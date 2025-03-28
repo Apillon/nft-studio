@@ -26,7 +26,10 @@ export function generateEmailAirdropToken(email: string) {
  * @param wallet Wallet address.
  * @param ctx Request context.
  */
-export function generateAdminAuthToken(wallet: string, exp?: jwt.SignOptions['expiresIn']) {
+export function generateAdminAuthToken(
+  wallet: string,
+  exp?: jwt.SignOptions['expiresIn'],
+) {
   if (!exp) {
     exp = '12h';
   }
@@ -36,7 +39,7 @@ export function generateAdminAuthToken(wallet: string, exp?: jwt.SignOptions['ex
   const subject = RequestToken.AUTH_ADMIN;
   const token = jwt.sign({ wallet }, env.APP_SECRET, {
     subject,
-   expiresIn:exp
+    expiresIn: exp,
   });
   return token;
 }

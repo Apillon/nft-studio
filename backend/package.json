@@ -50,6 +50,7 @@
     "@types/node": "^22.13.14",
     "@types/supertest": "^6.0.3",
     "ethers": "^6.13.5",
+    "prettier": "3.5.3",
     "supertest": "^7.1.0",
     "ts-jest": "^29.3.0",
     "ts-mysql-migrate": "^1.1.2",

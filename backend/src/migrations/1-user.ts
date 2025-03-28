@@ -1,7 +1,7 @@
 export async function upgrade(
-    queryFn: (query: string, values?: any[]) => Promise<Array<any>>,
-  ) {
-    await queryFn(`
+  queryFn: (query: string, values?: any[]) => Promise<Array<any>>,
+) {
+  await queryFn(`
       CREATE TABLE IF NOT EXISTS \`user\` (
         \`id\` INT NOT NULL AUTO_INCREMENT,
         \`email\` VARCHAR(255) NULL,
@@ -18,19 +18,18 @@ export async function upgrade(
         \`updateTime\` DATETIME NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         PRIMARY KEY (\`id\`));
     `);
-  
-    await queryFn(`
+
+  await queryFn(`
       CREATE UNIQUE INDEX \`email_UNIQUE\` ON \`user\` (\`email\` ASC) VISIBLE;
     `);
-    await queryFn(`
+  await queryFn(`
     CREATE UNIQUE INDEX \`wallet\` ON \`user\` (\`wallet\` ASC) VISIBLE;
     `);
-  }
-  export async function downgrade(
-    queryFn: (query: string, values?: any[]) => Promise<Array<any>>,
-  ) {
-    await queryFn(`
+}
+export async function downgrade(
+  queryFn: (query: string, values?: any[]) => Promise<Array<any>>,
+) {
+  await queryFn(`
       DROP TABLE IF EXISTS \`user\` ;
     `);
-  }
-  
+}

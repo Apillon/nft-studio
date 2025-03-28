@@ -13,12 +13,15 @@ export class Cron {
 
   constructor() {
     this.cronJobs.push(new CronJob('* * * * *', this.sendEmail, null, false));
-    this.cronJobs.push(new CronJob('* * * * *', this.sendEmailSignupEmailAirdrop, null, false));
+    this.cronJobs.push(
+      new CronJob('* * * * *', this.sendEmailSignupEmailAirdrop, null, false),
+    );
 
-    if(env.MAX_SUPPLY > 0){
-        this.cronJobs.push(
-            new CronJob('* * * * *', this.processExpiredClaims, null, false),
-          );    }
+    if (env.MAX_SUPPLY > 0) {
+      this.cronJobs.push(
+        new CronJob('* * * * *', this.processExpiredClaims, null, false),
+      );
+    }
   }
 
   async start() {
@@ -95,7 +98,6 @@ export class Cron {
     }
     MysqlConnectionManager.destroyInstance();
   }
-
 
   async sendEmailSignupEmailAirdrop() {
     const mysql = await MysqlConnectionManager.getInstance();
@@ -319,5 +321,4 @@ export class Cron {
     }
     await MysqlConnectionManager.destroyInstance();
   }
-
 }

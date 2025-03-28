@@ -16,10 +16,10 @@ import { inject as injectGetUser } from './routes/get-user';
 import { inject as injectGetStatistics } from './routes/get-statistics';
 import { inject as injectClaimAirdrop } from './routes/claim-airdrop';
 import { inject as injectAdminLogin } from './routes/admin-login';
-import {inject as injectCreateUserAdmin} from './routes/create-user-admin';
-import {inject as injectClaimAirdropSignupEmailClaim} from './routes/claim-airdrop-signup-email-claim';
-import {inject as injectCreateUserSignupEmailClaim} from './routes/create-user-signup-email-claim'
-import {inject as injectClaimWhitelist} from './routes/claim-whitelist';
+import { inject as injectCreateUserAdmin } from './routes/create-user-admin';
+import { inject as injectClaimAirdropSignupEmailClaim } from './routes/claim-airdrop-signup-email-claim';
+import { inject as injectCreateUserSignupEmailClaim } from './routes/create-user-signup-email-claim';
+import { inject as injectClaimWhitelist } from './routes/claim-whitelist';
 
 export interface Request extends express.Request {
   context: Context;

@@ -6,7 +6,7 @@ export async function generateSignature(wallet: string, amount: number) {
 
   const dataHash = ethers.solidityPackedKeccak256(
     ['address', 'uint256', 'address'],
-    [wallet, amount, env.SIGNATURE_CONTRACT_ADDRESS]
+    [wallet, amount, env.SIGNATURE_CONTRACT_ADDRESS],
   );
 
   return await signer.signMessage(ethers.getBytes(dataHash));

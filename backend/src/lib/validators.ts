@@ -111,7 +111,7 @@ export function uniqueFieldValueById(
   checkNull = false,
 ) {
   return async function (this: BaseSqlModel, value: any) {
-    if (!checkNull &&  (value === null || value === undefined)) {
+    if (!checkNull && (value === null || value === undefined)) {
       return true;
     }
     const count = await this.db()
@@ -139,7 +139,7 @@ export function uniqueFieldValueByIdActive(
   checkNull = false,
 ) {
   return async function (this: BaseSqlModel, value: any) {
-    if (!checkNull &&  (value === null || value === undefined)) {
+    if (!checkNull && (value === null || value === undefined)) {
       return true;
     }
     const count = await this.db()

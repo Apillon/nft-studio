@@ -30,7 +30,7 @@ export interface IEnv {
   SMTP_EMAIL_FROM_HELLO: string;
 
   ADMIN_WALLET: string[];
-  
+
   MYSQL_HOST_TEST: string;
   MYSQL_PORT_TEST: number;
   MYSQL_DB_TEST: string;
@@ -78,7 +78,6 @@ export const env: IEnv = {
    */
   API_HOST: process.env['API_HOST'] || '127.0.0.1',
   API_PORT: parseInt(process.env['API_PORT']) || 3001,
-
 
   /**
    * Admin
@@ -132,7 +131,6 @@ export const env: IEnv = {
   APILLON_SECRET: process.env['APILLON_SECRET'],
   COLLECTION_UUID: process.env['COLLECTION_UUID'],
   MAX_SUPPLY: parseInt(process.env['MAX_SUPPLY']) || 0,
-
 
   CAPTCHA_SECRET: process.env['CAPTCHA_SECRET'],
   CLAIM_EXPIRES_IN: parseInt(process.env['CLAIM_EXPIRES_IN']) || 72,

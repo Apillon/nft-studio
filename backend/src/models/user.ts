@@ -22,7 +22,7 @@ export enum AirdropStatus {
   AIRDROP_COMPLETED = 6,
   AIRDROP_ERROR = 7,
   AIRDROP_CLAIM_EXPIRED = 8,
-  IN_WAITING_LINE = 9
+  IN_WAITING_LINE = 9,
 }
 
 export class User extends BaseSqlModel {
@@ -44,7 +44,7 @@ export class User extends BaseSqlModel {
     ],
     validators: [
       {
-        resolver: uniqueFieldValue('user', 'email',undefined, true),
+        resolver: uniqueFieldValue('user', 'email', undefined, true),
         code: ValidatorErrorCode.PROFILE_EMAIL_ALREADY_TAKEN,
       },
     ],
@@ -96,25 +96,32 @@ export class User extends BaseSqlModel {
   })
   public nft_id: number;
 
-    /**
+  /**
    * signature
    */
-    @prop({
-        parser: { resolver: stringParser() },
-        populatable: [PopulateStrategy.DB],
-        serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
-        fakeValue: null,
-      })
-    public signature: string | null;
+  @prop({
+    parser: { resolver: stringParser() },
+    populatable: [PopulateStrategy.DB],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
+    fakeValue: null,
+  })
+  public signature: string | null;
 
-
-    /**
+  /**
    * amount
    */
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     validators: [],
     defaultValue: 1,
     fakeValue: 1,
@@ -219,7 +226,7 @@ export class User extends BaseSqlModel {
       SELECT * FROM ${this._tableName}
       WHERE wallet = @wallet
     `,
-      { wallet: wallet.toLowerCase() }
+      { wallet: wallet.toLowerCase() },
     );
 
     if (data && data.length) {
