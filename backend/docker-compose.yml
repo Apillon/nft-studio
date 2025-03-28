@@ -1,0 +1,27 @@
+#####
+# This is an example of docker compose file for Apillon pre-built solutions. You are encouraged to change it according to your needs.
+#####
+
+version: '3.8'
+
+services:
+  nft_studio_db:
+    image: mysql
+    container_name: nft_studio_db
+    
+    env_file:
+      - .env
+    ports:
+      - '3306:3306'
+    restart: always
+
+  nft_studio_app:
+    image: nft-studio:latest
+    container_name: nft_studio_app
+    depends_on:
+      - nft_studio_db
+    env_file:
+      - .env
+    ports:
+      - '${HOST_API_PORT}:3000'
+    restart: always
