@@ -4,6 +4,10 @@ import { MySql } from './mysql';
 export class MysqlConnectionManager {
   private static mysql: MySql = null;
 
+  static initialize(mysql: MySql) {
+    this.mysql = mysql;
+  }
+
   static async getInstance(): Promise<MySql> {
     if (!this.mysql) {
       console.log('creating instance');

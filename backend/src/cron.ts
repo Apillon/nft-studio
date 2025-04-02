@@ -7,11 +7,13 @@ import { SmtpSendTemplate } from './lib/node-mailer';
 import { env } from './config/env';
 import { generateEmailAirdropToken } from './lib/jwt';
 import { LogType, writeLog } from './lib/logger';
+import { MySql } from './lib/mysql';
 
 export class Cron {
   private cronJobs: CronJob[] = [];
 
-  constructor() {
+  constructor(private mysql: MySql) {
+    MysqlConnectionManager.initialize(mysql);
     this.cronJobs.push(new CronJob('* * * * *', this.sendEmail, null, false));
     this.cronJobs.push(
       new CronJob('* * * * *', this.sendEmailSignupEmailAirdrop, null, false),
@@ -57,7 +59,7 @@ export class Cron {
 
       for (let i = 0; i < users.length; i++) {
         try {
-          const token = await generateEmailAirdropToken(users[i].email);
+          const token = generateEmailAirdropToken(users[i].email);
           await SmtpSendTemplate(
             [users[i].email],
             'Claim your NFT',
@@ -96,7 +98,6 @@ export class Cron {
       writeLog(LogType.ERROR, e, 'cron.ts', 'sendEmail');
       await conn.rollback();
     }
-    MysqlConnectionManager.destroyInstance();
   }
 
   async sendEmailSignupEmailAirdrop() {
@@ -206,7 +207,6 @@ export class Cron {
       writeLog(LogType.ERROR, e, 'cron.ts', 'sendEmail');
       await mysql.rollback(conn);
     }
-    await MysqlConnectionManager.destroyInstance();
   }
 
   async processExpiredClaims() {
@@ -319,6 +319,5 @@ export class Cron {
       writeLog(LogType.ERROR, e, 'cron.ts', 'processExpiredClaims');
       await mysql.rollback(conn);
     }
-    await MysqlConnectionManager.destroyInstance();
   }
 }

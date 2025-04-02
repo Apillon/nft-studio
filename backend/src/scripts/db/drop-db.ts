@@ -12,7 +12,7 @@ const run = async () => {
 };
 
 rl.question(
-  `You are about to run all downgrade scripts for ${env.MYSQL_DB} @ ${env.MYSQL_HOST}.\n Are you sure? (Yes/No):`,
+  `You are about to run all downgrade scripts for ${env.MYSQL_DATABASE} @ ${env.MYSQL_HOST}.\n Are you sure? (Yes/No):`,
   (answer) => {
     if (answer.toLowerCase() === 'yes') {
       console.log(`Downgrading ...`);

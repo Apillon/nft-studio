@@ -44,7 +44,7 @@ const executeFn = (answer) => {
 if (showDialog) {
   rl.question(
     `You are about to upgrade database ${bgYellow(
-      black(` ${env.MYSQL_DB} @ ${env.MYSQL_HOST} `),
+      black(` ${env.MYSQL_DATABASE} @ ${env.MYSQL_HOST} `),
     )}.
 
 Set number of versions to upgrade ('Y' for all, '<number>' for number of versions, 'N' to exit):`,

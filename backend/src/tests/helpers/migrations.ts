@@ -58,7 +58,7 @@ async function initMigrations() {
     port: parseInt(process.env.MYSQL_PORT_TEST),
     user: process.env.MYSQL_USER_TEST,
     password: process.env.MYSQL_PASSWORD_TEST,
-    database: process.env.MYSQL_DB_TEST,
+    database: process.env.MYSQL_DATABASE_TEST,
     // debug: true,
     connectionLimit: 1,
   };

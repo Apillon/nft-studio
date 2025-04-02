@@ -26,8 +26,45 @@ export class MySql {
    */
   public async connect() {
     if (!this.db) {
+      console.log({
+        host:
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_HOST_TEST
+            : this.env.MYSQL_HOST,
+        port:
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_PORT_TEST
+            : this.env.MYSQL_PORT,
+        user:
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_USER_TEST
+            : this.env.MYSQL_USER,
+        password:
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_PASSWORD_TEST
+            : this.env.MYSQL_PASSWORD,
+        database:
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_DATABASE_TEST
+            : this.env.MYSQL_DATABASE,
+        waitForConnections: true,
+        decimalNumbers: true,
+
+        connectionLimit:
+          (this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_POOL_TEST
+            : this.env.MYSQL_POOL) || 10,
+
+        queueLimit: 100,
+        // ssl: env.USE_DB_SSL ? {
+        //   ca: fs.readFileSync(`${__dirname}/keys/ca-cert.pem`).toString(),
+        //   key: fs.readFileSync(`${__dirname}/keys/client-key.pem`).toString(),
+        //   cert: fs.readFileSync(`${__dirname}/keys/client-cert.pem`).toString()
+        // } : undefined
+      });
       try {
-        this.db = await mysql.createPool({
+        console.log('\n\n_______POOL CREATED\n\n');
+        this.db = mysql.createPool({
           host:
             this.env.APP_ENV === 'testing'
               ? this.env.MYSQL_HOST_TEST
@@ -46,8 +83,8 @@ export class MySql {
               : this.env.MYSQL_PASSWORD,
           database:
             this.env.APP_ENV === 'testing'
-              ? this.env.MYSQL_DB_TEST
-              : this.env.MYSQL_DB,
+              ? this.env.MYSQL_DATABASE_TEST
+              : this.env.MYSQL_DATABASE,
           waitForConnections: true,
           decimalNumbers: true,
 
@@ -73,8 +110,9 @@ export class MySql {
             : this.env.MYSQL_PORT;
         const database =
           this.env.APP_ENV === 'testing'
-            ? this.env.MYSQL_DB_TEST
-            : this.env.MYSQL_DB;
+            ? this.env.MYSQL_DATABASE_TEST
+            : this.env.MYSQL_DATABASE;
+
         writeLog(
           LogType.INFO,
           `Connected to DB: ${host}:${port} | ${database}`,
@@ -100,6 +138,7 @@ export class MySql {
    * Closes database client.
    */
   public async close() {
+    console.log('\n\n_______POOL ENDED\n\n');
     if (this.db) {
       await this.db.end();
     }

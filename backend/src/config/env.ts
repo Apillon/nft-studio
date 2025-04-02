@@ -13,7 +13,7 @@ export interface IEnv {
 
   MYSQL_HOST: string;
   MYSQL_PORT: number;
-  MYSQL_DB: string;
+  MYSQL_DATABASE: string;
   MYSQL_USER: string;
   MYSQL_PASSWORD: string;
   MYSQL_POOL: number;
@@ -33,7 +33,7 @@ export interface IEnv {
 
   MYSQL_HOST_TEST: string;
   MYSQL_PORT_TEST: number;
-  MYSQL_DB_TEST: string;
+  MYSQL_DATABASE_TEST: string;
   MYSQL_USER_TEST: string;
   MYSQL_PASSWORD_TEST: string;
   MYSQL_POOL_TEST: number;
@@ -90,7 +90,7 @@ export const env: IEnv = {
    */
   MYSQL_HOST: process.env['MYSQL_HOST'],
   MYSQL_PORT: parseInt(process.env['MYSQL_PORT']) || 3306,
-  MYSQL_DB: process.env['MYSQL_DB'],
+  MYSQL_DATABASE: process.env['MYSQL_DATABASE'],
   MYSQL_USER: process.env['MYSQL_USER'],
   MYSQL_PASSWORD: process.env['MYSQL_PASSWORD'],
   MYSQL_POOL: parseInt(process.env['MYSQL_POOL']),
@@ -119,7 +119,7 @@ export const env: IEnv = {
    */
   MYSQL_HOST_TEST: process.env['MYSQL_HOST_TEST'],
   MYSQL_PORT_TEST: parseInt(process.env['MYSQL_PORT_TEST']) || 3306,
-  MYSQL_DB_TEST: process.env['MYSQL_DB_TEST'],
+  MYSQL_DATABASE_TEST: process.env['MYSQL_DATABASE_TEST'],
   MYSQL_USER_TEST: process.env['MYSQL_USER_TEST'],
   MYSQL_PASSWORD_TEST: process.env['MYSQL_PASSWORD_TEST'],
   MYSQL_POOL_TEST: parseInt(process.env['MYSQL_POOL_TEST']),

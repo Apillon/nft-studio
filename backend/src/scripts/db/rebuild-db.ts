@@ -12,7 +12,7 @@ const run = async () => {
 };
 
 rl.question(
-  `You are about to reset database ${env.MYSQL_DB} @ ${env.MYSQL_HOST}.\n Are you sure? (Yes/No):`,
+  `You are about to reset database ${env.MYSQL_DATABASE} @ ${env.MYSQL_HOST}.\n Are you sure? (Yes/No):`,
   (answer) => {
     if (answer.toLowerCase() === 'yes') {
       console.log(`Rebuilding database ...`);

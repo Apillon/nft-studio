@@ -29,8 +29,8 @@ export async function createContextAndStartServer(
     // tslint:disable-next-line: comment-type
     if (
       useEnv.APP_ENV !== 'testing' ||
-      !useEnv.MYSQL_DB_TEST ||
-      !useEnv.MYSQL_DB_TEST.endsWith(
+      !useEnv.MYSQL_DATABASE_TEST ||
+      !useEnv.MYSQL_DATABASE_TEST.endsWith(
         'test',
       ) /*|| !databaseName.endsWith('test')*/
     ) {

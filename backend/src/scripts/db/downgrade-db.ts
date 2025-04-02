@@ -14,7 +14,7 @@ const run = async () => {
 };
 
 rl.question(
-  `You are about to downgrade database ${env.MYSQL_DB} @ ${env.MYSQL_HOST}.\n Set number of versions to downgrade (-1 for all, 0 to exit):`,
+  `You are about to downgrade database ${env.MYSQL_DATABASE} @ ${env.MYSQL_HOST}.\n Set number of versions to downgrade (-1 for all, 0 to exit):`,
   (answer) => {
     steps = parseInt(answer);
     if (steps) {

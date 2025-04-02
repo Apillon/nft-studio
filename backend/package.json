@@ -5,7 +5,6 @@
   "scripts": {
     "test": "npx jest --config jestconfig.json --forceExit --detectOpenHandles --runInBand",
     "development:run": "node -r ts-node/register --inspect ./src/scripts/start-http",
-    "cron": "node -r ts-node/register --inspect ./src/scripts/start-cron",
     "dev": "npm run development:run",
     "tsc": "tsc",
     "build": "tsc",

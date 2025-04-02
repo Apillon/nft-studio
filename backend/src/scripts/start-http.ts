@@ -1,4 +1,4 @@
-import { HttpServer, MySql } from '..';
+import { Cron, HttpServer, MySql } from '..';
 import { env } from '../config/env';
 import { writeLog, LogType } from '../lib/logger';
 
@@ -7,6 +7,10 @@ const api = new HttpServer({ env, mysql });
 
 (async () => {
   await mysql.connect();
+
+  const cron = new Cron(mysql);
+  await cron.start();
+
   await api.listen();
   writeLog(
     LogType.INFO,
