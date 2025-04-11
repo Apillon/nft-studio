@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import VueHcaptcha from '@hcaptcha/vue3-hcaptcha';
 import type { FormInst, FormRules, FormValidationError } from 'naive-ui';
 import { ruleRequired } from '~/lib/utils/validation';
 
@@ -13,15 +12,6 @@ const router = useRouter();
 const message = useMessage();
 const emit = defineEmits(['submitSuccess']);
 
-const {
-  loading,
-  captchaKey,
-  captchaInput,
-  onCaptchaChallengeExpire,
-  onCaptchaClose,
-  onCaptchaError,
-  onCaptchaExpire,
-} = useCaptcha();
 const { handleError } = useErrors();
 
 const formRef = ref<FormInst | null>(null);
@@ -45,8 +35,6 @@ function handleSubmit(e: MouseEvent | null) {
       errors.map(fieldErrors =>
         fieldErrors.map(error => message.warning(error.message || 'Error'))
       );
-    } else if (!formData.value.token) {
-      captchaInput.value.execute();
     } else {
       await signUp();
     }
@@ -70,10 +58,6 @@ async function signUp() {
 
   loading.value = false;
 }
-
-function onCaptchaVerify(token: string) {
-  formData.value.token = token;
-}
 </script>
 
 <template>
@@ -88,17 +72,21 @@ function onCaptchaVerify(token: string) {
       />
     </n-form-item>
 
-    <!-- Hcaptcha -->
-    <vue-hcaptcha
-      ref="captchaInput"
-      :sitekey="captchaKey"
-      theme="dark"
-      @error="onCaptchaError"
-      @verify="onCaptchaVerify"
-      @expired="onCaptchaExpire"
-      @challenge-expired="onCaptchaChallengeExpire"
-      @closed="onCaptchaClose"
-    />
+    <!-- Prosopo captcha
+<ProcaptchaComponent
+    :siteKey={"my-site-key"}
+    :callbacks={{
+        onVerified: (token: string): void => {
+            console.log("verified", token);
+        },
+    }}
+    :htmlAttributes={{
+        className: "my-app__procaptcha",
+        style: {
+            maxWidth: "600px",
+        },
+    }}
+/>; -->
 
     <!--  Form submit -->
     <n-form-item :show-feedback="false">

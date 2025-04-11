@@ -3,7 +3,7 @@
     <div ref="headerRef">
       <Header admin />
     </div>
-    <div class="container">
+    <div class="container my-8">
       <slot />
     </div>
   </n-layout>

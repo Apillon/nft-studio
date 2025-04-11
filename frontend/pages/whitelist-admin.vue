@@ -1,13 +1,13 @@
 <script lang="ts" setup>
-import { useAccount } from 'use-wagmi';
+import { useAccount } from '@wagmi/vue';
 import UploadSVG from '~/assets/images/upload.svg';
 
-useHead({
-  title: 'Apillon whitelist claim prebuilt solution',
-});
+useHead({ title: 'Apillon whitelist claim prebuilt solution' });
 
 const message = useMessage();
 const userStore = useUserStore();
+
+const { info } = useAccountEW();
 const { isConnected } = useAccount();
 const { handleError } = useErrors();
 
@@ -15,15 +15,8 @@ const items = ref<WhitelistUserInterface[]>([]);
 const statistics = ref<WhitelistStatisticsInterface | null>(null);
 const modalUploadCsvVisible = ref<boolean>(false);
 
-const isLoggedIn = computed(() => isConnected.value && userStore.jwt);
+const isLoggedIn = computed(() => (isConnected.value || !!info.activeWallet?.address) && userStore.loggedIn);
 const selectedRecipients = computed(() => items.value.length);
-
-onMounted(async () => {
-  if (isLoggedIn.value) {
-    await getUsers();
-    await getStatistics();
-  }
-});
 
 watch(
   () => isLoggedIn.value,
@@ -32,7 +25,8 @@ watch(
       await getUsers();
       await getStatistics();
     }
-  }
+  },
+  { immediate: true }
 );
 
 function onFileUploaded(csvData: WhitelistCsvItem[]) {
@@ -96,11 +90,7 @@ async function getStatistics() {
 }
 
 function addRecipient() {
-  items.value.push({
-    amount: 1,
-    signature: null,
-    wallet: null,
-  });
+  items.value.push({ amount: 1, signature: null, wallet: null });
 }
 
 function onUserRemove(wallet: string) {
@@ -155,18 +145,13 @@ async function saveWallets() {
       </n-space>
     </div>
 
-    <modal
-      :show="modalUploadCsvVisible"
-      @close="() => (modalUploadCsvVisible = false)"
-      @update:show="modalUploadCsvVisible = false"
-    >
+    <modal v-model:show="modalUploadCsvVisible" @close="modalUploadCsvVisible = false">
       <div class="max-w-md w-full md:px-6 my-12 mx-auto">
         <div class="mb-5 text-center">
           <img :src="UploadSVG" class="mx-auto" width="203" height="240" alt="airdrop" />
           <h3 class="my-8 text-center">Upload your CSV file with recipients’ addresses</h3>
           <p class="text-center">
-            Select and upload the CSV file containing addresses to which you wish to distribute
-            NFTs.
+            Select and upload the CSV file containing addresses to which you wish to distribute NFTs.
           </p>
           <Btn type="builders" size="tiny" href="/files/example.csv"> Download CSV sample </Btn>
         </div>

@@ -1,8 +1,16 @@
 <script lang="ts" setup>
 import WalletSVG from '~/assets/images/wallet.svg';
-import { useConnect } from 'use-wagmi';
+import { useConnect, useAccount, type CreateConnectorFn, type Connector } from '@wagmi/vue';
 
-const { connect, connectors, pendingConnector } = useConnect();
+const { isConnecting } = useAccount();
+const { connect, connectors } = useConnect();
+
+const connectorName = ref('');
+
+function connectWallet(connector: Connector<CreateConnectorFn>) {
+  connectorName.value = connector.name;
+  connect({ connector });
+}
 </script>
 
 <template>
@@ -18,17 +26,17 @@ const { connect, connectors, pendingConnector } = useConnect();
     </div>
 
     <n-space size="large" vertical>
+      <slot />
       <Btn
         v-for="(connector, key) in connectors"
         :key="key"
         type="secondary"
         size="large"
-        :loading="connector.id === pendingConnector?.id"
-        :disabled="!connector.ready"
-        @click="connect({ connector })"
+        :loading="isConnecting && connectorName === connector.name"
+        @click="connectWallet(connector)"
       >
         <span class="inline-flex gap-2 items-center">
-          <NuxtIcon :name="connector.id" class="text-xl" filled />
+          <NuxtIcon :name="connector.type" class="text-xl" filled />
           <span>{{ connector.name }}</span>
         </span>
       </Btn>

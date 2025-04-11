@@ -1,4 +1,4 @@
-import { useWaitForTransaction } from 'use-wagmi';
+import { useChainId, useWaitForTransactionReceipt } from '@wagmi/vue';
 
 /**
  * Usage:
@@ -6,21 +6,16 @@ import { useWaitForTransaction } from 'use-wagmi';
  * txWait.hash.value = '';
  * await txWait.wait();
  */
-export default function useTxWait() {
+export default function useTxWait(networkId?: number) {
   const hash = ref<`0x${string}` | undefined>(undefined);
+  const chainId = useChainId();
 
-  const { refetch } = useWaitForTransaction({
-    enabled: false,
-    hash,
-  });
+  const { refetch } = useWaitForTransactionReceipt({ hash, chainId: networkId || chainId.value });
 
   async function wait() {
     await sleep(50);
     return await refetch();
   }
 
-  return {
-    hash,
-    wait,
-  };
+  return { hash, wait };
 }

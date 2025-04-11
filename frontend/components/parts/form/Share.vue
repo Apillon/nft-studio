@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { PropType } from 'vue';
 defineProps({
   metadata: { type: Object as PropType<Metadata>, default: null },
   txHash: { type: String, default: null },

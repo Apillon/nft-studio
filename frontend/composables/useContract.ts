@@ -1,34 +1,51 @@
+import type { Config } from '@wagmi/vue';
 import {
   useAccount,
-  useNetwork,
-  usePublicClient,
-  useSwitchNetwork,
-  useWalletClient,
-} from 'use-wagmi';
-import { getContract } from 'viem';
-import { moonbaseAlpha, moonbeam } from 'use-wagmi/chains';
+  useChainId,
+  useChains,
+  useClient,
+  useSwitchChain,
+  useConnectorClient,
+  useAccountEffect,
+} from '@wagmi/vue';
+import { getContract, createWalletClient, custom } from 'viem';
+import { moonbaseAlpha, moonbeam } from 'viem/chains';
 import { abi } from '~/lib/config/abi';
 import { Chains } from '~/lib/values/general.values';
 
 export default function useContract() {
   const message = useMessage();
   const config = useRuntimeConfig();
-  const { chain } = useNetwork();
+  const { $wagmiConfig } = useNuxtApp();
+
+  const chainId = useChainId();
+  const chains = useChains();
   const { address } = useAccount();
-  const publicClient = usePublicClient();
-  const { data: walletClient, refetch } = useWalletClient();
-  const { switchNetwork } = useSwitchNetwork({
-    onSuccess() {
+  const publicClient = useClient();
+  const { data: walletClient, refetch } = useConnectorClient();
+  const { switchChain } = useSwitchChain();
+
+  const usedChain = config.public.CHAIN_ID === Chains.MOONBASE ? moonbaseAlpha : moonbeam;
+  const defaultContractAddress = config.public.CONTRACT_ADDRESS as `0x${string}`;
+  const contract = ref();
+  const importNft = ref<string | null>(null);
+
+  useAccountEffect({
+    onConnect: () => {
       if (importNft.value) {
         _watchAsset(importNft.value);
       }
     },
   });
 
-  const usedChain = config.public.CHAIN_ID === Chains.MOONBASE ? moonbaseAlpha : moonbeam;
-  const defaultContractAddress = config.public.CONTRACT_ADDRESS as `0x${string}`;
-  const contract = ref();
-  const importNft = ref<string | null>(null);
+  const chain = computed(() => chains.value.find(c => c.id === chainId.value));
+
+  async function ensureCorrectNetwork() {
+    if (!chain || !chain.value || chain?.value.id !== usedChain.id) {
+      await switchChain({ chainId: usedChain.id });
+    }
+    return true;
+  }
 
   async function isWalletUsed() {
     return (await contract.value.read.walletUsed([address.value])) as boolean;
@@ -46,31 +63,23 @@ export default function useContract() {
     return (await contract.value.read.tokenURI([id])) as string;
   }
 
-  async function watchAsset(nftId: string | number) {
+  async function watchNftId(nftId: string | number) {
     if (!walletClient.value) {
       await refetch();
       await sleep(200);
     }
-    if (!chain || !chain.value || chain?.value.id !== usedChain.id) {
-      importNft.value = `${nftId}`;
-      await switchNetwork(usedChain.id);
-    } else {
-      _watchAsset(nftId);
-    }
+    await ensureCorrectNetwork();
+    _watchAsset(nftId);
   }
 
   async function _watchAsset(nftId: string | number) {
     try {
-      const contractAddress = contract.value?.address
-        ? contract.value.address
-        : config.public.CONTRACT_ADDRESS;
+      const contractAddress = contract.value?.address ? contract.value.address : config.public.CONTRACT_ADDRESS;
 
-      await walletClient.value?.watchAsset({
+      const viemWalletClient = createWalletClient({ chain: usedChain, transport: custom(window.ethereum!) });
+      const success = await viemWalletClient.watchAsset({
         type: 'ERC721',
-        options: {
-          address: contractAddress,
-          tokenId: `${nftId}`,
-        },
+        options: { address: contractAddress, tokenId: `${nftId}` },
       });
       importNft.value = null;
 
@@ -92,9 +101,7 @@ export default function useContract() {
       await refetch();
       await sleep(200);
     }
-    if (!chain || !chain.value || chain?.value.id !== usedChain.id) {
-      switchNetwork(usedChain.id);
-    }
+    await ensureCorrectNetwork();
 
     if (!contractAddress) {
       message.warning('Please provide contract address in config!');
@@ -108,10 +115,8 @@ export default function useContract() {
     }
   }
 
-  async function initContractWithOurAddress(){
-    if (!chain || !chain.value || chain?.value.id !== usedChain.id) {
-      switchNetwork(usedChain.id);
-    }
+  async function initContractWithOurAddress() {
+    await ensureCorrectNetwork();
 
     if (!defaultContractAddress) {
       message.warning('Please provide contract address in config!');
@@ -131,12 +136,7 @@ export default function useContract() {
     // ignore user declined
     if (e?.code !== 4001) {
       const errorData =
-        e?.reason ||
-        e?.data?.message ||
-        e?.error?.data?.message ||
-        e?.error?.message ||
-        e?.message ||
-        '';
+        e?.reason || e?.data?.message || e?.error?.data?.message || e?.error?.message || e?.message || '';
       let msg = '';
 
       if (errorData.includes('insufficient funds')) {
@@ -161,12 +161,8 @@ export default function useContract() {
         // Problem with embedded signature
         msg = 'Problem with embedded wallet';
       } else if (errorData.includes('Suggested NFT is not owned by the selected account ')) {
-        msg =
-          'Suggested NFT is not owned by the selected account, please try again with other wallet.';
-      } else if (
-        errorData.includes('user rejected transaction') ||
-        errorData.includes('User rejected the request')
-      ) {
+        msg = 'Suggested NFT is not owned by the selected account, please try again with other wallet.';
+      } else if (errorData.includes('user rejected transaction') || errorData.includes('User rejected the request')) {
         // User rejected the transaction
         msg = 'Transaction was rejected.';
       } else {
@@ -188,6 +184,6 @@ export default function useContract() {
     initContract,
     initContractWithOurAddress,
     mint,
-    watchAsset,
+    watchNftId,
   };
 }

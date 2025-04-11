@@ -1,6 +1,7 @@
 import { ethers } from 'ethers';
 import { env } from '../config/env';
 
+
 export async function generateSignature(wallet: string, amount: number) {
   const signer = new ethers.Wallet(env.SIGNATURE_PRIVATE_KEY);
 

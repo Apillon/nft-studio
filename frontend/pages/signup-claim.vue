@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { useAccount, useConnect, useWalletClient } from 'use-wagmi';
+import { useAccount as useAccountEW } from '@apillon/wallet-vue';
+import { useAccount, useConnect, useClient } from 'use-vwagmi|vue';
 import SuccessSVG from '~/assets/images/success.svg';
 
 type Address = `0x${string}`;
@@ -18,6 +19,7 @@ const message = useMessage();
 const txWait = useTxWait();
 const { handleError } = useErrors();
 
+const { info } = useAccountEW();
 const { address, isConnected } = useAccount();
 const { data: walletClient, refetch } = useWalletClient();
 const { connect, connectors } = useConnect();

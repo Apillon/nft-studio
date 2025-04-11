@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer';
 import VuePapaParse from 'vue-papa-parse';
 import config from '../package.json';
 import { WebStorageKeys } from '~/lib/values/general.values';
@@ -5,12 +6,12 @@ import { WebStorageKeys } from '~/lib/values/general.values';
 /**
  * Register any vue plugins here, eg. nuxtApp.vueApp.use(VueApexCharts);
  */
-export default defineNuxtPlugin(_nuxtApp => {
+export default defineNuxtPlugin(nuxtApp => {
   if (window) {
     versionCheck();
   }
   /** CSV parser */
-  _nuxtApp.vueApp.use(VuePapaParse);
+  nuxtApp.vueApp.use(VuePapaParse);
 });
 
 function versionCheck() {

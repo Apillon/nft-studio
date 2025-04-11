@@ -3,6 +3,6 @@
   "singleQuote": true,
   "trailingComma": "es5",
   "semi": true,
-  "twConfig": "./tailwind.config.ts",
+  "twConfig": "./frontend/tailwind.config.ts",
   "printWidth": 120
 }

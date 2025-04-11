@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAccount, useConnect, useWalletClient } from 'use-wagmi';
+import { useAccount, useConnect, useClient } from '@wagmi/vue';
 
 definePageMeta({
   layout: 'claim',
@@ -14,7 +14,7 @@ const { handleError } = useErrors();
 
 const timestamp = useTimestamp();
 const { address, isConnected } = useAccount();
-const { data: walletClient, refetch } = useWalletClient();
+const { data: walletClient, refetch } = useClient();
 const { connect, connectors } = useConnect();
 
 const loading = ref<boolean>(false);

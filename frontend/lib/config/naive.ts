@@ -1,5 +1,5 @@
-import colors from '~~/tailwind.colors';
 import type { GlobalThemeOverrides, MessageProviderProps } from 'naive-ui';
+import { colors } from '~/tailwind.config';
 
 type MessageThemeOverrides = NonNullable<MessageProviderProps['themeOverrides']>;
 const messageOverrides: MessageThemeOverrides = {
@@ -50,7 +50,7 @@ const messageOverrides: MessageThemeOverrides = {
 export const NaiveTheme: GlobalThemeOverrides = {
   common: {
     baseColor: colors.bg.DEFAULT,
-    bodyColor: colors.bg.DEFAULT,
+    bodyColor: colors.bg.dark,
     errorColor: colors.pink,
     fontFamily: 'Inter',
     fontSize: '14px',
@@ -95,8 +95,12 @@ export const NaiveTheme: GlobalThemeOverrides = {
   },
   Button: {
     border: `1px solid ${colors.bg.lighter}`,
-    borderDisabled: `1px solid ${colors.bg.lighter}`,
-    borderDisabledPrimary: `1px solid ${colors.bg.lighter}`,
+    borderDisabled: `1px solid ${colors.bodyDark}`,
+    borderDisabledError: `1px solid ${colors.bodyDark}`,
+    borderDisabledInfo: `1px solid ${colors.bodyDark}`,
+    borderDisabledPrimary: `1px solid ${colors.bodyDark}`,
+    borderDisabledSuccess: `1px solid ${colors.bodyDark}`,
+    borderDisabledWarning: `1px solid ${colors.bodyDark}`,
     borderError: `1px solid ${colors.bg.lighter}`,
     borderFocusError: `1px solid ${colors.pink}`,
     borderHoverError: `1px solid ${colors.pink}`,
@@ -133,7 +137,7 @@ export const NaiveTheme: GlobalThemeOverrides = {
     heightTiny: '24px',
     paddingLarge: '8px',
     paddingMedium: '8px 24px',
-    paddingSmall: '6px 20px',
+    paddingSmall: '6px 10px',
     paddingTiny: '1px',
     textColorHover: 'inherit',
     textColorInfo: colors.bg.DEFAULT,
@@ -162,11 +166,14 @@ export const NaiveTheme: GlobalThemeOverrides = {
   },
   DataTable: {
     borderColor: colors.bg.lighter,
-    tdColor: colors.bg.DEFAULT,
-    tdColorHover: colors.bg.dark,
-    tdTextColor: colors.body,
-    thColor: colors.bg.DEFAULT,
-    thColorHover: colors.bg.DEFAULT,
+    tdColor: colors.transparent,
+    tdColorHover: colors.transparent,
+    tdTextColor: colors.white,
+    thColor: colors.transparent,
+    thColorHoverModal: colors.transparent,
+    thColorHoverPopover: colors.transparent,
+    thColorModal: colors.transparent,
+    thColorHover: colors.transparent,
     thFontWeight: '700',
     thTextColor: colors.white,
   },
@@ -221,7 +228,7 @@ export const NaiveTheme: GlobalThemeOverrides = {
     borderError: `1px solid ${colors.pink}`,
     borderFocusError: `1px solid ${colors.pink}`,
     borderHoverError: `1px solid ${colors.pink}`,
-    borderDisabled: `1px solid ${colors.bg.lighter}`,
+    borderDisabled: `1px solid ${colors.bodyDark}`,
     borderRadius: '8px',
     boxShadowFocus: 'none',
     boxShadowFocusError: 'none',
@@ -250,18 +257,12 @@ export const NaiveTheme: GlobalThemeOverrides = {
     textColor: colors.white,
     textColorDisabled: colors.bodyDark,
   },
-  Layout: {
-    textColor: colors.white,
-    siderBorderColor: colors.bg.lighter,
-  },
+  Layout: { textColor: colors.white, siderBorderColor: colors.bg.lighter },
   Message: messageOverrides,
   Modal: {
     color: colors.bg.DEFAULT,
     zIndex: 80,
     peers: {
-      Scrollbar: {
-        zIndex: 84,
-      },
       Card: {
         borderColor: colors.bg.lighter,
         borderRadius: '0px',
@@ -269,7 +270,6 @@ export const NaiveTheme: GlobalThemeOverrides = {
         paddingMedium: '32px 64px',
         paddingLarge: '32px 64px',
         paddingHuge: '32px 64px',
-        zIndex: 83,
       },
       Dialog: {
         border: `1px solid ${colors.bg.lighter}`,
@@ -277,21 +277,12 @@ export const NaiveTheme: GlobalThemeOverrides = {
         closeColorHover: 'inherit',
         closeMargin: '-24px -24px 0 0',
         contentMargin: '16px 0',
-        padding: '64px 64px 32px',
-        zIndex: 82,
+        padding: '64px',
       },
-
-      zIndex: 81,
     },
   },
-  Pagination: {
-    itemColorDisabled: colors.bodyDark,
-  },
-  Popover: {
-    arrowHeight: '14px',
-    spaceArrow: '14px',
-    textColor: colors.white,
-  },
+  Pagination: { itemColorDisabled: colors.bodyDark },
+  Popover: { arrowHeight: '14px', spaceArrow: '14px', textColor: colors.white },
   Select: {
     peers: {
       InternalSelection: {
@@ -314,8 +305,12 @@ export const NaiveTheme: GlobalThemeOverrides = {
         heightTiny: '32px',
       },
       InternalSelectMenu: {
+        actionTextColor: colors.white,
         borderRadius: '8px',
         color: colors.bg.dark,
+        paddingSmall: '0px 10px',
+        paddingMedium: '0px 10px',
+        paddingLarge: '0px 20px',
         optionCheckColor: colors.bg.lighter,
         optionColorActive: colors.bg.lighter,
         optionColorActivePending: colors.bg.lighter,
@@ -323,24 +318,12 @@ export const NaiveTheme: GlobalThemeOverrides = {
         optionHeightLarge: '48px',
         optionHeightMedium: '48px',
         optionHeightSmall: '32px',
-        paddingSmall: '0px 10px',
-        paddingMedium: '0px 10px',
-        paddingLarge: '0px 20px',
-        actionTextColor: colors.white,
         optionTextColor: colors.white,
         optionTextColorActive: colors.white,
         optionTextColorPressed: colors.white,
       },
     },
   },
-  Tag: {
-    colorInfo: colors.bg.lighter,
-    fontSizeSmall: '10px',
-    heightSmall: '24px',
-  },
-  Upload: {
-    draggerBorder: `none`,
-    draggerBorderHover: `none`,
-    draggerColor: colors.bg.light,
-  },
+  Tag: { colorInfo: colors.bg.lighter, fontSizeSmall: '10px', heightSmall: '24px' },
+  Upload: { draggerBorder: `none`, draggerBorderHover: `none`, draggerColor: colors.bg.light },
 };

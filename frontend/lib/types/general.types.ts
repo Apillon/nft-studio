@@ -11,31 +11,13 @@ export interface ConfigInterface {
 
 export type AuthResponseProfile = {
   id: number;
-  authUser: {
-    id: number;
-    status: number;
-    username: string;
-    email?: string;
-    roles: any[];
-    permissions: any[];
-  };
+  authUser: { id: number; status: number; username: string; email?: string; roles: any[]; permissions: any[] };
 };
 
-export type AuthResponse = {
-  profile: AuthResponseProfile;
-  authToken: {
-    status: boolean;
-    data: string;
-  };
-};
+export type AuthResponse = { profile: AuthResponseProfile; authToken: { status: boolean; data: string } };
 
 declare global {
-  type WhitelistCsvItem = {
-    amount?: number | null;
-    signature?: string | null;
-    status?: number | null;
-    wallet: string;
-  }
+  type WhitelistCsvItem = { amount?: number | null; signature?: string | null; status?: number | null; wallet: string };
 
   type CsvItem = {
     email: string;
@@ -62,22 +44,9 @@ declare global {
     };
   };
 
-
-
   /** Response */
-  type GeneralResponse<T> = {
-    data: T;
-    id: string;
-    status: number;
-  };
-  type GeneralItemsResponse<T> = {
-    data: {
-      items: Array<T>;
-      total: number;
-    };
-    id: string;
-    status: number;
-  };
+  type GeneralResponse<T> = { data: T; id: string; status: number };
+  type GeneralItemsResponse<T> = { data: { items: Array<T>; total: number }; id: string; status: number };
   type SuccessResponse = GeneralResponse<{ success: boolean }>;
   interface WhitelistClaimInterface {
     amount: number;
@@ -106,6 +75,9 @@ declare global {
   }
 
   type UsersResponse = GeneralItemsResponse<UserInterface>;
+
+  type LoginInterface = { jwt: string };
+  type LoginResponse = GeneralResponse<LoginInterface>;
 
   interface WhitelistUserInterface {
     amount: number;
@@ -136,9 +108,5 @@ declare global {
 
   type WhitelistStatisticsResponse = GeneralResponse<WhitelistStatisticsInterface>;
 
-  type Metadata = {
-    name: string;
-    description: string;
-    image: string;
-  };
+  type Metadata = { name: string; description: string; image: string };
 }

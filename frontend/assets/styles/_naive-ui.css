@@ -135,8 +135,11 @@
 }
 #kalm .nuxt-icon {
   &.icon-auto svg {
-    width: auto;
-    height: auto;
+    @apply max-w-full;
+
+    svg {
+      @apply w-auto h-auto max-w-full object-contain;
+    }
   }
   svg {
     margin-bottom: 0;
@@ -284,6 +287,11 @@ body > .n-message-container {
       }
     }
   }
+  &.hide-header {
+    &.n-dialog .n-dialog__content {
+      @apply mt-0;
+    }
+  }
 }
 
 /** Pagination */
@@ -329,6 +337,14 @@ body > .n-message-container {
         display: none;
       }
     }
+  }
+}
+
+.n-select-menu {
+  @apply border-card !rounded-xl overflow-hidden;
+
+  .v-vl-visible-items {
+    @apply py-1;
   }
 }
 

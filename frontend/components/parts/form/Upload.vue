@@ -15,17 +15,13 @@
         <span>{{ uploadedFile.name }}</span>
       </div>
       <div class="">
-        <button
-          class="flex justify-center items-center h-12 w-12 ml-4 p-3"
-          @click="uploadedFile = null"
-        >
+        <button class="flex justify-center items-center h-12 w-12 ml-4 p-3" @click="uploadedFile = null">
           <span class="icon-delete text-xl"></span>
         </button>
       </div>
     </div>
     <Notification v-if="!hasRequiredColumns" type="error" class="mt-4 text-left">
-      Invalid file format. Please upload a valid CSV file with columns "email",
-      "email_start_send_time" and "nft_id".
+      Invalid file format. Please upload a valid CSV file with columns "email", "email_start_send_time" and "nft_id".
     </Notification>
   </template>
 
@@ -43,8 +39,8 @@
 </template>
 
 <script lang="ts" setup>
-import { UploadCustomRequestOptions } from 'naive-ui';
-import { FileInfo } from 'naive-ui/es/upload/src/interface';
+import type { UploadCustomRequestOptions } from 'naive-ui';
+import type { FileInfo } from 'naive-ui/es/upload/src/interface';
 
 defineEmits(['close', 'proceed']);
 
@@ -57,9 +53,7 @@ const fileData = ref<CsvItem[] | null>(null);
 const fileColumns = ref<String[]>([]);
 const requiredColumns = ['email', 'email_start_send_time', 'nft_id'];
 
-const hasRequiredColumns = computed<boolean>(() =>
-  requiredColumns.every(item => fileColumns.value.includes(item))
-);
+const hasRequiredColumns = computed<boolean>(() => requiredColumns.every(item => fileColumns.value.includes(item)));
 
 function uploadFileRequest({ file, onError, onFinish }: UploadCustomRequestOptions) {
   if (file.type !== 'text/csv' && file.type !== 'application/vnd.ms-excel') {

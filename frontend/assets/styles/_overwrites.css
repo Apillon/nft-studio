@@ -1,6 +1,16 @@
 #kalm {
   --wcm-z-index: 3000;
 
+  table {
+    td {
+      @apply py-2 text-sm text-body;
+
+      &:first-child {
+        @apply font-bold text-white;
+      }
+    }
+  }
+
   .flip-clock {
     @apply flex justify-between;
 
@@ -28,6 +38,18 @@
 
     .no-animation__card {
       @apply font-bold;
+    }
+  }
+
+  #oaw-wallet-widget-btn {
+    @apply invisible absolute -z-1;
+  }
+  .oaw-btn-default-style {
+    @apply h-12 border border-bg-lighter text-yellow bg-transparent w-full text-[0px];
+
+    &::after {
+      content: '▶◀ Apillon Embedded Wallet';
+      @apply text-sm;
     }
   }
 }

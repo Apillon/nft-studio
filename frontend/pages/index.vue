@@ -1,14 +1,15 @@
 <script lang="ts" setup>
 import UploadSVG from '~/assets/images/upload.svg';
-import { useAccount } from 'use-wagmi';
+import { useAccount } from '@wagmi/vue';
+import { useAccount as useAccountEW } from '@apillon/wallet-vue';
 import { AirdropStatus } from '~/lib/values/general.values';
 
-useHead({
-  title: 'Apillon email airdrop prebuilt solution',
-});
+useHead({ title: 'NFT Studio' });
 
 const message = useMessage();
 const userStore = useUserStore();
+
+const { info } = useAccountEW();
 const { isConnected } = useAccount();
 const { handleError } = useErrors();
 
@@ -17,15 +18,8 @@ const items = ref<UserInterface[]>([]);
 const statistics = ref<StatisticsInterface | null>(null);
 const modalUploadCsvVisible = ref<boolean>(false);
 
-const isLoggedIn = computed(() => isConnected.value && userStore.jwt);
+const isLoggedIn = computed(() => (isConnected.value || !!info.activeWallet?.address) && userStore.loggedIn);
 const selectedRecipients = computed(() => items.value.length);
-
-onMounted(async () => {
-  if (isLoggedIn.value) {
-    await getUsers();
-    await getStatistics();
-  }
-});
 
 onUnmounted(() => {
   clearInterval(recipientInterval);
@@ -38,7 +32,8 @@ watch(
       await getUsers();
       await getStatistics();
     }
-  }
+  },
+  { immediate: true }
 );
 
 function onFileUploaded(csvData: CsvItem[]) {
@@ -150,9 +145,7 @@ async function saveRecipients() {
 
 /** Recipients polling */
 function checkUnfinishedRecipients() {
-  const unfinishedRecipient = items.value.find(
-    item => item.airdrop_status === AirdropStatus.PENDING
-  );
+  const unfinishedRecipient = items.value.find(item => item.airdrop_status === AirdropStatus.PENDING);
   if (unfinishedRecipient === undefined) {
     return;
   }
@@ -184,25 +177,18 @@ function checkUnfinishedRecipients() {
 
         <div v-if="items && items.length" class="flex gap-4 items-center">
           <p>Price ≈ {{ selectedRecipients * 100 }} credits</p>
-          <Btn :disabled="!items || items.length === 0" @click="saveRecipients()">
-            Save recipients
-          </Btn>
+          <Btn :disabled="!items || items.length === 0" @click="saveRecipients()"> Save recipients </Btn>
         </div>
       </n-space>
     </div>
 
-    <modal
-      :show="modalUploadCsvVisible"
-      @close="() => (modalUploadCsvVisible = false)"
-      @update:show="modalUploadCsvVisible = false"
-    >
+    <modal v-model:show="modalUploadCsvVisible" @close="modalUploadCsvVisible = false">
       <div class="max-w-md w-full md:px-6 my-12 mx-auto">
         <div class="mb-5 text-center">
           <img :src="UploadSVG" class="mx-auto" width="203" height="240" alt="airdrop" />
           <h3 class="my-8 text-center">Upload your CSV file with recipients’ addresses</h3>
           <p class="text-center">
-            Select and upload the CSV file containing addresses to which you wish to distribute
-            NFTs.
+            Select and upload the CSV file containing addresses to which you wish to distribute NFTs.
           </p>
           <Btn type="builders" size="tiny" href="/files/example.csv"> Download CSV sample </Btn>
         </div>

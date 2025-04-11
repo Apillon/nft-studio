@@ -14,7 +14,7 @@
 </template>
 
 <script lang="ts" setup>
-import colors from '~/tailwind.colors';
+import { colors } from '~/tailwind.config';
 
 defineProps({
   admin: { type: Boolean, default: false },

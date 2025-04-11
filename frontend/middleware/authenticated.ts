@@ -1,3 +1,5 @@
+import { useUserStore } from '~/stores/user';
+
 /**
  * Use in page components:
     definePageMeta({

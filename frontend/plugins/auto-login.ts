@@ -1,3 +1,5 @@
+import { useUserStore } from '~/stores/user';
+
 export default defineNuxtPlugin(() => {
   const user = useUserStore();
   if (user.jwt) {

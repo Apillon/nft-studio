@@ -1,5 +1,33 @@
+export const colors = {
+  primary: '#F9FF73',
+  secondary: '#78DCE8',
+
+  transparent: 'transparent',
+  current: 'currentColor',
+  black: '#000000',
+  white: '#F0F2DA',
+  yellow: '#F9FF73',
+  orange: '#F7AF39',
+  pink: '#FF6188',
+  green: '#A9DC76',
+  violet: '#AB9DF2',
+  blue: '#78DCE8',
+  discord: '#4554E9',
+
+  body: '#9D9E91',
+  bodyDark: '#6A6B63',
+
+  bg: {
+    lightest: '#F4F4EA',
+    lighter: '#313442',
+    light: '#1E212B',
+    DEFAULT: '#141721',
+    dark: '#06080F',
+  },
+};
+
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
     `components/**/*.{vue,js}`,
     `layouts/**/*.vue`,
@@ -22,33 +50,7 @@ module.exports = {
       hd: '1920px',
     },
 
-    colors: {
-      primary: '#F9FF73',
-      secondary: '#78DCE8',
-
-      transparent: 'transparent',
-      current: 'currentColor',
-      black: '#000000',
-      white: '#F0F2DA',
-      yellow: '#F9FF73',
-      orange: '#F7AF39',
-      pink: '#FF6188',
-      green: '#A9DC76',
-      violet: '#AB9DF2',
-      blue: '#78DCE8',
-      discord: '#4554E9',
-
-      body: '#9D9E91',
-      bodyDark: '#6A6B63',
-
-      bg: {
-        lightest: '#F4F4EA',
-        lighter: '#313442',
-        light: '#1E212B',
-        DEFAULT: '#141721',
-        dark: '#06080F',
-      },
-    },
+    colors,
 
     fontFamily: {
       inter: ['Inter', 'ui-sans-serif', 'system-ui'],
@@ -59,7 +61,7 @@ module.exports = {
     container: {
       center: true,
       screens: {
-        lx: '1440px',
+        lx: '1320px',
       },
       padding: {
         DEFAULT: '1rem',

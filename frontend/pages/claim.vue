@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-type Address = `0x${string}`;
-
 import SuccessSVG from '~/assets/images/success.svg';
-import { useAccount, useConnect, useWalletClient } from 'use-wagmi';
+import { useAccount, useConnect, useClient } from '@wagmi/vue';
 
 definePageMeta({
   layout: 'claim',
@@ -19,7 +17,7 @@ const txWait = useTxWait();
 const { handleError } = useErrors();
 
 const { address, isConnected } = useAccount();
-const { data: walletClient, refetch } = useWalletClient();
+const { data: walletClient, refetch } = useClient();
 const { connect, connectors } = useConnect();
 const { initContract, getTokenOfOwner, getTokenUri } = useContract();
 

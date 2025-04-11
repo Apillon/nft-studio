@@ -1,17 +1,6 @@
 <script lang="ts" setup>
-import { ModalProps } from 'naive-ui';
-
-/**
- * https://github.com/vuejs/core/issues/8286#issuecomment-1545659320
- * Remove once naive-ui updates (https://github.com/tusen-ai/naive-ui/issues/4810)
- */
-interface Props extends /* @vue-ignore */ ModalProps {
-  title?: string;
-  innerClass?: string;
-}
-
-const props = defineProps<Props>();
-const emits = defineEmits(['close']);
+defineEmits(['close']);
+defineProps({ title: { type: String, default: '' }, innerClass: { type: String, default: '' } });
 </script>
 
 <template>
@@ -30,11 +19,8 @@ const emits = defineEmits(['close']);
       </button>
 
       <!-- Title -->
-      <h2
-        v-if="props.title"
-        class="mb-6 text-center text-xl font-medium text-blue sm:mb-10 md:text-3xl"
-      >
-        {{ props.title }}
+      <h2 v-if="title" class="mb-6 text-center text-xl font-medium text-blue sm:mb-10 md:text-3xl">
+        {{ title }}
       </h2>
 
       <!-- Content -->
