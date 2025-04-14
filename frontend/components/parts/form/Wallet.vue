@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import type { CreateConnectorFn, Connector } from '@wagmi/vue';
+import { useConnect, useAccount } from '@wagmi/vue';
 import WalletSVG from '~/assets/images/wallet.svg';
-import { useConnect, useAccount, type CreateConnectorFn, type Connector } from '@wagmi/vue';
 
 const { isConnecting } = useAccount();
 const { connect, connectors } = useConnect();
@@ -20,8 +21,8 @@ function connectWallet(connector: Connector<CreateConnectorFn>) {
     <div class="my-8 text-center">
       <h3 class="mb-6">Choose wallet</h3>
       <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is
-        crucial for securely receiving and managing the airdropped NFTs.
+        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is crucial for securely
+        receiving and managing the airdropped NFTs.
       </p>
     </div>
 

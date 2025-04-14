@@ -1,4 +1,4 @@
-import qs from 'query-string';
+import queryString from 'query-string';
 
 class Api {
   settings: { headers: Headers; basePath: string; publicPath: string } = {
@@ -28,7 +28,7 @@ class Api {
   ) {
     this.initSettings();
 
-    const q = !query ? '' : '?' + qs.stringify(query, { arrayFormat: 'index' });
+    const q = !query ? '' : '?' + queryString.stringify(query, { arrayFormat: 'index' });
     const requestData = { method: 'GET', query: q };
 
     const response = await fetch(

@@ -1,16 +1,10 @@
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import mkcert from 'vite-plugin-mkcert';
+import { moonbaseAlpha } from 'viem/chains';
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { Environments } from './lib/values/general.values';
-import { moonbaseAlpha } from 'viem/chains';
-import dev from './lib/config/development';
-import stg from './lib/config/staging';
-import prod from './lib/config/production';
-
-const env = process.env.ENV ? process.env.ENV : process.env.NODE_ENV;
-const CONFIG = env === Environments.prod ? prod : env === Environments.stg ? stg : dev;
 
 const meta = { title: 'NFT Studio', description: 'NFT Studio', url: 'https://nft-studio.io/' };
 
@@ -32,7 +26,7 @@ export default defineNuxtConfig({
       CHAIN_ID: process.env.CHAIN_ID ? Number(process.env.CHAIN_ID) : moonbaseAlpha.id,
       EMBEDDED_WALLET_CLIENT: process.env.EMBEDDED_WALLET_CLIENT,
       WALLET_CONNECT_PROJECT: process.env.WALLET_CONNECT_PROJECT,
-      ENV: env || Environments.dev,
+      ENV: process.env.ENV || process.env.NODE_ENV || Environments.dev,
     },
   },
 
