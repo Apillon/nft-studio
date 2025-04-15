@@ -20,6 +20,7 @@ import { inject as injectCreateUserAdmin } from './routes/create-user-admin';
 import { inject as injectClaimAirdropSignupEmailClaim } from './routes/claim-airdrop-signup-email-claim';
 import { inject as injectCreateUserSignupEmailClaim } from './routes/create-user-signup-email-claim';
 import { inject as injectClaimWhitelist } from './routes/claim-whitelist';
+import { inject as injectGetProject} from './routes/get-project';
 
 export interface Request extends express.Request {
   context: Context;
@@ -83,6 +84,7 @@ export class HttpServer {
     injectClaimAirdropSignupEmailClaim(this.app);
     injectCreateUserSignupEmailClaim(this.app);
     injectClaimWhitelist(this.app);
+    injectGetProject(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);

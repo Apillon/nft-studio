@@ -2,7 +2,7 @@ import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
 import { RouteErrorCode, SerializedStrategy } from '../config/values';
 import { AuthenticateAdmin } from '../middlewares/authentication';
-import { ResourceError, ValidationError } from '../lib/errors';
+import { ResourceError } from '../lib/errors';
 import { User } from '../models/user';
 
 /**

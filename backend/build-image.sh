@@ -27,6 +27,7 @@ docker build \
     --build-arg MYSQL_POOL_TEST \
     --build-arg ADMIN_WALLET \
     --build-arg APILLON_KEY \
+    --build-arg APILLON_API_URL \
     --build-arg APILLON_SECRET \
     --build-arg COLLECTION_UUID \
     --build-arg MAX_SUPPLY \

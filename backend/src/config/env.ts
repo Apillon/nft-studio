@@ -40,6 +40,7 @@ export interface IEnv {
 
   MAX_SUPPLY: number;
 
+  APILLON_API_URL: string;
   APILLON_KEY: string;
   APILLON_SECRET: string;
   COLLECTION_UUID: string;
@@ -127,6 +128,7 @@ export const env: IEnv = {
   /**
    * Apillon
    */
+  APILLON_API_URL: process.env['APILLON_API_URL'],
   APILLON_KEY: process.env['APILLON_KEY'],
   APILLON_SECRET: process.env['APILLON_SECRET'],
   COLLECTION_UUID: process.env['COLLECTION_UUID'],
