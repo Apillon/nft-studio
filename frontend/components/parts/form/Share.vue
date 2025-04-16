@@ -16,17 +16,12 @@ defineProps({
     <div class="rounded-lg overflow-hidden mb-8">
       <img :src="metadata.image" class="" width="400" height="400" alt="nft" />
 
-      <div class="p-6 bg-bg-lighter">
+      <div class="p-6 bg-grey-darker">
         <h5>{{ metadata.name }}</h5>
       </div>
       <div class="mt-4 text-center">
         <p class="mb-4">{{ metadata.description }}</p>
-        <a
-          v-if="txHash"
-          :href="`https://moonbase.moonscan.io/tx/${txHash}`"
-          class="text-yellow hover:underline"
-          target="_blank"
-        >
+        <a v-if="txHash" :href="`https://moonbase.moonscan.io/tx/${txHash}`" class="hover:underline" target="_blank">
           Transaction: {{ shortHash(txHash) }}
         </a>
       </div>
@@ -38,7 +33,7 @@ defineProps({
       :href="`https://twitter.com/intent/tweet?text=Display Your '${metadata.name}' NFT Collectible on Social Media for All to Envy.`"
     >
       <span class="inline-flex gap-2 items-center">
-        <NuxtIcon name="x" class="text-xl" />
+        <NuxtIcon name="logo/x" class="text-xl" />
         <span>Share on X</span>
       </span>
     </Btn>

@@ -87,11 +87,10 @@ const btnClass = computed(() => {
   return [
     {
       'w-full': props.type !== 'link' && props.size === 'large',
-      'text-primary underline': props.type === 'link',
+      'text-grey-darker underline': props.type === 'link',
       'font-bold': props.type !== 'link',
-      '!text-white': props.type === 'secondary',
       'pointer-events-none pointer-default': props.disabled || props.loading,
-      'opacity-60': props.disabled,
+      'opacity-60 !text-grey': props.disabled,
       'hover-bounce': props.type !== 'link' && props.type !== 'builders',
       quaternary: props.quaternary || props.type === 'builders',
       locked: isBtnLocked.value,

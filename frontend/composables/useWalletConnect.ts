@@ -1,16 +1,18 @@
-import { useAccount, useDisconnect, type Config } from '@wagmi/vue';
+import type { Events } from '@apillon/wallet-sdk';
+import type { Config } from '@wagmi/vue';
+import { useAccount, useDisconnect } from '@wagmi/vue';
 import { useAccount as useAccountEW, useWallet } from '@apillon/wallet-vue';
 import { signMessage } from '@wagmi/vue/actions';
 import { moonbeam, moonbaseAlpha } from '@wagmi/vue/chains';
 
 export default function useWalletConnect() {
   const config = useRuntimeConfig();
-  const userStore = useUserStore();
+  const authStore = useAuthStore();
   const { handleError } = useErrors();
 
   /** Apillon Embedded wallet */
   const { info } = useAccountEW();
-  const { signMessage: signEW } = useWallet();
+  const { signMessage: signEW, wallet } = useWallet();
 
   /** Wagmi */
   const { address, isConnected } = useAccount();
@@ -23,14 +25,14 @@ export default function useWalletConnect() {
 
   const connected = computed(() => isConnected.value || !!info.activeWallet?.address);
   const walletAddress = computed(() => (isConnected.value ? address.value : info.activeWallet?.address));
+  const isLoggedIn = computed(() => connected.value && authStore.loggedIn);
 
   const sign = async (message: string) => {
     return isConnected.value ? await signMessage($wagmiConfig as Config, { message }) : await signEW(message);
   };
 
   async function login(admin = false) {
-    if (loading.value) return;
-    if (!admin) return;
+    if (loading.value || authStore.loggedIn || !admin) return;
 
     loading.value = true;
     try {
@@ -39,15 +41,13 @@ export default function useWalletConnect() {
 
       const signature = await sign(message);
 
-      const res = await $api.post<LoginResponse>('/login', {
+      const { data } = await $api.post<LoginResponse>('/login', {
         signature,
         timestamp,
         address: walletAddress.value,
       });
-      if (res.data.jwt) {
-        userStore.jwt = res.data.jwt;
-        $api.setToken(res.data.jwt);
-      }
+      authStore.login(data);
+
       modalWalletVisible.value = false;
     } catch (e) {
       handleError(e);
@@ -56,17 +56,42 @@ export default function useWalletConnect() {
   }
 
   function disconnectWallet() {
-    userStore.jwt = '';
+    authStore.logout();
     disconnect();
   }
 
+  async function initEmbeddedWallet(admin: boolean = false) {
+    await sleep(1000);
+
+    if (wallet.value) {
+      wallet.value?.events.on('connect', () => {
+        login(admin);
+      });
+      wallet.value?.events.on('accountsChanged', async (accounts: Events['accountsChanged']) => {
+        if (accounts.length) {
+          login(admin);
+        }
+      });
+      wallet.value?.events.on('dataUpdated', ({ name, newValue }) => {
+        if (name === 'wallets') {
+          login(admin);
+        }
+      });
+      wallet.value?.events.on('disconnect', () => {
+        disconnectWallet();
+      });
+    }
+  }
+
   return {
+    connected,
+    isLoggedIn,
     loading,
     modalWalletVisible,
     network,
-    connected,
     walletAddress,
     disconnectWallet,
+    initEmbeddedWallet,
     login,
     sign,
   };

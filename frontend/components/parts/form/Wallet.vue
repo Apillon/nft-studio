@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { CreateConnectorFn, Connector } from '@wagmi/vue';
 import { useConnect, useAccount } from '@wagmi/vue';
-import WalletSVG from '~/assets/images/wallet.svg';
 
 const { isConnecting } = useAccount();
 const { connect, connectors } = useConnect();
@@ -15,16 +14,17 @@ function connectWallet(connector: Connector<CreateConnectorFn>) {
 </script>
 
 <template>
-  <div class="max-w-md w-full md:px-6 my-12 mx-auto">
-    <img :src="WalletSVG" class="mx-auto" width="241" height="240" alt="wallet" />
+  <div class="max-w-md w-full md:px-6 my-12 mx-auto text-center">
+    <NuxtIcon name="icon/studio" class="text-3xl inline-block" />
 
-    <div class="my-8 text-center">
-      <h3 class="mb-6">Choose wallet</h3>
-      <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is crucial for securely
-        receiving and managing the airdropped NFTs.
-      </p>
+    <h1 class="my-4">NFT Studio</h1>
+    <div>
+      <strong>Your NFTs, delivered with style</strong><br />
+      Email them. Airdrop them. Share a link. <br />No gas fees. No fuss.
     </div>
+
+    <hr class="my-4 border-grey-transparent" />
+    <h6 class="my-4">Connect your wallet to get started:</h6>
 
     <n-space size="large" vertical>
       <slot />
@@ -37,7 +37,7 @@ function connectWallet(connector: Connector<CreateConnectorFn>) {
         @click="connectWallet(connector)"
       >
         <span class="inline-flex gap-2 items-center">
-          <NuxtIcon :name="connector.type" class="text-xl" filled />
+          <NuxtIcon :name="`logo/${connector.type}`" class="text-xl" filled />
           <span>{{ connector.name }}</span>
         </span>
       </Btn>

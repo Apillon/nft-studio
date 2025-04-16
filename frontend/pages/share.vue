@@ -9,7 +9,7 @@ useHead({
 const router = useRouter();
 const { query } = useRoute();
 const config = useRuntimeConfig();
-const { watchAsset } = useContract();
+// const { watchAsset } = useContract();
 
 useSeoMeta(prepareOG(`Just minted my ${query.name} NFT on Apillon!`, ``, `${query.image}`));
 
@@ -30,17 +30,11 @@ const txHash = ref<string | undefined>(`${query?.txHash}`);
 function transactionLink(transactionHash?: string | null): string {
   switch (config.public.CHAIN_ID) {
     case Chains.MOONBEAM:
-      return transactionHash
-        ? `https://moonbeam.moonscan.io/tx/${transactionHash}`
-        : 'https://moonbeam.moonscan.io';
+      return transactionHash ? `https://moonbeam.moonscan.io/tx/${transactionHash}` : 'https://moonbeam.moonscan.io';
     case Chains.MOONBASE:
-      return transactionHash
-        ? `https://moonbase.moonscan.io/tx/${transactionHash}`
-        : 'https://moonbase.moonscan.io';
+      return transactionHash ? `https://moonbase.moonscan.io/tx/${transactionHash}` : 'https://moonbase.moonscan.io';
     case Chains.ASTAR:
-      return transactionHash
-        ? `https://astar.subscan.io/tx/${transactionHash}`
-        : 'https://astar.subscan.io';
+      return transactionHash ? `https://astar.subscan.io/tx/${transactionHash}` : 'https://astar.subscan.io';
     default:
       console.warn('Missing chainId');
       return '';
@@ -58,29 +52,19 @@ function transactionLink(transactionHash?: string | null): string {
     <div class="rounded-lg overflow-hidden mb-8">
       <img :src="metadata.image" class="" width="400" height="400" alt="nft" />
 
-      <div class="p-6 bg-bg-light">
+      <div class="p-6 bg-grey-dark">
         <h5>{{ metadata.name }}</h5>
       </div>
       <div class="mt-4 text-center">
         <p class="mb-4">{{ metadata.description }}</p>
 
         <!-- Import NFT -->
-        <Btn
-          v-if="query?.nftId && nftId"
-          size="large"
-          class="!text-black mb-6 mobile:hidden"
-          @click="watchAsset(nftId)"
-        >
+        <Btn v-if="query?.nftId && nftId" size="large" class="!text-black mb-6 mobile:hidden" @click="">
           Import NFT to wallet
         </Btn>
 
         <!-- Transaction -->
-        <a
-          v-if="query?.txHash && txHash"
-          :href="transactionLink(txHash)"
-          class="text-yellow hover:underline"
-          target="_blank"
-        >
+        <a v-if="query?.txHash && txHash" :href="transactionLink(txHash)" class="hover:underline" target="_blank">
           Transaction: {{ shortHash(txHash) }}
         </a>
       </div>
@@ -92,7 +76,7 @@ function transactionLink(transactionHash?: string | null): string {
       :href="`https://twitter.com/intent/tweet?text=Just minted my ${metadata.name} NFT on Apillon!&url=https://apillon.io/`"
     >
       <span class="inline-flex gap-2 items-center">
-        <NuxtIcon name="x" class="text-xl" />
+        <NuxtIcon name="logo/x" class="text-xl" />
         Share on X
       </span>
     </Btn>

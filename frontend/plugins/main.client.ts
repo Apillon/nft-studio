@@ -1,4 +1,3 @@
-import { Buffer } from 'buffer';
 import VuePapaParse from 'vue-papa-parse';
 import config from '../package.json';
 import { WebStorageKeys } from '~/lib/values/general.values';

@@ -105,7 +105,7 @@ export default defineNuxtConfig({
     useStylesheet: true,
     display: 'swap',
     download: false,
-    families: { Inter: { wght: [400, 600] }, 'IBM Plex Sans': { wght: [400, 700] } },
+    families: { Inter: { wght: [400, 600] } },
   },
 
   compatibilityDate: '2025-04-11',

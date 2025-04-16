@@ -1,21 +1,17 @@
 <script lang="ts" setup>
-import { useAccount } from '@wagmi/vue';
 import UploadSVG from '~/assets/images/upload.svg';
 
 useHead({ title: 'Apillon whitelist claim prebuilt solution' });
 
 const message = useMessage();
-const userStore = useUserStore();
 
-const { info } = useAccountEW();
-const { isConnected } = useAccount();
 const { handleError } = useErrors();
+const { isLoggedIn } = useWalletConnect();
 
 const items = ref<WhitelistUserInterface[]>([]);
 const statistics = ref<WhitelistStatisticsInterface | null>(null);
 const modalUploadCsvVisible = ref<boolean>(false);
 
-const isLoggedIn = computed(() => (isConnected.value || !!info.activeWallet?.address) && userStore.loggedIn);
 const selectedRecipients = computed(() => items.value.length);
 
 watch(
@@ -104,7 +100,7 @@ function onUserAdded(user: UserInterface) {
 async function saveWallets() {
   const uploadItems = items.value.filter(item => !item.id && item.wallet);
 
-  if (!userStore.jwt) {
+  if (!isLoggedIn.value) {
     message.warning('Please login first to proceed with this action');
     return;
   } else if (!uploadItems || uploadItems.length === 0) {

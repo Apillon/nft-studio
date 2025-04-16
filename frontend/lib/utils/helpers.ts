@@ -1,3 +1,5 @@
+import { Chains } from '../values/general.values';
+
 export function sleep(timeMs = 1000) {
   return new Promise(resolve => setTimeout(resolve, timeMs));
 }
@@ -95,4 +97,21 @@ export function prepareOG(
     twitterImage: image,
     ogUrl: url,
   };
+}
+
+export function mintPrice(chainId?: number): number {
+  switch (chainId) {
+    case Chains.MOONBEAM:
+      return 4;
+    case Chains.MOONBASE:
+      return 0;
+    case Chains.ASTAR:
+      return 2;
+    default:
+      console.warn('Missing chainId');
+      return 0;
+  }
+}
+export function formatNumber(n: number) {
+  return new Intl.NumberFormat('en-US').format(n);
 }

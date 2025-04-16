@@ -17,15 +17,13 @@ export type AuthResponseProfile = {
 export type AuthResponse = { profile: AuthResponseProfile; authToken: { status: boolean; data: string } };
 
 declare global {
-  type WhitelistCsvItem = { amount?: number | null; signature?: string | null; status?: number | null; wallet: string };
-
   type CsvItem = {
-    email: string;
+    email: string | null;
     email_start_send_time: string;
     email_send_time?: string | null;
     nft_id?: number | null;
     tx_hash?: string | null;
-    wallet: string;
+    wallet?: string | null;
     airdrop_status?: number | null;
     status?: number | null;
   };
@@ -63,7 +61,7 @@ declare global {
   interface UserInterface {
     airdrop_status: number;
     createTime?: string;
-    email: string;
+    email: string | null;
     email_sent_time: string | null;
     email_start_send_time: string | null;
     id?: number | null;
@@ -79,17 +77,6 @@ declare global {
   type LoginInterface = { jwt: string };
   type LoginResponse = GeneralResponse<LoginInterface>;
 
-  interface WhitelistUserInterface {
-    amount: number;
-    createTime?: string;
-    id?: number | null;
-    signature: string | null;
-    status?: number;
-    updateTime?: string;
-    wallet: string | null;
-  }
-  type WhitelistUsersResponse = GeneralItemsResponse<WhitelistUserInterface>;
-
   interface StatisticsInterface {
     airdropped: number;
     emailSent: number;
@@ -100,13 +87,6 @@ declare global {
   }
 
   type StatisticsResponse = GeneralResponse<StatisticsInterface>;
-
-  interface WhitelistStatisticsInterface {
-    generatedSignature: number;
-    total: number;
-  }
-
-  type WhitelistStatisticsResponse = GeneralResponse<WhitelistStatisticsInterface>;
 
   type Metadata = { name: string; description: string; image: string };
 }

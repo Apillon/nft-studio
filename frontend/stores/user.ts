@@ -1,42 +1,22 @@
 import { defineStore } from 'pinia';
 import { WebStorageKeys } from '~/lib/values/general.values';
-import type { AuthResponseProfile } from '~/lib/types/general.types';
-
-let abortController = null as AbortController | null;
 
 export const useUserStore = defineStore('user', {
-  state: () => ({ jwt: '', userId: 0, username: '', email: '' }),
+  state: () => ({
+    statistics: {} as StatisticsInterface,
+    users: [] as UserInterface[],
+  }),
 
   getters: {
-    loggedIn(state) {
-      return !!state.jwt;
+    hasStatistics(state) {
+      return !!state.statistics && Object.keys(state.statistics).length > 0;
+    },
+    hasUsers(state) {
+      return !!state.users && state.users.length > 0;
     },
   },
 
   actions: {
-    async refresh() {
-      try {
-        if (abortController) {
-          abortController.abort();
-        }
-
-        abortController = new AbortController();
-
-        const res = await $api.get<AuthResponseProfile>(`/users/me`, undefined, undefined, {
-          signal: abortController.signal,
-        });
-
-        this.userId = res?.authUser?.id || 0;
-        this.username = res?.authUser?.username || '';
-        this.email = res?.authUser?.email || '';
-      } catch (e: any) {
-        if (e?.name !== 'AbortError') {
-          console.error(e);
-          this.logout();
-        }
-      }
-    },
-
     logout() {
       if (typeof localStorage !== 'undefined') {
         localStorage.removeItem(WebStorageKeys.USER);
@@ -46,9 +26,10 @@ export const useUserStore = defineStore('user', {
       this.$reset();
     },
   },
+
   persist: {
     key: WebStorageKeys.USER,
-    storage: persistedState.localStorage,
-    pick: ['jwt', 'userId', 'username', 'email'],
+    storage: persistedState.sessionStorage,
+    pick: ['users', 'statistics'],
   },
 });

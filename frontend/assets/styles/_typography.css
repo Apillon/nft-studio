@@ -1,7 +1,7 @@
 /* Headline 1 */
 h1,
 .h1 {
-  @apply font-sans font-bold;
+  @apply text-black font-newSpirit font-bold;
   font-size: 1.75rem;
   line-height: 1.43;
 }
@@ -9,7 +9,7 @@ h1,
 /* Headline 2 */
 h2,
 .h2 {
-  @apply font-sans font-bold;
+  @apply text-black font-newSpirit font-bold;
   font-size: 1.5rem;
   line-height: 1.5;
 
@@ -21,7 +21,7 @@ h2,
 /* Headline 3 */
 h3,
 .h3 {
-  @apply font-newSpirit font-medium text-2xl;
+  @apply font-inter font-medium text-2xl;
 
   + p {
     @apply mt-2;
@@ -31,7 +31,7 @@ h3,
 /* Headline 4 */
 h4,
 .h4 {
-  @apply font-sans font-bold;
+  @apply font-inter font-bold;
   font-size: 1.125rem;
   line-height: 1.55;
 
@@ -50,14 +50,11 @@ h5,
 
 /* Headline 6 */
 h6 {
-  @apply font-sans font-bold uppercase;
-  font-size: 0.875rem;
-  line-height: 1.6;
-  letter-spacing: 0.25em;
+  @apply font-semibold;
 }
 
 p {
-  @apply body-md text-body;
+  @apply body-md text-grey;
 
   + h2,
   + .h2,
@@ -70,6 +67,9 @@ p {
     @apply mt-4;
   }
 }
+small {
+  @apply text-xs text-grey;
+}
 
 ul {
   @apply body-md;
@@ -77,17 +77,17 @@ ul {
 
 label {
   @apply font-bold cursor-pointer;
+}
 
-  > a {
-    @apply text-primary;
-  }
+a {
+  @apply underline;
 }
 
 button,
 [role='button'],
 [type='reset'],
 [type='submit'] {
-  @apply relative font-sans;
+  @apply relative;
   font-size: 0.875rem;
   line-height: 1.715;
 }

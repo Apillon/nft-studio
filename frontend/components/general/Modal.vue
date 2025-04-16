@@ -15,7 +15,7 @@ defineProps({ title: { type: String, default: '' }, innerClass: { type: String, 
         class="absolute right-3 top-2 z-10 block !p-0.5 text-tq hover:text-tq-hover sm:right-5 sm:top-5"
         @click="$emit('close', false)"
       >
-        <NuxtIcon name="close" class="text-[18px]" />
+        <NuxtIcon name="action/close" class="text-[18px]" />
       </button>
 
       <!-- Title -->

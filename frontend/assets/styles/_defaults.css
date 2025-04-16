@@ -2,15 +2,18 @@
   box-sizing: border-box;
 }
 
+html {
+  @apply overflow-hidden;
+}
+
 html,
 body,
 #__nuxt {
-  height: 100%;
   margin: 0;
 }
 
 body {
-  @apply text-white font-normal;
+  @apply text-grey-darker font-normal font-inter;
   font-size: 14px;
 }
 
@@ -73,67 +76,4 @@ select:autofill:focus {
   border: none;
   -webkit-text-fill-color: theme('colors.white');
   -webkit-box-shadow: 0 0 0px 1000px #1e212b inset;
-}
-
-@layer components {
-  .border-card {
-    @apply border border-bg-lighter rounded-2xl;
-  }
-  .card {
-    @apply bg-bg rounded-2xl p-6 md:p-8 lg:p-10 xl:p-12;
-  }
-  .card-dark {
-    @apply card !bg-bg-dark border-card;
-  }
-}
-
-@layer utilities {
-  .frame {
-    @apply relative rounded-2xl pt-8;
-
-    &:before {
-      content: '';
-      @apply border-bg-lighter absolute left-0 right-0 top-0 h-8 rounded-t-2xl border;
-    }
-    &:after {
-      @apply absolute left-3 top-0 block h-8 w-8 bg-center bg-no-repeat;
-      content: '';
-      background-image: url('data:image/svg+xml,<svg width="30" height="10" viewBox="0 0 30 10" fill="none" xmlns="http://www.w3.org/2000/svg"><g><circle cx="5" cy="5" r="5" fill="%23313442"/><circle cx="15" cy="5" r="5" fill="%23313442"/><circle cx="25" cy="5" r="5" fill="%23313442"/></g></svg>');
-    }
-
-    .frame-border {
-      @apply border-bg-lighter w-full rounded-b-2xl border border-t-0;
-      code {
-        @apply w-full rounded-b-2xl;
-      }
-    }
-  }
-  /** scrollbar */
-  .scrollbar {
-    @apply transition-all duration-300 cursor-grab;
-    -ms-overflow-style: auto;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
-    scrollbar-width: thin;
-
-    &::-webkit-scrollbar-thumb,
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-    }
-    &::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-      border-radius: 5px;
-    }
-
-    &:hover {
-      &::-webkit-scrollbar-thumb {
-        background-color: rgba(255, 255, 255, 0.2);
-        border-radius: 5px;
-
-        &:hover {
-          background-color: rgba(255, 255, 255, 0.3);
-        }
-      }
-    }
-  }
 }

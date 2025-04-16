@@ -141,10 +141,7 @@ class Api {
      * User does not have permission to view resource.
      * Log them out and redirect to login page.
      */
-    if (user.loggedIn) {
-      user.logout();
-    }
-
+    user.logout();
     router.replace({ path: '/' });
   }
 }

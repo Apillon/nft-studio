@@ -5,8 +5,9 @@ export const Environments = {
 };
 
 export const WebStorageKeys = {
-  USER: 'kal_user',
-  APP_VERSION: 'kal_version',
+  AUTH: 'nft_studio_auth',
+  USER: 'nft_studio_user',
+  APP_VERSION: 'nft_studio_version',
 };
 
 /** NFT Chains */

@@ -1,18 +1,10 @@
 <template>
-  <Btn
-    v-if="connected && (!admin || userStore.jwt)"
-    :size="size"
-    :color="colors.blue"
-    :loading="loading"
-    @click="disconnectWallet()"
-  >
-    Disconnect
-    <small v-if="walletAddress"> ({{ shortHash(walletAddress) }}) </small>
-  </Btn>
-  <Btn v-else-if="connected" :size="size" :color="colors.blue" :loading="loading" @click="login()"> Login </Btn>
-  <Btn v-else :size="size" :color="colors.blue" :loading="loading" round @click="modalWalletVisible = true">
-    Connect wallet
-  </Btn>
+  <div v-if="connected && (!admin || authStore.loggedIn)" class="flex gap-2 items-center">
+    <strong v-if="walletAddress"> ({{ shortHash(walletAddress) }}) </strong>
+    <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()"> Disconnect </Btn>
+  </div>
+  <Btn v-else-if="connected" :size="size" :loading="loading" @click="login(admin)"> Login </Btn>
+  <Btn v-else :size="size" :loading="loading" round @click="modalWalletVisible = true"> Connect wallet </Btn>
 
   <EmbeddedWallet
     :client-id="config.public.EMBEDDED_WALLET_CLIENT"
@@ -35,7 +27,7 @@
   >
     <FormWallet>
       <Btn type="secondary" size="large" @click="openWallet">
-        <span class="text-white mr-1">▶◀</span> Apillon Embedded Wallet
+        <span class="mr-1">▶◀</span> Apillon Embedded Wallet
       </Btn>
     </FormWallet>
   </modal>
@@ -43,50 +35,32 @@
 
 <script lang="ts" setup>
 import type { Size } from 'naive-ui/es/button/src/interface';
-import { type Events } from '@apillon/wallet-sdk';
 import { useAccountEffect } from '@wagmi/vue';
-import { EmbeddedWallet, useWallet } from '@apillon/wallet-vue';
-import { colors } from '~/tailwind.config';
+import { EmbeddedWallet } from '@apillon/wallet-vue';
 
 const props = defineProps({
   admin: { type: Boolean, default: false },
-  size: { type: String as PropType<Size>, default: 'small' },
+  size: { type: String as PropType<Size>, default: 'medium' },
 });
 
 const config = useRuntimeConfig();
-const userStore = useUserStore();
-const { loading, modalWalletVisible, network, connected, walletAddress, login, disconnectWallet } = useWalletConnect();
-
-/** Apillon Embedded wallet */
-const { wallet } = useWallet();
+const authStore = useAuthStore();
+const {
+  loading,
+  modalWalletVisible,
+  network,
+  connected,
+  isLoggedIn,
+  walletAddress,
+  disconnectWallet,
+  initEmbeddedWallet,
+  login,
+} = useWalletConnect();
 
 useAccountEffect({ onConnect: () => loginDelay() });
 
-onMounted(async () => {
-  await sleep(1000);
-
-  if (wallet.value) {
-    wallet.value?.events.on('connect', () => {
-      console.debug('connect');
-      login(props.admin);
-    });
-    wallet.value?.events.on('accountsChanged', async (accounts: Events['accountsChanged']) => {
-      console.debug('accountsChanged');
-      if (accounts.length) {
-        login(props.admin);
-      }
-    });
-    wallet.value?.events.on('dataUpdated', ({ name, newValue }) => {
-      console.debug('data', name, newValue);
-      if (name === 'wallets') {
-        login(props.admin);
-      }
-    });
-    wallet.value?.events.on('disconnect', () => {
-      console.debug('disconnect');
-      disconnectWallet();
-    });
-  }
+onMounted(() => {
+  initEmbeddedWallet();
 });
 
 function openWallet() {

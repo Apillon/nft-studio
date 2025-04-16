@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useAccount as useAccountEW } from '@apillon/wallet-vue';
-import { useAccount, useConnect, useClient } from 'use-vwagmi|vue';
+import { useAccount, useConnect, useClient } from '@wagmi/vue';
 import SuccessSVG from '~/assets/images/success.svg';
 
 type Address = `0x${string}`;
@@ -71,11 +71,7 @@ async function claimAirdrop() {
       console.debug(receipt);
       message.success('You successfully claimed NFT');
 
-      if (
-        config.public.METADATA_BASE_URI &&
-        config.public.METADATA_TOKEN &&
-        receipt.data?.logs[0].topics[3]
-      ) {
+      if (config.public.METADATA_BASE_URI && config.public.METADATA_TOKEN && receipt.data?.logs[0].topics[3]) {
         getMetadata(Number(receipt.data?.logs[0].topics[3]), res.data.transactionHash);
       } else if (receipt.data?.to && receipt.data?.logs[0].topics[3]) {
         const nftId = Number(receipt.data?.logs[0].topics[3]);
@@ -86,10 +82,7 @@ async function claimAirdrop() {
       }
     }
   } catch (e) {
-    if (
-      !config.public.CONTRACT_ADDRESS ||
-      !(await getMyNFT(config.public.CONTRACT_ADDRESS as Address))
-    ) {
+    if (!config.public.CONTRACT_ADDRESS || !(await getMyNFT(config.public.CONTRACT_ADDRESS as Address))) {
       handleError(e);
     }
   }
@@ -155,16 +148,16 @@ async function getMetadata(id: number, transactionHash: string) {
     <div v-if="!isConnected" class="my-8 text-center">
       <h3 class="mb-6">Almost there!</h3>
       <p>
-        But first, connect compatible digital wallet. This step is crucial for securely receiving
-        and managing the token you’ll about to receive.
+        But first, connect compatible digital wallet. This step is crucial for securely receiving and managing the token
+        you’ll about to receive.
       </p>
     </div>
 
     <div v-else class="my-8 text-center">
       <h3 class="mb-6">Great success!</h3>
       <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is
-        crucial for securely receiving and managing the airdropped NFTs.
+        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is crucial for securely
+        receiving and managing the airdropped NFTs.
       </p>
     </div>
 

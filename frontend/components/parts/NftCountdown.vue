@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import AirdropSVG from '~/assets/images/airdrop.svg';
-
 import { Countdown } from 'vue3-flip-countdown';
+import AirdropSVG from '~/assets/images/airdrop.svg';
 import { colors } from '~/tailwind.config';
 
 defineProps({ deadline: { type: String, default: '' } });
@@ -24,7 +23,7 @@ defineProps({ deadline: { type: String, default: '' } });
       <div class="text-center mb-4">
         <strong>Time left to claim</strong>
       </div>
-      <Countdown :flip-animation="false" :label-color="colors.bodyDark" :main-color="colors.white" />
+      <Countdown :flip-animation="false" :label-color="colors.grey.transparent" :main-color="colors.white" />
 
       <Btn class="mt-8" size="large" @click="$emit('proceed')">Proceed</Btn>
     </div>

@@ -7,7 +7,7 @@
       </RouterLink>
     </div>
     <div v-if="!hideLogin" :class="{ 'w-1/3 text-right': logoCenter }">
-      <ConnectWallet :admin="admin" :color="colors.blue" />
+      <ConnectWallet :admin="admin" />
     </div>
     <div v-else-if="logoCenter" class="w-1/3"></div>
   </nav>

@@ -1,24 +1,18 @@
 <script lang="ts" setup>
 import UploadSVG from '~/assets/images/upload.svg';
-import { useAccount } from '@wagmi/vue';
-import { useAccount as useAccountEW } from '@apillon/wallet-vue';
 import { AirdropStatus } from '~/lib/values/general.values';
 
 useHead({ title: 'NFT Studio' });
 
 const message = useMessage();
-const userStore = useUserStore();
 
-const { info } = useAccountEW();
-const { isConnected } = useAccount();
+const { connected, isLoggedIn } = useWalletConnect();
 const { handleError } = useErrors();
 
 let recipientInterval: any = null;
 const data = ref<UserInterface[]>([]);
 const statistics = ref<StatisticsInterface | null>(null);
 const modalUploadCsvVisible = ref<boolean>(false);
-
-const isLoggedIn = computed(() => (isConnected.value || !!info.activeWallet?.address) && userStore.loggedIn);
 
 onUnmounted(() => {
   clearInterval(recipientInterval);
@@ -116,7 +110,7 @@ function onUserAdded(user: UserInterface) {
 async function saveRecipients() {
   const uploadItems = data.value.filter(item => !item.id && item.email);
 
-  if (!userStore.jwt) {
+  if (!isLoggedIn.value) {
     message.warning('Please login first to proceed with this action');
     return;
   } else if (!uploadItems || uploadItems.length === 0) {
@@ -154,7 +148,7 @@ function checkUnfinishedRecipients() {
 </script>
 
 <template>
-  <div v-if="!isConnected" class="mx-auto">
+  <div v-if="!connected" class="mx-auto">
     <div class="text-lg mb-4">Email airdrop</div>
     <ConnectWallet admin />
   </div>
