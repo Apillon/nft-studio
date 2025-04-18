@@ -16,8 +16,8 @@ export default function useUser() {
     () => isLoggedIn.value,
     _ => {
       if (isLoggedIn.value) {
-        getUsers();
-        getStatistics();
+        fetchUsers();
+        fetchStatistics();
       }
     },
     { immediate: true }
@@ -39,6 +39,7 @@ export default function useUser() {
 
   /** FETCH */
   async function fetchUsers() {
+    userStore.loading = true;
     try {
       const { data } = await $api.get<UsersResponse>('/users', { itemsPerPage: 10000 });
       userStore.users = data.items;
@@ -48,6 +49,7 @@ export default function useUser() {
     } catch (e) {
       handleError(e);
     }
+    userStore.loading = false;
   }
 
   async function fetchStatistics() {

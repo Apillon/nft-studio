@@ -1,94 +1,72 @@
 <script lang="ts" setup>
+import type { Address } from 'viem';
 import SuccessSVG from '~/assets/images/success.svg';
+import { ClaimType } from '~/lib/values/general.values';
 
 const props = defineProps({
-  signature: { type: String, required: true },
+  signature: { type: String, default: null },
+  timestamp: { type: Number, default: null },
+  token: { type: String, default: undefined },
   amount: { type: Number, default: 1 },
+  type: { type: Number, default: ClaimType.AIRDROP },
 });
 const emits = defineEmits(['claim']);
 
 const message = useMessage();
 const txWait = useTxWait();
-const {
-  contract,
-  initContractWithOurAddress,
-  contractError,
-  getBalance,
-  getTokenOfOwner,
-  getTokenUri,
-  isWalletUsed,
-  mint,
-} = useContract();
+const { contractError, loadNft } = useClaim();
+const { walletAddress, sign } = useWalletConnect();
 
 const loading = ref<boolean>(false);
 const walletUsed = ref<boolean>(false);
 
-onMounted(() => {
-    initContractWithOurAddress();
-});
-
 async function claim() {
-  if (!contract.value) {
-    console.warn('Please check CONTRACT_ADDRESS config!');
-    message.warning('Failed to establish connection to contract.');
-    return;
-  }
   loading.value = true;
 
   try {
-    walletUsed.value = await isWalletUsed();
+    const URI =
+      props.type === ClaimType.FREE_MINT
+        ? '/users/claim'
+        : props.type === ClaimType.WHITELIST
+          ? '/users/claim-whitelist'
+          : '/users/claim-airdrop';
 
-    if (walletUsed.value) {
-      message.success('You already claimed NFT');
-      await getMyNFT();
-      return;
+    const timestamp = props.timestamp || new Date().getTime();
+    const signature = props.signature || (await sign(`test\n${timestamp}`).catch(e => contractError(e)));
+
+    const { data } = await $api.post<ClaimResponse>(URI, {
+      jwt: props.type === ClaimType.AIRDROP ? props.token : undefined,
+      signature,
+      timestamp,
+      address: walletAddress.value,
+    });
+    if (data.success) {
+      txWait.hash.value = data.transactionHash as Address;
+
+      console.debug('Transaction', txWait.hash.value);
+      message.info('Your NFT Mint has started');
+
+      const receipt = await txWait.wait();
+      console.debug(receipt);
+      message.success('You successfully claimed NFT');
+
+      if (receipt.data?.to && receipt.data?.logs[0].topics[3]) {
+        const nftId = Number(receipt.data?.logs[0].topics[3]);
+
+        const metadata = await loadNft(nftId);
+
+        emits('claim', metadata, data.transactionHash);
+      } else {
+        message.error('Mint failed, missing NFT ID!');
+      }
+    } else {
+      message.error('Failed to claim NFT, please try again later.');
     }
-
-    txWait.hash.value = await mint(props.amount, props.signature);
-
-    console.debug('Transaction', txWait.hash.value);
-    message.info('Your NFT Mint has started');
-
-    await txWait.wait();
-
-    console.debug('Transaction receipt', txWait.hash.value);
-    message.success('You successfully claimed NFT');
-
-    // get metadata
-    await getMyNFT(txWait.hash.value);
     loading.value = false;
   } catch (e) {
     contractError(e);
     loading.value = false;
   }
-}
-
-async function getMyNFT(txHash?: string) {
-  const balance = contract.value ? await getBalance() : null;
-
-  if (!contract.value || !balance || balance.toString() === '0') {
-    loading.value = false;
-    return;
-  }
-
-  try {
-    const id = await getTokenOfOwner(0);
-    const url = await getTokenUri(id);
-
-    const metadata = await fetch(url).then(response => {
-      return response.json();
-    });
-
-    if (metadata) {
-      emits('claim', metadata, txHash);
-    } else {
-      message.error('Missing metadata');
-    }
-  } catch (e) {
-    console.error(e);
-    message.error('Apologies, we were unable to load NFTs metadata.');
-  }
-  loading.value = false;
 }
 </script>
 
@@ -99,8 +77,8 @@ async function getMyNFT(txHash?: string) {
     <div class="my-8 text-center">
       <h3 class="mb-6">Great Success!</h3>
       <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is
-        crucial for securely receiving and managing the airdropped NFTs.
+        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is crucial for securely
+        receiving and managing the airdropped NFTs.
       </p>
     </div>
     <Btn size="large" :loading="loading" :disabled="walletUsed" @click="claim()">Claim NFT</Btn>

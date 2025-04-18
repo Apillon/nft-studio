@@ -7,21 +7,22 @@ defineProps({
 </script>
 
 <template>
-  <div v-if="metadata" class="max-w-md w-full md:px-6 my-12 mx-auto">
-    <div class="my-8 text-center">
-      <h3 class="mb-6">Celebrate your triumph!</h3>
-      <p>Display Your '{{ metadata.name }}' NFT Collectible on Social Media for All to Envy.</p>
+  <div v-if="metadata" class="max-w-md w-full md:px-6 mx-auto">
+    <div class="mb-8 text-center">
+      <h3>Just minted my #{{ metadata.name }} NFT on Apillon!</h3>
     </div>
 
-    <div class="rounded-lg overflow-hidden mb-8">
-      <img :src="metadata.image" class="" width="400" height="400" alt="nft" />
+    <div class="rounded-lg overflow-hidden mb-6">
+      <img :src="parseImage(`${metadata.image}`)" class="w-full" alt="nft" />
 
-      <div class="p-6 bg-grey-darker">
+      <div class="p-6 bg-grey-dark text-white">
         <h5>{{ metadata.name }}</h5>
       </div>
       <div class="mt-4 text-center">
         <p class="mb-4">{{ metadata.description }}</p>
-        <a v-if="txHash" :href="`https://moonbase.moonscan.io/tx/${txHash}`" class="hover:underline" target="_blank">
+
+        <!-- Transaction -->
+        <a v-if="txHash" :href="transactionLink(txHash)" class="hover:underline" target="_blank">
           Transaction: {{ shortHash(txHash) }}
         </a>
       </div>
@@ -30,11 +31,11 @@ defineProps({
     <Btn
       type="secondary"
       size="large"
-      :href="`https://twitter.com/intent/tweet?text=Display Your '${metadata.name}' NFT Collectible on Social Media for All to Envy.`"
+      :href="`https://twitter.com/intent/tweet?text=Just minted my ${metadata.name} NFT on Apillon!&url=https://apillon.io/`"
     >
       <span class="inline-flex gap-2 items-center">
         <NuxtIcon name="logo/x" class="text-xl" />
-        <span>Share on X</span>
+        Share on X
       </span>
     </Btn>
   </div>

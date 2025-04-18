@@ -36,7 +36,7 @@
 <script lang="ts" setup>
 import type { Size } from 'naive-ui/es/button/src/interface';
 import { useAccountEffect } from '@wagmi/vue';
-import { EmbeddedWallet } from '@apillon/wallet-vue';
+import { EmbeddedWallet, useWallet } from '@apillon/wallet-vue';
 
 const props = defineProps({
   admin: { type: Boolean, default: false },
@@ -45,17 +45,9 @@ const props = defineProps({
 
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
-const {
-  loading,
-  modalWalletVisible,
-  network,
-  connected,
-  isLoggedIn,
-  walletAddress,
-  disconnectWallet,
-  initEmbeddedWallet,
-  login,
-} = useWalletConnect();
+const { wallet } = useWallet();
+const { loading, modalWalletVisible, network, connected, walletAddress, disconnectWallet, initEmbeddedWallet, login } =
+  useWalletConnect();
 
 useAccountEffect({ onConnect: () => loginDelay() });
 
@@ -64,10 +56,8 @@ onMounted(() => {
 });
 
 function openWallet() {
-  const btnWallet = document.querySelector('#oaw-wallet-widget-btn') as HTMLButtonElement;
-  if (btnWallet) {
-    btnWallet.click();
-    modalWalletVisible.value = false;
+  if (wallet.value) {
+    wallet.value.events.emit('open', true);
   }
 }
 

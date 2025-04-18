@@ -1,12 +1,9 @@
 <template>
   <n-layout class="relative h-screen" :native-scrollbar="false">
     <div ref="headerRef">
-      <Header logo-center />
+      <Header logo-center :hideLogin="!!($route.query?.txHash && $route.query?.image)" />
     </div>
-    <div
-      class="container max-w-6xl py-8 flex flex-col justify-center box-border"
-      :style="containerStyle"
-    >
+    <div class="container max-w-6xl py-8 flex flex-col justify-center box-border" :style="containerStyle">
       <slot />
     </div>
     <div ref="footerRef" class="justify-center">

@@ -1,13 +1,4 @@
-export interface ConfigInterface {
-  APP_URL: string;
-  API_BASE: string;
-  CLAIM_START: number;
-  CHAIN_ID: number;
-  CAPTCHA_KEY: string;
-  CONTRACT_ADDRESS: string | null;
-  METADATA_BASE_URI: string | null;
-  METADATA_TOKEN: string | null;
-}
+import type { TagProps } from 'naive-ui';
 
 export type AuthResponseProfile = {
   id: number;
@@ -17,9 +8,12 @@ export type AuthResponseProfile = {
 export type AuthResponse = { profile: AuthResponseProfile; authToken: { status: boolean; data: string } };
 
 declare global {
+  type TagType = TagProps['type'];
+
   type CsvItem = {
-    email: string | null;
-    email_start_send_time: string;
+    amount?: number | null;
+    email?: string | null;
+    email_start_send_time?: string;
     email_send_time?: string | null;
     nft_id?: number | null;
     tx_hash?: string | null;
@@ -46,20 +40,11 @@ declare global {
   type GeneralResponse<T> = { data: T; id: string; status: number };
   type GeneralItemsResponse<T> = { data: { items: Array<T>; total: number }; id: string; status: number };
   type SuccessResponse = GeneralResponse<{ success: boolean }>;
-  interface WhitelistClaimInterface {
-    amount: number;
-    createTime: string;
-    id: number;
-    signature: string;
-    status: number;
-    updateTime: string;
-    wallet: string;
-  }
-  type WhitelistClaimResponse = GeneralResponse<WhitelistClaimInterface>;
   type ClaimResponse = GeneralResponse<{ success: boolean; transactionHash: string }>;
 
   interface UserInterface {
     airdrop_status: number;
+    amount: number;
     createTime?: string;
     email: string | null;
     email_sent_time: string | null;
@@ -88,5 +73,5 @@ declare global {
 
   type StatisticsResponse = GeneralResponse<StatisticsInterface>;
 
-  type Metadata = { name: string; description: string; image: string };
+  type Metadata = { name?: string | null; description?: string | null; image?: string | null };
 }

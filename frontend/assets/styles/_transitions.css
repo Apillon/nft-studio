@@ -68,3 +68,20 @@
     transform: rotate(180deg);
   }
 }
+
+/**
+ * Spinning
+*/
+.animation-spinning {
+  display: inline-block;
+  animation: spinning 1s infinite linear;
+}
+
+@keyframes spinning {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

@@ -4,7 +4,7 @@ import mkcert from 'vite-plugin-mkcert';
 import { moonbaseAlpha } from 'viem/chains';
 import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
-import { Environments } from './lib/values/general.values';
+import { ClaimType, Environments } from './lib/values/general.values';
 
 const meta = { title: 'NFT Studio', description: 'NFT Studio', url: 'https://nft-studio.io/' };
 
@@ -14,19 +14,22 @@ export default defineNuxtConfig({
   devtools: { enabled: true },
 
   devServer: {
-    https: {
-      key: process.env.USERPROFILE + '\\.vite-plugin-mkcert\\cert.key',
-      cert: process.env.USERPROFILE + '\\.vite-plugin-mkcert\\cert.crt',
-    },
+    // https: {
+    //   key: process.env.USERPROFILE + '\\.vite-plugin-mkcert\\cert.key',
+    //   cert: process.env.USERPROFILE + '\\.vite-plugin-mkcert\\cert.crt',
+    // },
   },
 
   runtimeConfig: {
     public: {
-      API_BASE: process.env.API_BASE,
-      CHAIN_ID: process.env.CHAIN_ID ? Number(process.env.CHAIN_ID) : moonbaseAlpha.id,
-      EMBEDDED_WALLET_CLIENT: process.env.EMBEDDED_WALLET_CLIENT,
-      WALLET_CONNECT_PROJECT: process.env.WALLET_CONNECT_PROJECT,
+      API_BASE: '',
+      CHAIN_ID: moonbaseAlpha.id,
+      CLAIM_START: 0,
+      CLAIM_TYPE: ClaimType.AIRDROP,
+      CONTRACT_ADDRESS: '',
+      EMBEDDED_WALLET_CLIENT: '',
       ENV: process.env.ENV || process.env.NODE_ENV || Environments.dev,
+      WALLET_CONNECT_PROJECT: '',
     },
   },
 

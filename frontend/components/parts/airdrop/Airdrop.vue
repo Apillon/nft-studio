@@ -8,7 +8,7 @@
           Apillon-hosted collection, so make sure you’ve got enough supply left.
         </div>
       </div>
-      <Statistics :statistics="userStore.statistics" />
+      <Statistics :loading="userStore.loading" :statistics="userStore.statistics" />
     </div>
     <hr class="border-grey-transparent my-8" />
     <n-space class="w-full my-8" size="large" align="center" justify="space-between">
@@ -27,7 +27,7 @@
     </n-space>
     <TableUsers :users="users" />
 
-    <ModalAirdrop v-model:show="modalUploadCsvVisible" @close="modalUploadCsvVisible = false" />
+    <AirdropModal v-model:show="modalUploadCsvVisible" @close="modalUploadCsvVisible = false" />
   </div>
 </template>
 <script lang="ts" setup>

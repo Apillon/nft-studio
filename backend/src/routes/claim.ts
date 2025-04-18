@@ -1,6 +1,6 @@
 import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
-import { RouteErrorCode } from '../config/values';
+import { RouteErrorCode, ValidatorErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
 import { readEmailAirdropToken } from '../lib/jwt';
 import { AirdropStatus, User } from '../models/user';
@@ -14,7 +14,7 @@ import { claim } from '../lib/claim';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/users/claim-airdrop', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/users/claim', (req: Request, res: Response, next: NextFunction) => {
     resolve(req, res).catch(next);
   });
 }
@@ -38,35 +38,18 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   if (!isValid) {
     throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
   }
-  const wallet = body.address;
 
-  if (!body.jwt) {
-    throw new ResourceError(RouteErrorCode.REQUEST_TOKEN_NOT_PRESENT);
-  }
+  const user = await new User({}, context).populateByWallet(body.address);
 
-  const email = readEmailAirdropToken(body.jwt);
-  if (!email) {
-    throw new ResourceError(RouteErrorCode.REQUEST_TOKEN_INVALID);
-  }
-
-  const user = await new User({}, context).populateByEmail(email.email);
-
-  if (!user.exists()) {
-    throw new ResourceError(RouteErrorCode.USER_DOES_NOT_EXIST);
-  }
-
-  if (
-    ![AirdropStatus.PENDING, AirdropStatus.EMAIL_SENT, AirdropStatus.WALLET_LINKED, AirdropStatus.EMAIL_ERROR].includes(
-      user.airdrop_status
-    )
-  ) {
+  if (user.exists()) {
     throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
   }
 
   user.airdrop_status = AirdropStatus.WALLET_LINKED;
-  user.wallet = wallet;
+  user.amount = 1;
+  user.wallet = body.address;
+  user.signature = body.signature;
 
-  await user.validateWallet();
   await user.update();
 
   const txHash = await claim(user);
@@ -74,7 +57,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   await user.update();
 
   return res.respond(200, {
-    success: true,
+    success: 'ok',
     transactionHash: txHash,
   });
 }

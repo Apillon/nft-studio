@@ -10,6 +10,12 @@ export const WebStorageKeys = {
   APP_VERSION: 'nft_studio_version',
 };
 
+export enum ClaimType {
+  AIRDROP = 1,
+  WHITELIST = 2,
+  FREE_MINT = 3,
+}
+
 /** NFT Chains */
 export enum Chains {
   MOONBEAM = 1284,

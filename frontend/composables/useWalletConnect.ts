@@ -57,7 +57,11 @@ export default function useWalletConnect() {
 
   function disconnectWallet() {
     authStore.logout();
-    disconnect();
+    if (isConnected.value) {
+      disconnect();
+    } else if (wallet.value && info.activeWallet?.address) {
+      wallet.value?.events.emit('disconnect');
+    }
   }
 
   async function initEmbeddedWallet(admin: boolean = false) {

@@ -80,7 +80,7 @@ const createColumns = (): DataTableColumns<UserInterface> => {
                 onUpdateValue(v) {
                   row.wallet = v;
                 },
-                onKeyup(e) {
+                onKeyup(e: KeyboardEvent) {
                   if (e.key === 'Enter') {
                     editingRow.value = -1;
                   }
@@ -102,7 +102,7 @@ const createColumns = (): DataTableColumns<UserInterface> => {
                 onUpdateValue(v) {
                   row.email = v;
                 },
-                onKeyup(e) {
+                onKeyup(e: KeyboardEvent) {
                   if (e.key === 'Enter') {
                     editingRow.value = -1;
                   }
@@ -124,7 +124,7 @@ const createColumns = (): DataTableColumns<UserInterface> => {
                 onUpdateValue(v: any) {
                   row.email_start_send_time = v;
                 },
-                onKeyup(e) {
+                onKeyup(e: KeyboardEvent) {
                   if (e.key === 'Enter') {
                     editingRow.value = -1;
                   }
@@ -137,10 +137,34 @@ const createColumns = (): DataTableColumns<UserInterface> => {
         },
       ];
 
-  if (!props.autoIncrement) {
+  if (props.autoIncrement) {
+    cols.push({
+      key: 'amount',
+      title: 'NFT amount',
+      minWidth: 80,
+      render(row: UserInterface, index: number) {
+        if (isEditingRow(index)) {
+          return h(NInputNumber, {
+            value: row.amount,
+            onUpdateValue(v) {
+              row.amount = v || 0;
+            },
+            onKeyup(e: KeyboardEvent) {
+              if (e.key === 'Enter') {
+                editingRow.value = -1;
+              }
+            },
+          });
+        }
+        return row?.amount ? `${row.amount}` : '';
+      },
+    });
+  }
+  {
     cols.push({
       key: 'nft_id',
       title: 'NFT ID',
+      minWidth: 80,
       render(row: UserInterface, index: number) {
         if (isEditingRow(index)) {
           return h(NInputNumber, {
@@ -148,15 +172,14 @@ const createColumns = (): DataTableColumns<UserInterface> => {
             onUpdateValue(v) {
               row.nft_id = v || 0;
             },
-            onKeyup(e) {
+            onKeyup(e: KeyboardEvent) {
               if (e.key === 'Enter') {
                 editingRow.value = -1;
               }
             },
           });
-        } else {
-          return h('span', { class: 'whitespace-nowrap' }, row.nft_id || '');
         }
+        return row?.nft_id ? `${row.nft_id}` : '';
       },
     });
   }
@@ -215,6 +238,7 @@ const addNewUser = () => {
 };
 const createEmptyUser = (): UserInterface => ({
   airdrop_status: AirdropStatus.PENDING,
+  amount: 1,
   email: null,
   email_sent_time: null,
   email_start_send_time: new Date().toDateString(),

@@ -66,6 +66,7 @@ export const ErrorCodes = {
   400006: 'Token does not exists',
   400007: 'NFT already claimed',
   400009: 'Invalid admin, please login with different wallet',
+  400011: 'Valid not eligible, please try another wallet',
   403001: 'Missing auth token, please login!',
   403002: 'UNKNOWN USER',
   403003: 'UNAUTHORIZED',

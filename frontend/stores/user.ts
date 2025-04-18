@@ -3,6 +3,7 @@ import { WebStorageKeys } from '~/lib/values/general.values';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
+    loading: false,
     statistics: {} as StatisticsInterface,
     users: [] as UserInterface[],
   }),
@@ -16,16 +17,7 @@ export const useUserStore = defineStore('user', {
     },
   },
 
-  actions: {
-    logout() {
-      if (typeof localStorage !== 'undefined') {
-        localStorage.removeItem(WebStorageKeys.USER);
-      }
-
-      $api.clearToken();
-      this.$reset();
-    },
-  },
+  actions: {},
 
   persist: {
     key: WebStorageKeys.USER,

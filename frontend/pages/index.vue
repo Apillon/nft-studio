@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { useWallet } from '@apillon/wallet-vue';
+
 useHead({ title: 'NFT Studio' });
 
+const { wallet } = useWallet();
 const { isLoggedIn, initEmbeddedWallet } = useWalletConnect();
 
 onMounted(() => {
@@ -10,9 +13,8 @@ onMounted(() => {
 });
 
 function openEmbeddedWallet() {
-  const btnWallet = document.querySelector('#oaw-wallet-widget-btn') as HTMLButtonElement;
-  if (btnWallet) {
-    btnWallet.click();
+  if (wallet.value) {
+    wallet.value.events.emit('open', true);
   }
 }
 </script>

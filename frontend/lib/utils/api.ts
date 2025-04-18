@@ -135,13 +135,13 @@ class Api {
 
   onForbidden(_errorData: any, _requestData: Request | any) {
     const router = useRouter();
-    const user = useUserStore();
+    const authStore = useAuthStore();
 
     /**
      * User does not have permission to view resource.
      * Log them out and redirect to login page.
      */
-    user.logout();
+    authStore.logout();
     router.replace({ path: '/' });
   }
 }

@@ -6,7 +6,6 @@ import { Context } from './context';
 import { MySql } from './lib/mysql';
 import { inject as injectContext } from './middlewares/context';
 import { inject as injectCors } from './middlewares/cors';
-// import { inject as injectCompression } from './middlewares/compression';
 import { inject as injectErrors } from './middlewares/errors';
 import { inject as injectDataParser } from './middlewares/parser';
 import { inject as injectRenders } from './middlewares/renders';
@@ -14,11 +13,10 @@ import { inject as injectGetRoot } from './routes/get-root';
 import { inject as injectCreateUser } from './routes/create-user';
 import { inject as injectGetUser } from './routes/get-user';
 import { inject as injectGetStatistics } from './routes/get-statistics';
-import { inject as injectClaimAirdrop } from './routes/claim-airdrop';
 import { inject as injectAdminLogin } from './routes/admin-login';
-import { inject as injectCreateUserAdmin } from './routes/create-user-admin';
-import { inject as injectClaimAirdropSignupEmailClaim } from './routes/claim-airdrop-signup-email-claim';
-import { inject as injectCreateUserSignupEmailClaim } from './routes/create-user-signup-email-claim';
+import { inject as injectClaim } from './routes/claim';
+import { inject as injectClaimAirdrop } from './routes/claim-airdrop';
+import { inject as injectClaimValidate } from './routes/claim-validate';
 import { inject as injectClaimWhitelist } from './routes/claim-whitelist';
 
 export interface Request extends express.Request {
@@ -73,16 +71,15 @@ export class HttpServer {
     injectDataParser(this.app);
 
     // ROUTES
-    injectGetRoot(this.app);
+    injectAdminLogin(this.app);
+    injectClaim(this.app);
     injectClaimAirdrop(this.app);
-    injectCreateUserAdmin(this.app);
+    injectClaimValidate(this.app);
+    injectClaimWhitelist(this.app);
     injectCreateUser(this.app);
+    injectGetRoot(this.app);
     injectGetStatistics(this.app);
     injectGetUser(this.app);
-    injectAdminLogin(this.app);
-    injectClaimAirdropSignupEmailClaim(this.app);
-    injectCreateUserSignupEmailClaim(this.app);
-    injectClaimWhitelist(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);
@@ -95,11 +92,8 @@ export class HttpServer {
    * @param port Server listening port.
    */
   public async listen() {
-    await new Promise((res) => {
-      this.server = this.app.listen(
-        this.config.env.API_PORT,
-        this.config.env.API_HOST,
-      );
+    await new Promise(res => {
+      this.server = this.app.listen(this.config.env.API_PORT, this.config.env.API_HOST);
       res(null);
     });
 
@@ -110,7 +104,7 @@ export class HttpServer {
    * Stops the server.
    */
   public async close() {
-    await new Promise((resolve) => {
+    await new Promise(resolve => {
       this.server.close(resolve);
       this.server = null;
     });
