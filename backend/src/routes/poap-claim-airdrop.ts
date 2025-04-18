@@ -1,24 +1,23 @@
 import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
-import { RouteErrorCode } from '../config/values';
+import { AirdropStatus, RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
-import { readEmailAirdropToken } from '../lib/jwt';
-import { AirdropStatus, User } from '../models/user';
 import { Identity, LogLevel, Nft } from '@apillon/sdk';
 import { LogType, writeLog } from '../lib/logger';
 import { env } from '../config/env';
+import { DropReservation } from '../models/drop-reservation';
+import { PoapDrop } from '../models/poap-drop';
+import { readEmailAirdropPoapToken } from '../lib/jwt';
+import { createDropReservation } from '../lib/create-drop-reservation';
 
-/**∂
+/**
  * Installs new route on the provided application.
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post(
-    '/users/claim',
-    (req: Request, res: Response, next: NextFunction) => {
-      resolve(req, res).catch(next);
-    },
-  );
+  app.post('/claim-poap', (req: Request, res: Response, next: NextFunction) => {
+    resolve(req, res).catch(next);
+  });
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {
@@ -33,7 +32,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     walletAddress: body.address,
     signature: body.signature,
     signatureValidityMinutes: 10,
-    message: `test\n${body.timestamp}`, //To-DO
+    message: `test\n${body.timestamp}`,
     timestamp: body.timestamp,
   });
 
@@ -46,15 +45,27 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     throw new ResourceError(RouteErrorCode.REQUEST_TOKEN_NOT_PRESENT);
   }
 
-  const email = readEmailAirdropToken(body.jwt);
+  const { email, poapId } = readEmailAirdropPoapToken(body.jwt);
   if (!email) {
     throw new ResourceError(RouteErrorCode.REQUEST_TOKEN_INVALID);
   }
 
-  const user = await new User({}, context).populateByEmail(email.email);
+  let dropReservation = await new DropReservation(
+    {},
+    { context },
+  ).populateByDropAndEmail(+poapId, email);
 
-  if (!user.exists()) {
-    throw new ResourceError(RouteErrorCode.USER_DOES_NOT_EXIST);
+  if (!dropReservation.exists()) {
+    dropReservation = await createDropReservation(
+        context,
+        +poapId,
+        new DropReservation({
+            wallet,
+            airdropStatus: AirdropStatus.PENDING,
+            email,
+            poapDrop_id: poapId
+        }, {context})
+    )
   }
 
   if (
@@ -63,35 +74,31 @@ export async function resolve(req: Request, res: Response): Promise<void> {
       AirdropStatus.EMAIL_SENT,
       AirdropStatus.WALLET_LINKED,
       AirdropStatus.EMAIL_ERROR,
-    ].includes(user.airdrop_status)
+    ].includes(dropReservation.airdropStatus)
   ) {
     throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
   }
 
-  user.airdrop_status = AirdropStatus.WALLET_LINKED;
-  user.wallet = wallet;
+  dropReservation.airdropStatus = AirdropStatus.WALLET_LINKED;
+  dropReservation.wallet = wallet;
+  await dropReservation.update();
 
-  await user.update();
+  const poapDrop = await new PoapDrop({}, { context }).populateById(
+    dropReservation.poapDrop_id,
+  );
 
   const collection = new Nft({
     key: env.APILLON_KEY,
     secret: env.APILLON_SECRET,
     logLevel: LogLevel.VERBOSE,
-  }).collection(env.COLLECTION_UUID);
+  }).collection(poapDrop.collectionUuid);
 
-  let response = null;
   try {
-    const mintData = {
+    const res = await collection.mint({
       receivingAddress: wallet,
       quantity: 1,
-    };
-
-    if (user.nft_id) {
-      mintData['idsToMint'] = [user.nft_id];
-    }
-
-    response = await collection.mint(mintData);
-    user.airdrop_status = response.success
+    });
+    dropReservation.airdropStatus = res.success
       ? AirdropStatus.AIRDROP_COMPLETED
       : AirdropStatus.AIRDROP_ERROR;
   } catch (e) {
@@ -102,17 +109,10 @@ export async function resolve(req: Request, res: Response): Promise<void> {
       'resolve',
       e,
     );
-    user.airdrop_status = AirdropStatus.AIRDROP_ERROR;
+    dropReservation.airdropStatus = AirdropStatus.AIRDROP_ERROR;
     throw new Error(e);
   }
 
-  await user.update();
-  if (response && response.success) {
-    return res.respond(200, {
-      success: 'ok',
-      transactionHash: response.transactionHash,
-    });
-  } else {
-    throw new ResourceError(RouteErrorCode.AIRDROP_ERROR);
-  }
+  await dropReservation.update();
+  return res.respond(200, { success: true });
 }

@@ -21,6 +21,14 @@ import { inject as injectClaimAirdropSignupEmailClaim } from './routes/claim-air
 import { inject as injectCreateUserSignupEmailClaim } from './routes/create-user-signup-email-claim';
 import { inject as injectClaimWhitelist } from './routes/claim-whitelist';
 import { inject as injectGetProject} from './routes/get-project';
+import {inject as injectPoapDrop} from './routes/poap-drop';
+import { inject as injectDropReservationToken } from './routes/drop-reservation-token';
+import { inject as injectGetCollections } from './routes/get-collection';
+import { inject as injectReserveDrop } from './routes/reserve-drop';
+import { inject as injectPoapClaimAirdrop} from './routes/poap-claim-airdrop';
+
+
+
 
 export interface Request extends express.Request {
   context: Context;
@@ -85,6 +93,11 @@ export class HttpServer {
     injectCreateUserSignupEmailClaim(this.app);
     injectClaimWhitelist(this.app);
     injectGetProject(this.app);
+    injectPoapDrop(this.app);
+    injectDropReservationToken(this.app);
+    injectGetCollections(this.app);
+    injectReserveDrop(this.app);
+    injectPoapClaimAirdrop(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);

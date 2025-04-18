@@ -92,3 +92,76 @@ export function readEmailAirdropToken(token: string) {
     return null;
   }
 }
+
+/**
+ * Parses a request token needed to verify profile/email. Request token expires in one day.
+ * @param token Request token.
+ * @param ctx Request context.
+ */
+export function readEmailAirdropPoapToken(token: string) {
+  const subject = RequestToken.AIRDROP_EMAIL;
+  try {
+    const { email, poapId } = jwt.verify(token, env.APP_SECRET, {
+      subject,
+    }) as any;
+    console.log();
+    if (email) {
+      return {
+        email: email as string,
+        poapId: poapId as string,
+        subject,
+      };
+    } else {
+      return null;
+    }
+  } catch (e) {
+    return null;
+  }
+}
+
+/**
+ * Generate a new token, used to access mint reservation page
+ */
+export function generateDropReservationToken() {
+  const subject = RequestToken.DROP_RESERVATION;
+  const token = jwt.sign({}, env.APP_SECRET, {
+    subject,
+    expiresIn: '5m',
+  });
+  return token;
+}
+
+/**
+ * Generates a new request token needed to verify profile/email. Request token expires in one day.
+ * @param email
+ * @param ctx
+ */
+export function generateEmailAirdropPoapToken(email: string, poapId: number) {
+  if (!email || !poapId) {
+    return null;
+  }
+  const exp = '30 days';
+  const subject = RequestToken.AIRDROP_EMAIL;
+  const token = jwt.sign({ email, poapId }, env.APP_SECRET, {
+    subject,
+    expiresIn: exp,
+  });
+
+  return token;
+}
+
+/**
+ * Parses a request token needed to verify profile/email. Request token expires in one day.
+ * @param token Request token.
+ * @param ctx Request context.
+ */
+export function readDropReservationToken(token: string) {
+  const subject = RequestToken.DROP_RESERVATION;
+  try {
+    return jwt.verify(token, env.APP_SECRET, {
+      subject,
+    }) as any;
+  } catch (e) {
+    return null;
+  }
+}
