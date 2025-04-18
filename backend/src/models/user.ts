@@ -2,8 +2,8 @@ import { presenceValidator } from '@rawmodel/validators';
 import { PopulateStrategy, SerializedStrategy, SystemErrorCode, ValidatorErrorCode } from '../config/values';
 import { enumInclusionValidator, uniqueFieldValue } from '../lib/validators';
 import { BaseSqlModel, prop } from './base-sql-model';
-import { stringTrimParser } from '../lib/parsers';
-import { dateParser, integerParser, stringParser } from '@rawmodel/parsers';
+import { stringTrimParser, utcDateParser } from '../lib/parsers';
+import { integerParser, stringParser } from '@rawmodel/parsers';
 import { Context } from '../context';
 import { ResourceError, SqlError } from '../lib/errors';
 import { getQueryParams, selectAndCountQuery } from '../lib/sql-utils';
@@ -47,7 +47,7 @@ export class User extends BaseSqlModel {
    * email_start_send_time
    */
   @prop({
-    parser: { resolver: dateParser() },
+    parser: { resolver: utcDateParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
     serializable: [PopulateStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     validators: [],
@@ -60,7 +60,7 @@ export class User extends BaseSqlModel {
    * email_sent_time
    */
   @prop({
-    parser: { resolver: dateParser() },
+    parser: { resolver: utcDateParser() },
     populatable: [PopulateStrategy.DB],
     serializable: [SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     validators: [],
