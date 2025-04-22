@@ -14,9 +14,12 @@ import { claim } from '../lib/claim';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/users/claim-airdrop', (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
+  app.post(
+    '/users/claim-airdrop',
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {
@@ -56,9 +59,12 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   }
 
   if (
-    ![AirdropStatus.PENDING, AirdropStatus.EMAIL_SENT, AirdropStatus.WALLET_LINKED, AirdropStatus.EMAIL_ERROR].includes(
-      user.airdrop_status
-    )
+    ![
+      AirdropStatus.PENDING,
+      AirdropStatus.EMAIL_SENT,
+      AirdropStatus.WALLET_LINKED,
+      AirdropStatus.EMAIL_ERROR,
+    ].includes(user.airdrop_status)
   ) {
     throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
   }

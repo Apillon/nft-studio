@@ -28,15 +28,33 @@ export class MySql {
     if (!this.db) {
       try {
         this.db = mysql.createPool({
-          host: this.env.APP_ENV === 'testing' ? this.env.MYSQL_HOST_TEST : this.env.MYSQL_HOST,
-          port: this.env.APP_ENV === 'testing' ? this.env.MYSQL_PORT_TEST : this.env.MYSQL_PORT,
-          user: this.env.APP_ENV === 'testing' ? this.env.MYSQL_USER_TEST : this.env.MYSQL_USER,
-          password: this.env.APP_ENV === 'testing' ? this.env.MYSQL_PASSWORD_TEST : this.env.MYSQL_PASSWORD,
-          database: this.env.APP_ENV === 'testing' ? this.env.MYSQL_DATABASE_TEST : this.env.MYSQL_DATABASE,
+          host:
+            this.env.APP_ENV === 'testing'
+              ? this.env.MYSQL_HOST_TEST
+              : this.env.MYSQL_HOST,
+          port:
+            this.env.APP_ENV === 'testing'
+              ? this.env.MYSQL_PORT_TEST
+              : this.env.MYSQL_PORT,
+          user:
+            this.env.APP_ENV === 'testing'
+              ? this.env.MYSQL_USER_TEST
+              : this.env.MYSQL_USER,
+          password:
+            this.env.APP_ENV === 'testing'
+              ? this.env.MYSQL_PASSWORD_TEST
+              : this.env.MYSQL_PASSWORD,
+          database:
+            this.env.APP_ENV === 'testing'
+              ? this.env.MYSQL_DATABASE_TEST
+              : this.env.MYSQL_DATABASE,
           waitForConnections: true,
           decimalNumbers: true,
 
-          connectionLimit: (this.env.APP_ENV === 'testing' ? this.env.MYSQL_POOL_TEST : this.env.MYSQL_POOL) || 100,
+          connectionLimit:
+            (this.env.APP_ENV === 'testing'
+              ? this.env.MYSQL_POOL_TEST
+              : this.env.MYSQL_POOL) || 100,
 
           queueLimit: 100,
           // ssl: env.USE_DB_SSL ? {
@@ -45,13 +63,33 @@ export class MySql {
           //   cert: fs.readFileSync(`${__dirname}/keys/client-cert.pem`).toString()
           // } : undefined
         });
-        const host = this.env.APP_ENV === 'testing' ? this.env.MYSQL_HOST_TEST : this.env.MYSQL_HOST;
-        const port = this.env.APP_ENV === 'testing' ? this.env.MYSQL_PORT_TEST : this.env.MYSQL_PORT;
-        const database = this.env.APP_ENV === 'testing' ? this.env.MYSQL_DATABASE_TEST : this.env.MYSQL_DATABASE;
+        const host =
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_HOST_TEST
+            : this.env.MYSQL_HOST;
+        const port =
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_PORT_TEST
+            : this.env.MYSQL_PORT;
+        const database =
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_DATABASE_TEST
+            : this.env.MYSQL_DATABASE;
 
-        writeLog(LogType.INFO, `Connected to DB: ${host}:${port} | ${database}`, 'mysql.ts', 'connect');
+        writeLog(
+          LogType.INFO,
+          `Connected to DB: ${host}:${port} | ${database}`,
+          'mysql.ts',
+          'connect',
+        );
       } catch (err) {
-        writeLog(LogType.ERROR, 'Database connection failed.', 'mysql.ts', 'connect', err);
+        writeLog(
+          LogType.ERROR,
+          'Database connection failed.',
+          'mysql.ts',
+          'connect',
+          err,
+        );
       }
     } else {
       writeLog(LogType.INFO, `Already connected to DB!`, 'mysql.ts', 'connect');
@@ -97,7 +135,11 @@ export class MySql {
    * @param data procedure parameters
    * @param [options={multiSet: boolean}] additional options
    */
-  public async callSingle(procedure: String, data: Object, options: { multiSet?: boolean } = {}) {
+  public async callSingle(
+    procedure: String,
+    data: Object,
+    options: { multiSet?: boolean } = {},
+  ) {
     // console.time('Call Single');
     const conn = await this.start();
     try {
@@ -123,7 +165,7 @@ export class MySql {
     procedure: String,
     data: Object,
     connection?: PoolConnection,
-    options: { multiSet?: boolean } = {}
+    options: { multiSet?: boolean } = {},
   ) {
     if (!connection) {
       connection = await this.db.getConnection();
@@ -132,7 +174,9 @@ export class MySql {
 
     let result;
     const query = `CALL ${procedure}(${
-      Object.keys(data).length ? Array(Object.keys(data).length).fill('?').join(',') : ''
+      Object.keys(data).length
+        ? Array(Object.keys(data).length).fill('?').join(',')
+        : ''
     });`;
 
     writeLog(LogType.SQL, query, 'lib/mysql.ts', 'call');
@@ -144,7 +188,11 @@ export class MySql {
 
     for (const resultSet of result[0] as mysql.RowDataPacket[][]) {
       if (resultSet.length && resultSet[0].ErrorCode > 0) {
-        throw new ProcedureError(resultSet[0].ErrorCode, resultSet[0].Message, result);
+        throw new ProcedureError(
+          resultSet[0].ErrorCode,
+          resultSet[0].Message,
+          result,
+        );
       }
     }
     if (!options.multiSet) {
@@ -207,7 +255,10 @@ export class MySql {
         }
         // SqlString.escape prevents SQL injection!
         const re = new RegExp(`@${key}\\b`, 'gi');
-        query = query.replace(re, values[key] ? SqlString.escape(values[key]) : 'NULL');
+        query = query.replace(
+          re,
+          values[key] ? SqlString.escape(values[key]) : 'NULL',
+        );
       }
     }
     // console.log(query);
@@ -230,7 +281,11 @@ export class MySql {
    * @param values object with replacement values
    * @param connection PoolConnection reference - needed if query is part of transaction
    */
-  public async paramExecute(query: string, values?: Object, connection?: PoolConnection) {
+  public async paramExecute(
+    query: string,
+    values?: Object,
+    connection?: PoolConnection,
+  ) {
     // const queryId = Math.round(Math.random() * 10000);
     // console.time('Param Execute');
     // array with values for prepared statement
@@ -239,7 +294,9 @@ export class MySql {
 
     if (values) {
       // split query to array to find right order of variables
-      const queryArray = query.split(/\n|\s/).filter(x => !!x && /@.*\b/.test(x));
+      const queryArray = query
+        .split(/\n|\s/)
+        .filter((x) => !!x && /@.*\b/.test(x));
 
       for (const word of queryArray) {
         for (const key of Object.keys(values)) {
@@ -299,7 +356,11 @@ export class MySql {
    * @param values objects with replacement values
    * @param connection PoolConnection reference - needed if query is part of transaction
    */
-  public async paramExecuteBatch(query: string, values?: Object[], connection?: PoolConnection) {
+  public async paramExecuteBatch(
+    query: string,
+    values?: Object[],
+    connection?: PoolConnection,
+  ) {
     // const queryId = Math.round(Math.random() * 10000);
     // console.time('Param Execute');
     // array with values for prepared statement
@@ -308,7 +369,9 @@ export class MySql {
 
     if (values) {
       // split query to array to find right order of variables
-      const queryArray = query.split(/\n|\s/).filter(x => !!x && /@.*\b/.test(x));
+      const queryArray = query
+        .split(/\n|\s/)
+        .filter((x) => !!x && /@.*\b/.test(x));
       for (const word of queryArray) {
         const index = word.split('_')[0].substring(1);
         const value = values[index];
@@ -340,10 +403,19 @@ export class MySql {
     // console.log(query);
     // console.time(`Logs [${queryId}]`);
     const omitLong = true;
-    const queryLog = omitLong && query.length > 3000 ? 'query omitted (too long)' : query;
-    const sqlParamValuesLog = omitLong && query.length > 3000 ? 'query params omitted (too long)' : sqlParamValues;
+    const queryLog =
+      omitLong && query.length > 3000 ? 'query omitted (too long)' : query;
+    const sqlParamValuesLog =
+      omitLong && query.length > 3000
+        ? 'query params omitted (too long)'
+        : sqlParamValues;
     writeLog(LogType.SQL, queryLog, 'lib/mysql.ts', 'paramExecuteBatch');
-    writeLog(LogType.SQL, sqlParamValuesLog, 'lib/mysql.ts', 'paramExecuteBatch');
+    writeLog(
+      LogType.SQL,
+      sqlParamValuesLog,
+      'lib/mysql.ts',
+      'paramExecuteBatch',
+    );
     // console.timeEnd(`Logs [${queryId}]`);
 
     let result;
