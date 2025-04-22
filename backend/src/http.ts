@@ -4,7 +4,7 @@ import { Server } from 'http';
 import { IEnv } from './config/env';
 import { Context } from './context';
 import { MySql } from './lib/mysql';
-import { inject, inject as injectContext } from './middlewares/context';
+import { inject as injectContext } from './middlewares/context';
 import { inject as injectCors } from './middlewares/cors';
 import { inject as injectErrors } from './middlewares/errors';
 import { inject as injectDataParser } from './middlewares/parser';
