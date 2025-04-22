@@ -6,6 +6,7 @@ export enum SerializedStrategy {
   DB = 'db',
   EXTENDED_DB = 'extended_db',
   ADMIN = 'admin',
+  UPDATE_DB = 'update_db',
 }
 
 /**
@@ -47,6 +48,7 @@ export enum AppEnvironment {
 export enum RequestToken {
   AUTH_ADMIN = 'authAdmin',
   AIRDROP_EMAIL = 'airdropEmail',
+  DROP_RESERVATION = 'dropReservation',
 }
 
 /**
@@ -66,6 +68,8 @@ export enum AuthorizationErrorCode {
   UNKNOWN_USER = 403002,
   UNAUTHORIZED = 403003,
   NOT_ACTIVATED = 403004,
+  INVALID_TOKEN = 403005,
+  TOKEN_EXPIRED = 403006,
 }
 
 /**
@@ -82,6 +86,9 @@ export enum ValidatorErrorCode {
   CAPTCHA_INVALID = 422007,
   USER_ALREADY_MINTED = 422008,
   WALLET_BELONGS_TO_ANOTHER_USER = 422009,
+  POAP_DROP_REQUIRED_DATA_NOT_PRESENT = 422010,
+  DROP_RESERVATION_REQUIRED_DATA_NOT_PRESENT = 422011,
+  REQUIRED_DATA_MISSING = 422012,
   DATA_MODEL_STATUS_MISSING = 422100,
   DATA_MODEL_INVALID_STATUS = 422101,
 }
@@ -101,5 +108,32 @@ export enum RouteErrorCode {
   INVALID_SIGNATURE = 400008,
   INVALID_ADMIN = 400009,
   AIRDROP_ERROR = 400010,
-  WALLET_NOT_VALID = 400011,
+  POAP_DROP_DOES_NOT_EXISTS = 400011,
+  DROP_ALREADY_RESERVED = 400012,
+  DROP_RESERVATION_DOES_NOT_EXISTS = 400013,
+  WALLET_NOT_VALID = 400014
+}
+
+export enum AirdropStatus {
+  PENDING = 1,
+  EMAIL_SENT = 2,
+  EMAIL_ERROR = 3,
+  WALLET_LINKED = 4,
+  TRANSACTION_CREATED = 5,
+  AIRDROP_COMPLETED = 6,
+  AIRDROP_ERROR = 7,
+  AIRDROP_CLAIM_EXPIRED = 8,
+  IN_WAITING_LINE = 9,
+}
+
+export enum SqlModelStatus {
+  DRAFT = 1,
+  PENDING = 2,
+  ACTIVE = 5,
+  COMPLETED = 8,
+  DELETED = 9,
+}
+
+export enum JobName {
+  SEND_CLAIM_EMAIL = 'sendClaimEmail',
 }

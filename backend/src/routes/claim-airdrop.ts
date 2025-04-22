@@ -1,9 +1,9 @@
 import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
-import { RouteErrorCode } from '../config/values';
+import { AirdropStatus, RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
 import { readEmailAirdropToken } from '../lib/jwt';
-import { AirdropStatus, User } from '../models/user';
+import { User } from '../models/user';
 import { Identity, LogLevel, Nft } from '@apillon/sdk';
 import { LogType, writeLog } from '../lib/logger';
 import { env } from '../config/env';
@@ -27,7 +27,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   }
 
   const identity = new Identity(null);
-  const { isValid } = await identity.validateEvmWalletSignature({
+  const { isValid } = identity.validateEvmWalletSignature({
     walletAddress: body.address,
     signature: body.signature,
     signatureValidityMinutes: 10,

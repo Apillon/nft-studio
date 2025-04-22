@@ -1,24 +1,11 @@
-import { presenceValidator } from '@rawmodel/validators';
-import { PopulateStrategy, SerializedStrategy, SystemErrorCode, ValidatorErrorCode } from '../config/values';
+import { AirdropStatus, PopulateStrategy, SerializedStrategy, SystemErrorCode, ValidatorErrorCode } from '../config/values';
 import { enumInclusionValidator, uniqueFieldValue } from '../lib/validators';
 import { BaseSqlModel, prop } from './base-sql-model';
-import { stringTrimParser } from '../lib/parsers';
-import { dateParser, integerParser, stringParser } from '@rawmodel/parsers';
+import { stringTrimParser, utcDateParser } from '../lib/parsers';
+import { integerParser, stringParser } from '@rawmodel/parsers';
 import { Context } from '../context';
 import { ResourceError, SqlError } from '../lib/errors';
 import { getQueryParams, selectAndCountQuery } from '../lib/sql-utils';
-
-export enum AirdropStatus {
-  PENDING = 1,
-  EMAIL_SENT = 2,
-  EMAIL_ERROR = 3,
-  WALLET_LINKED = 4,
-  TRANSACTION_CREATED = 5,
-  AIRDROP_COMPLETED = 6,
-  AIRDROP_ERROR = 7,
-  AIRDROP_CLAIM_EXPIRED = 8,
-  IN_WAITING_LINE = 9,
-}
 
 export class User extends BaseSqlModel {
   /**
@@ -41,13 +28,13 @@ export class User extends BaseSqlModel {
     ],
     fakeValue: 'test@email.com',
   })
-  public email: string | null;
+  public email?: string | null;
 
   /**
    * email_start_send_time
    */
   @prop({
-    parser: { resolver: dateParser() },
+    parser: { resolver: utcDateParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
     serializable: [PopulateStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     validators: [],
@@ -60,7 +47,7 @@ export class User extends BaseSqlModel {
    * email_sent_time
    */
   @prop({
-    parser: { resolver: dateParser() },
+    parser: { resolver: utcDateParser() },
     populatable: [PopulateStrategy.DB],
     serializable: [SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     validators: [],

@@ -1,4 +1,5 @@
-import { BaseSqlModel, SqlModelStatus } from '../models/base-sql-model';
+import { SqlModelStatus } from '../config/values';
+import { BaseSqlModel } from '../models/base-sql-model';
 import { stringLengthValidator } from '@rawmodel/validators';
 
 /**

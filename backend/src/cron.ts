@@ -1,23 +1,20 @@
 import { CronJob } from 'cron';
-import { AirdropStatus } from './models/user';
-import { dateToSqlString } from './lib/sql-utils';
-import { SqlModelStatus } from './models/base-sql-model';
 import { MysqlConnectionManager } from './lib/mysql-connection-manager';
 import { SmtpSendTemplate } from './lib/node-mailer';
 import { env } from './config/env';
 import { generateEmailAirdropToken } from './lib/jwt';
 import { LogType, writeLog } from './lib/logger';
 import { MySql } from './lib/mysql';
+import { AirdropStatus, SqlModelStatus } from './config/values';
+import { Job } from './models/job';
+import { processJob } from './lib/job';
 
 export class Cron {
   private cronJobs: CronJob[] = [];
 
   constructor(private mysql: MySql) {
     MysqlConnectionManager.initialize(mysql);
-    this.cronJobs.push(new CronJob('* * * * *', this.sendEmail, null, false));
-    this.cronJobs.push(
-      new CronJob('* * * * *', this.sendEmailSignupEmailAirdrop, null, false),
-    );
+    this.cronJobs.push(new CronJob('* * * * *', this.handleJobs, null, false));
 
     if (env.MAX_SUPPLY > 0) {
       this.cronJobs.push(
@@ -37,176 +34,6 @@ export class Cron {
       cronJob.stop();
     }
     await MysqlConnectionManager.destroyInstance();
-  }
-
-  async sendEmail() {
-    const mysql = await MysqlConnectionManager.getInstance();
-    const conn = await mysql.start();
-
-    try {
-      const res = await conn.execute(
-        `SELECT * FROM user WHERE
-          airdrop_status = ${AirdropStatus.PENDING}
-          AND status = ${SqlModelStatus.ACTIVE}
-          AND email_start_send_time < '${dateToSqlString(new Date())}'
-          FOR UPDATE
-        ;
-       `,
-      );
-      const users = res[0] as Array<any>;
-
-      const updates = [];
-
-      for (let i = 0; i < users.length; i++) {
-        try {
-          const token = generateEmailAirdropToken(users[i].email);
-          await SmtpSendTemplate(
-            [users[i].email],
-            'Claim your NFT',
-            'en-airdrop-claim',
-            {
-              link: `${env.APP_URL}/claim?token=${token}`,
-            },
-          );
-          updates.push(
-            `(${users[i].id}, '${users[i].email}', ${AirdropStatus.EMAIL_SENT}, '${dateToSqlString(
-              new Date(),
-            )}')`,
-          );
-        } catch (e) {
-          writeLog(LogType.ERROR, e, 'cron.ts', 'sendEmail');
-          updates.push(
-            `(${users[i].id}, '${users[i].email}', ${AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(
-              new Date(),
-            )}')`,
-          );
-        }
-      }
-
-      if (updates && updates.length > 0) {
-        const sql = `
-        INSERT INTO user (id, email, airdrop_status, email_sent_time)
-        VALUES ${updates.join(',')}
-        ON DUPLICATE KEY UPDATE
-        airdrop_status = VALUES(airdrop_status),
-        email_sent_time = VALUES(email_sent_time)`;
-
-        await conn.execute(sql);
-      }
-      await conn.commit();
-    } catch (e) {
-      writeLog(LogType.ERROR, e, 'cron.ts', 'sendEmail');
-      await conn.rollback();
-    }
-  }
-
-  async sendEmailSignupEmailAirdrop() {
-    const mysql = await MysqlConnectionManager.getInstance();
-
-    let availableNftLeft = 0;
-    if (env.MAX_SUPPLY) {
-      const res = await mysql.paramExecute(
-        `SELECT COUNT(id) as total FROM user WHERE
-          airdrop_status IN (
-            ${AirdropStatus.EMAIL_SENT},
-            ${AirdropStatus.WALLET_LINKED},
-            ${AirdropStatus.TRANSACTION_CREATED},
-            ${AirdropStatus.AIRDROP_COMPLETED},
-            ${AirdropStatus.IN_WAITING_LINE}
-          )
-          AND status = @status
-        ;
-       `,
-        { status: SqlModelStatus.ACTIVE },
-      );
-      const numOfReservations = res[0].total;
-      availableNftLeft = env.MAX_SUPPLY - numOfReservations;
-    }
-
-    const conn = await mysql.start();
-
-    try {
-      const users = await mysql.paramExecute(
-        `SELECT * FROM user WHERE
-          airdrop_status = @airdrop_status
-          AND status = @status
-          AND email_start_send_time < @date
-          FOR UPDATE
-        ;
-       `,
-        {
-          airdrop_status: AirdropStatus.PENDING,
-          status: SqlModelStatus.ACTIVE,
-          date: new Date(),
-        },
-        conn,
-      );
-
-      const updates = [];
-
-      for (let i = 0; i < users.length; i++) {
-        try {
-          if (!env.MAX_SUPPLY || i < availableNftLeft) {
-            const token = await generateEmailAirdropToken(users[i].email);
-            await SmtpSendTemplate(
-              [users[i].email],
-              'Claim your NFT',
-              'en-signup-email-airdrop-claim',
-              {
-                appUrl: env.APP_URL,
-                link: `${env.APP_URL}/claim?token=${token}`,
-                claimExpiresIn: env.CLAIM_EXPIRES_IN,
-              },
-              'Apillon',
-            );
-            updates.push(
-              `(${users[i].id}, '${users[i].email}', ${
-                AirdropStatus.EMAIL_SENT
-              }, '${dateToSqlString(new Date())}')`,
-            );
-          } else {
-            //Currently, waiting line for airdrop is full.Send info email and set appropriate status
-            await SmtpSendTemplate(
-              [users[i].email],
-              'You have been placed on a waitlist for NFT Airdrop token',
-              'en-airdrop-waiting-line',
-              {
-                appUrl: env.APP_URL,
-              },
-              'Apillon',
-            );
-            updates.push(
-              `(${users[i].id}, '${users[i].email}', ${
-                AirdropStatus.IN_WAITING_LINE
-              }, '${dateToSqlString(new Date())}')`,
-            );
-          }
-        } catch (e) {
-          writeLog(LogType.ERROR, e, 'cron.ts', 'sendEmail');
-          updates.push(
-            `(${users[i].id}, '${users[i].email}', ${AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(
-              new Date(),
-            )}')`,
-          );
-        }
-      }
-
-      if (updates.length > 0) {
-        const sql = `
-        INSERT INTO user (id, email, airdrop_status, email_sent_time)
-        VALUES ${updates.join(',')}
-        ON DUPLICATE KEY UPDATE
-        airdrop_status = VALUES(airdrop_status),
-        email_sent_time = VALUES(email_sent_time)`;
-
-        await mysql.paramExecute(sql, null, conn);
-      }
-
-      await mysql.commit(conn);
-    } catch (e) {
-      writeLog(LogType.ERROR, e, 'cron.ts', 'sendEmail');
-      await mysql.rollback(conn);
-    }
   }
 
   async processExpiredClaims() {
@@ -318,6 +145,27 @@ export class Cron {
     } catch (e) {
       writeLog(LogType.ERROR, e, 'cron.ts', 'processExpiredClaims');
       await mysql.rollback(conn);
+    }
+  }
+
+  async handleJobs() {
+    const mysql = await MysqlConnectionManager.getInstance();
+
+    const jobsToExecute = (await mysql.paramExecute(
+      `SELECT * FROM job WHERE 
+        status = @status
+        ORDER BY createTime ASC`,
+      {
+        status: SqlModelStatus.DRAFT,
+      },
+    )) as Job[];
+
+    for (const job of jobsToExecute) {
+      try {
+        await processJob(job, mysql);
+      } catch (e) {
+        writeLog(LogType.ERROR, e, 'cron.ts', 'handleJobs');
+      }
     }
   }
 }
