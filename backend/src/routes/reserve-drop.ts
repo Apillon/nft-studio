@@ -1,14 +1,9 @@
 import { Application } from 'express';
-import {
-  AuthorizationErrorCode,
-  SerializedStrategy,
-} from '../config/values';
+import { AuthorizationErrorCode, SerializedStrategy } from '../config/values';
 import { NextFunction, Request, Response } from '../http';
 import { ResourceError } from '../lib/errors';
 import { DropReservation } from '../models/drop-reservation';
-import {
-  readDropReservationToken,
-} from '../lib/jwt';
+import { readDropReservationToken } from '../lib/jwt';
 import { createDropReservation } from '../lib/create-drop-reservation';
 
 /**
@@ -36,7 +31,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   const dropReservation = await createDropReservation(
     context,
     +params.id,
-    body as DropReservation
+    body as DropReservation,
   );
 
   return res.respond(200, dropReservation.serialize(SerializedStrategy.ADMIN));

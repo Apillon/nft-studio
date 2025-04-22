@@ -5,19 +5,13 @@ import { integerParser, dateParser } from '@rawmodel/parsers';
 import {
   PopulateStrategy,
   SerializedStrategy,
+  SqlModelStatus,
   ValidatorErrorCode,
 } from '../config/values';
 import { PoolConnection } from 'mysql2/promise';
 import { presenceValidator, enumInclusionValidator } from '../lib/validators';
 
 export { prop };
-
-export enum SqlModelStatus {
-  DRAFT = 1,
-  ACTIVE = 5,
-  ARCHIVED = 8,
-  DEACTIVATED = 9,
-}
 
 export abstract class BaseSqlModel extends BaseModel {
   /**
@@ -97,7 +91,7 @@ export abstract class BaseSqlModel extends BaseModel {
   }
 
   public isActive() {
-    return !!this.id && this.status !== SqlModelStatus.DEACTIVATED;
+    return !!this.id && this.status !== SqlModelStatus.DELETED;
   }
 
   public async setStatus(status: SqlModelStatus, conn?: PoolConnection) {

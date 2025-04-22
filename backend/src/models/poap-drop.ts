@@ -1,6 +1,10 @@
 import { dateParser } from '@rawmodel/parsers';
 import { presenceValidator } from '@rawmodel/validators';
-import { PopulateStrategy, SerializedStrategy, ValidatorErrorCode } from '../config/values';
+import {
+  PopulateStrategy,
+  SerializedStrategy,
+  ValidatorErrorCode,
+} from '../config/values';
 import { stringTrimParser } from '../lib/parsers';
 import { BaseSqlModel, prop } from './base-sql-model';
 import { ValidationError } from '../lib/errors';
@@ -94,7 +98,11 @@ export class PoapDrop extends BaseSqlModel {
   @prop({
     parser: { resolver: stringTrimParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     validators: [
       {
         resolver: presenceValidator(),
@@ -133,7 +141,12 @@ export class PoapDrop extends BaseSqlModel {
   }
 
   public async getList(urlQuery) {
-    const { params, filters } = getQueryParams({ id: null, title: null, status: null }, 'pd', {}, urlQuery);
+    const { params, filters } = getQueryParams(
+      { id: null, title: null, status: null },
+      'pd',
+      {},
+      urlQuery,
+    );
     if (filters.limit === -1) {
       filters.limit = null;
     }

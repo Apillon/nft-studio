@@ -1,4 +1,4 @@
-import {dateParser} from '@rawmodel/parsers';
+import { dateParser } from '@rawmodel/parsers';
 
 /**
  * Returns parser function which converts a value to a string.
@@ -19,17 +19,32 @@ export function utcDateParser() {
     resolver: (value: any) => {
       const parsedDate = parser(value);
       if (parsedDate instanceof Date) {
-        return new Date(Date.UTC(
-          parsedDate.getUTCFullYear(),
-          parsedDate.getUTCMonth(),
-          parsedDate.getUTCDate(),
-          parsedDate.getUTCHours(),
-          parsedDate.getUTCMinutes(),
-          parsedDate.getUTCSeconds(),
-          parsedDate.getUTCMilliseconds()
-        ));
+        return new Date(
+          Date.UTC(
+            parsedDate.getUTCFullYear(),
+            parsedDate.getUTCMonth(),
+            parsedDate.getUTCDate(),
+            parsedDate.getUTCHours(),
+            parsedDate.getUTCMinutes(),
+            parsedDate.getUTCSeconds(),
+            parsedDate.getUTCMilliseconds(),
+          ),
+        );
       }
       return parsedDate;
+    },
+  };
+}
+
+export function JSONParser(): any {
+  return (value: string | any) => {
+    try {
+      if (typeof value == 'string') {
+        return JSON.parse(value);
+      }
+      return value;
+    } catch (e) {
+      return null;
     }
   };
 }
