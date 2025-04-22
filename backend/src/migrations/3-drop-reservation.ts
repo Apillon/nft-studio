@@ -1,7 +1,7 @@
 export async function upgrade(
-    queryFn: (query: string, values?: any[]) => Promise<Array<any>>,
-  ) {
-    await queryFn(`
+  queryFn: (query: string, values?: any[]) => Promise<Array<any>>,
+) {
+  await queryFn(`
       CREATE TABLE IF NOT EXISTS \`drop_reservation\` (
         \`id\` INT NOT NULL AUTO_INCREMENT,
         \`poapDrop_id\` INT NOT NULL,
@@ -19,15 +19,15 @@ export async function upgrade(
           ON DELETE CASCADE
           ON UPDATE NO ACTION);
     `);
-  
-    await queryFn(`
+
+  await queryFn(`
       CREATE UNIQUE INDEX \`email_poap_drop_UNIQUE\` ON \`drop_reservation\` (\`poapDrop_id\`, \`email\` ASC) VISIBLE;
     `);
-  }
-  export async function downgrade(
-    queryFn: (query: string, values?: any[]) => Promise<Array<any>>,
-  ) {
-    await queryFn(`
+}
+export async function downgrade(
+  queryFn: (query: string, values?: any[]) => Promise<Array<any>>,
+) {
+  await queryFn(`
       DROP TABLE IF EXISTS \`drop_reservation\` ;
     `);
-  }
+}

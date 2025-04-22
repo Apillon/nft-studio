@@ -1,5 +1,5 @@
-import { presenceValidator } from '@rawmodel/validators';
 import {
+  AirdropStatus,
   PopulateStrategy,
   SerializedStrategy,
   SystemErrorCode,
@@ -12,18 +12,6 @@ import { integerParser, stringParser } from '@rawmodel/parsers';
 import { Context } from '../context';
 import { ResourceError, SqlError } from '../lib/errors';
 import { getQueryParams, selectAndCountQuery } from '../lib/sql-utils';
-
-export enum AirdropStatus {
-  PENDING = 1,
-  EMAIL_SENT = 2,
-  EMAIL_ERROR = 3,
-  WALLET_LINKED = 4,
-  TRANSACTION_CREATED = 5,
-  AIRDROP_COMPLETED = 6,
-  AIRDROP_ERROR = 7,
-  AIRDROP_CLAIM_EXPIRED = 8,
-  IN_WAITING_LINE = 9,
-}
 
 export class User extends BaseSqlModel {
   /**
@@ -50,7 +38,7 @@ export class User extends BaseSqlModel {
     ],
     fakeValue: 'test@email.com',
   })
-  public email: string | null;
+  public email?: string | null;
 
   /**
    * email_start_send_time

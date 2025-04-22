@@ -27,7 +27,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   }
 
   const identity = new Identity(null);
-  const { isValid } = await identity.validateEvmWalletSignature({
+  const { isValid } = identity.validateEvmWalletSignature({
     walletAddress: body.address,
     signature: body.signature,
     signatureValidityMinutes: 10,

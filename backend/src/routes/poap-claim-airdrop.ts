@@ -57,15 +57,18 @@ export async function resolve(req: Request, res: Response): Promise<void> {
 
   if (!dropReservation.exists()) {
     dropReservation = await createDropReservation(
-        context,
-        +poapId,
-        new DropReservation({
-            wallet,
-            airdropStatus: AirdropStatus.PENDING,
-            email,
-            poapDrop_id: poapId
-        }, {context})
-    )
+      context,
+      +poapId,
+      new DropReservation(
+        {
+          wallet,
+          airdropStatus: AirdropStatus.PENDING,
+          email,
+          poapDrop_id: poapId,
+        },
+        { context },
+      ),
+    );
   }
 
   if (
