@@ -25,6 +25,7 @@ export default defineNuxtConfig({
       API_BASE: '',
       CHAIN_ID: moonbaseAlpha.id,
       CLAIM_START: 0,
+      CLAIM_END: 0,
       CLAIM_TYPE: ClaimType.AIRDROP,
       CONTRACT_ADDRESS: '',
       EMBEDDED_WALLET_CLIENT: '',

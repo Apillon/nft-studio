@@ -1,4 +1,4 @@
-import { useContract, useWallet } from '@apillon/wallet-vue';
+import { useWallet } from '@apillon/wallet-vue';
 import { useChainId, useChains, useSwitchChain, useConnectorClient } from '@wagmi/vue';
 import type { Address } from 'viem';
 import { createPublicClient, getContract, http } from 'viem';
@@ -10,6 +10,7 @@ export default function useClaim() {
   const message = useMessage();
   const config = useRuntimeConfig();
   const { wallet } = useWallet();
+  const { parseIpnsLink } = useIpns();
   const { walletAddress } = useWalletConnect();
 
   const chainId = useChainId();
@@ -53,9 +54,7 @@ export default function useClaim() {
   async function getTokenUri(id: number) {
     await initContract();
     const uri = (await contract.value.read.tokenURI([id])) as string;
-    return uri.includes('ipns')
-      ? 'http://k2k4r8m9sxm9rbgm7n8poo30dt1m9sy629d9qo2gaiqi8hp2gd301j4e.ipns.eu1.web3approved.com/2.json?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJjaWQiOiJrMms0cjhtOXN4bTlyYmdtN244cG9vMzBkdDFtOXN5NjI5ZDlxbzJnYWlxaThocDJnZDMwMWo0ZSIsInByb2plY3RfdXVpZCI6ImY2N2RkOTlhLTY5ZDEtNGY2Zi05Y2QzLWYwYWMyZDdmYWRjNCIsImlhdCI6MTc0NDk3ODM5Nywic3ViIjoiSVBGUy10b2tlbiJ9.HZ_HD_c2iZfq8LxYi9FED5WaqEqSgt9gXVfOs3S9WoU'
-      : uri;
+    return await parseIpnsLink(uri);
   }
 
   /** Actions */

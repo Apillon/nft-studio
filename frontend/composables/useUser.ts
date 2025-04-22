@@ -24,6 +24,12 @@ export default function useUser() {
   );
 
   /** GETTERS */
+  async function getBalance() {
+    if (!userStore.hasBalance) {
+      await fetchBalance();
+    }
+    return userStore.balance;
+  }
   async function getStatistics() {
     if (!userStore.hasStatistics) {
       await fetchStatistics();
@@ -52,10 +58,18 @@ export default function useUser() {
     userStore.loading = false;
   }
 
+  async function fetchBalance() {
+    try {
+      const { data } = await $api.get<BalanceResponse>('/project');
+      userStore.balance = data.balance;
+    } catch (error) {
+      handleError(error);
+    }
+  }
   async function fetchStatistics() {
     try {
-      const res = await $api.get<StatisticsResponse>('/users/statistics');
-      userStore.statistics = res.data;
+      const { data } = await $api.get<StatisticsResponse>('/statistics');
+      userStore.statistics = data;
     } catch (error) {
       handleError(error);
     }

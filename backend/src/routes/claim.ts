@@ -1,12 +1,9 @@
 import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
-import { RouteErrorCode, ValidatorErrorCode } from '../config/values';
+import { RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
-import { readEmailAirdropToken } from '../lib/jwt';
 import { AirdropStatus, User } from '../models/user';
-import { Identity, LogLevel, Nft } from '@apillon/sdk';
-import { LogType, writeLog } from '../lib/logger';
-import { env } from '../config/env';
+import { Identity } from '@apillon/sdk';
 import { claim } from '../lib/claim';
 
 /**∂
@@ -14,7 +11,7 @@ import { claim } from '../lib/claim';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/users/claim', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/claim', (req: Request, res: Response, next: NextFunction) => {
     resolve(req, res).catch(next);
   });
 }
@@ -57,7 +54,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   await user.update();
 
   return res.respond(200, {
-    success: 'ok',
+    success: true,
     transactionHash: txHash,
   });
 }

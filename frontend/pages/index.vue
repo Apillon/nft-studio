@@ -1,10 +1,14 @@
 <script lang="ts" setup>
 import { useWallet } from '@apillon/wallet-vue';
+import { ClaimType } from '~/lib/values/general.values';
 
 useHead({ title: 'NFT Studio' });
 
+const config = useRuntimeConfig();
 const { wallet } = useWallet();
 const { isLoggedIn, initEmbeddedWallet } = useWalletConnect();
+
+const type = config.public.CLAIM_TYPE;
 
 onMounted(() => {
   if (!isLoggedIn.value) {
@@ -37,5 +41,7 @@ function openEmbeddedWallet() {
     </div>
     <Footer />
   </div>
+  <Poap v-else-if="Number(type) === ClaimType.POAP" />
+  <TablePoapReservation v-else-if="Number(type) === ClaimType.FREE_MINT" />
   <Airdrop v-else />
 </template>

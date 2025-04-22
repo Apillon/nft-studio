@@ -1,4 +1,4 @@
-import { useUserStore } from '~/stores/user';
+import { useAuthStore } from '~/stores/auth';
 
 /**
  * Use in page components:
@@ -7,13 +7,13 @@ import { useUserStore } from '~/stores/user';
     });
  */
 export default defineNuxtRouteMiddleware(_to => {
-  const user = useUserStore();
+  const authStore = useAuthStore();
 
   if (process?.server) {
     return;
   }
 
-  if (!user.loggedIn) {
+  if (!authStore.loggedIn) {
     return navigateTo('/');
   }
 });

@@ -11,7 +11,7 @@ import { claim } from '../lib/claim';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/users/claim-whitelist', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/claim/whitelist', (req: Request, res: Response, next: NextFunction) => {
     resolve(req, res).catch(next);
   });
 }

@@ -31,12 +31,12 @@ const data = computed(() => {
   // TODO: group data by createTime, so all users with the same createTime are grouped together as children
   return props.users.reduce(
     (acc, user) => {
-      const date = dateTimeToDateAndTime(user.createTime);
+      const date = dateTimeToDateAndTime(user?.createTime || '');
       if (!acc[date]) {
         acc[date] = {
           batch: (Object.keys(acc).length || 0) + 1,
           date,
-          email_sent_time: dateTimeToDate(user.createTime),
+          email_sent_time: dateTimeToDate(user?.createTime || ''),
           children: [],
         };
       }

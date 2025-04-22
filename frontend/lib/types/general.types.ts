@@ -40,6 +40,9 @@ declare global {
   type GeneralResponse<T> = { data: T; id: string; status: number };
   type GeneralItemsResponse<T> = { data: { items: Array<T>; total: number }; id: string; status: number };
   type SuccessResponse = GeneralResponse<{ success: boolean }>;
+  type BalanceResponse = GeneralResponse<{ balance: number }>;
+  type IpnsResponse = GeneralResponse<{ link: string }>;
+  type TokenResponse = GeneralResponse<{ token: string }>;
   type ClaimResponse = GeneralResponse<{ success: boolean; transactionHash: string }>;
 
   interface UserInterface {
@@ -57,6 +60,7 @@ declare global {
     wallet: string | null;
   }
 
+  type UserResponse = GeneralResponse<UserInterface>;
   type UsersResponse = GeneralItemsResponse<UserInterface>;
 
   type LoginInterface = { jwt: string };

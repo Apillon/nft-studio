@@ -91,7 +91,7 @@ function parseUploadedFile(file?: File | null) {
       }
     },
     error: function (error: string) {
-      console.log(error);
+      console.error(error);
       uploadedFile.value = null;
     },
   });

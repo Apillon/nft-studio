@@ -17,7 +17,6 @@ export function inject(app: Application) {
 
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
-  console.log(body);
   const users = new BatchUsers({}, context).populate(body, PopulateStrategy.ADMIN);
 
   try {

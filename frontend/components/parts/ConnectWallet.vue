@@ -1,5 +1,5 @@
 <template>
-  <div v-if="connected && (!admin || authStore.loggedIn)" class="flex gap-2 items-center">
+  <div v-if="connected && (!admin || authStore.loggedIn)" class="flex justify-end gap-2 items-center">
     <strong v-if="walletAddress"> ({{ shortHash(walletAddress) }}) </strong>
     <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()"> Disconnect </Btn>
   </div>

@@ -2,16 +2,22 @@
 import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
 
+const config = useRuntimeConfig();
+const router = useRouter();
+const message = useMessage();
+const type = config.public.CLAIM_TYPE;
+
 definePageMeta({
   layout: 'claim',
 });
 useHead({
-  title: 'Apillon email airdrop prebuilt solution',
+  title:
+    type === ClaimType.POAP
+      ? 'Apillon POAP prebuilt solution'
+      : type === ClaimType.FREE_MINT
+        ? 'Apillon Gasless mint prebuilt solution'
+        : 'Apillon email airdrop prebuilt solution',
 });
-
-const router = useRouter();
-const message = useMessage();
-const config = useRuntimeConfig();
 
 const { query } = useRoute();
 const { handleError } = useErrors();
@@ -23,10 +29,9 @@ const metadata = ref<Metadata | null>(null);
 const timestamp = ref<number>(new Date().getTime());
 const walletSignature = ref<string | undefined>();
 
-const type = ClaimType.AIRDROP;
 const timeToStart = computed(() => Number(config.public.CLAIM_START) - timestamp.value);
 const isWhitelist = computed(() => Number(type) === ClaimType.WHITELIST);
-const isAirdrop = computed(() => Number(type) === ClaimType.AIRDROP);
+const isAirdrop = computed(() => Number(type) === ClaimType.AIRDROP || Number(type) === ClaimType.POAP);
 
 watch(
   () => walletAddress.value,
@@ -51,7 +56,7 @@ async function validateWallet() {
   }
 
   try {
-    const { data } = await $api.post<SuccessResponse>('/users/validate', {
+    const { data } = await $api.post<SuccessResponse>('/claim/validate', {
       signature,
       address: walletAddress.value,
       timestamp: timestamp.value,

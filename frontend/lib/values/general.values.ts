@@ -14,6 +14,7 @@ export enum ClaimType {
   AIRDROP = 1,
   WHITELIST = 2,
   FREE_MINT = 3,
+  POAP = 4,
 }
 
 /** NFT Chains */
@@ -42,4 +43,13 @@ export enum AirdropStatus {
   AIRDROP_ERROR = 7,
   AIRDROP_CLAIM_EXPIRED = 8,
   IN_WAITING_LINE = 9,
+}
+
+/**
+ * 0 = Not yet started, 1 = In progress, 2 = Finished
+ */
+export enum PoapStatus {
+  WAITING = 0,
+  IN_PROGRESS = 1,
+  FINISHED = 2,
 }

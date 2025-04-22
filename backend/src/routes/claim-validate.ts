@@ -10,7 +10,7 @@ import { Identity } from '@apillon/sdk';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/users/validate', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/claim/validate', (req: Request, res: Response, next: NextFunction) => {
     resolve(req, res).catch(next);
   });
 }
@@ -23,7 +23,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   }
 
   const identity = new Identity(null);
-  const { isValid } = await identity.validateEvmWalletSignature({
+  const { isValid } = identity.validateEvmWalletSignature({
     walletAddress: body.address,
     signature: body.signature,
     signatureValidityMinutes: 10,

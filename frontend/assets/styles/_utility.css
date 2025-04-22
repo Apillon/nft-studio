@@ -45,7 +45,7 @@
   }
   /** scrollbar */
   .scrollable {
-    @apply transition-all duration-300;
+    @apply transition-all duration-300 cursor-grab;
 
     &::-webkit-scrollbar-thumb,
     &::-webkit-scrollbar-track {

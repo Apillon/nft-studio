@@ -8,13 +8,9 @@ import { User } from '../models/user';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.get(
-    '/users/statistics',
-    AuthenticateAdmin,
-    (req: Request, res: Response, next: NextFunction) => {
-      resolve(req, res).catch(next);
-    },
-  );
+  app.get('/statistics', AuthenticateAdmin, (req: Request, res: Response, next: NextFunction) => {
+    resolve(req, res).catch(next);
+  });
 }
 
 /**

@@ -20,21 +20,25 @@ const { walletAddress, sign } = useWalletConnect();
 const loading = ref<boolean>(false);
 const walletUsed = ref<boolean>(false);
 
+const getURI = () => {
+  switch (props.type) {
+    case ClaimType.FREE_MINT:
+      return '/claim';
+    case ClaimType.WHITELIST:
+      return 'claim/whitelist';
+    default:
+      return 'claim/airdrop';
+  }
+};
+
 async function claim() {
   loading.value = true;
 
   try {
-    const URI =
-      props.type === ClaimType.FREE_MINT
-        ? '/users/claim'
-        : props.type === ClaimType.WHITELIST
-          ? '/users/claim-whitelist'
-          : '/users/claim-airdrop';
-
     const timestamp = props.timestamp || new Date().getTime();
     const signature = props.signature || (await sign(`test\n${timestamp}`).catch(e => contractError(e)));
 
-    const { data } = await $api.post<ClaimResponse>(URI, {
+    const { data } = await $api.post<ClaimResponse>(getURI(), {
       jwt: props.type === ClaimType.AIRDROP ? props.token : undefined,
       signature,
       timestamp,

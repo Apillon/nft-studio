@@ -263,8 +263,6 @@ export class User extends BaseSqlModel {
     if (filters.limit === -1) {
       filters.limit = null;
     }
-
-    let serializedStrategy = SerializedStrategy.ADMIN;
     const sqlQuery = {
       qSelect: `
         SELECT
@@ -289,17 +287,9 @@ export class User extends BaseSqlModel {
       `,
     };
 
-    const { items, total } = await selectAndCountQuery(this.db(), sqlQuery, params, 'u.id');
     const conn = await this.db().db.getConnection();
     try {
-      const populatedItems = await Promise.all(
-        items.map(async item => {
-          const u = new User({}, this.getContext()).populate(item, PopulateStrategy.DB);
-          return u.serialize(serializedStrategy);
-        })
-      );
-      await conn.release();
-      return { items: populatedItems, total };
+      return await selectAndCountQuery(this.db(), sqlQuery, params, 'u.id');
     } catch (e) {
       throw e;
     } finally {

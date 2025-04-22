@@ -18,15 +18,11 @@ import { inject as injectClaim } from './routes/claim';
 import { inject as injectClaimAirdrop } from './routes/claim-airdrop';
 import { inject as injectClaimValidate } from './routes/claim-validate';
 import { inject as injectClaimWhitelist } from './routes/claim-whitelist';
-import { inject as injectGetProject} from './routes/get-project';
-import {inject as injectPoapDrop} from './routes/poap-drop';
+import { inject as injectGetProject } from './routes/get-project';
+import { inject as injectGetIpns } from './routes/get-ipns';
 import { inject as injectDropReservationToken } from './routes/drop-reservation-token';
-import { inject as injectGetCollections } from './routes/get-collection';
 import { inject as injectReserveDrop } from './routes/reserve-drop';
-import { inject as injectPoapClaimAirdrop} from './routes/poap-claim-airdrop';
-
-
-
+import { inject as injectClaimPoapAirdrop } from './routes/claim-poap-airdrop';
 
 export interface Request extends express.Request {
   context: Context;
@@ -90,11 +86,10 @@ export class HttpServer {
     injectGetStatistics(this.app);
     injectGetUser(this.app);
     injectGetProject(this.app);
-    injectPoapDrop(this.app);
+    injectGetIpns(this.app);
     injectDropReservationToken(this.app);
-    injectGetCollections(this.app);
     injectReserveDrop(this.app);
-    injectPoapClaimAirdrop(this.app);
+    injectClaimPoapAirdrop(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);

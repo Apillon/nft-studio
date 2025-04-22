@@ -26,6 +26,13 @@ export enum DefaultUserRoles {
   USER = 2,
 }
 
+export enum ClaimType {
+  AIRDROP = 1,
+  WHITELIST = 2,
+  FREE_MINT = 3,
+  POAP = 4,
+}
+
 /**
  * Default pagination values.
  */
@@ -69,7 +76,7 @@ export enum AuthorizationErrorCode {
   UNAUTHORIZED = 403003,
   NOT_ACTIVATED = 403004,
   INVALID_TOKEN = 403005,
-  TOKEN_EXPIRED = 403006
+  TOKEN_EXPIRED = 403006,
 }
 
 /**
@@ -108,17 +115,6 @@ export enum RouteErrorCode {
   INVALID_ADMIN = 400009,
   AIRDROP_ERROR = 400010,
   WALLET_NOT_VALID = 400011,
-  POAP_DROP_DOES_NOT_EXISTS = 400011,
   DROP_ALREADY_RESERVED = 400012,
   DROP_RESERVATION_DOES_NOT_EXISTS = 400013,
-}
-
-export enum AirdropStatus {
-  PENDING = 1,
-  EMAIL_SENT = 2,
-  EMAIL_ERROR = 3,
-  WALLET_LINKED = 4,
-  TRANSACTION_CREATED = 5,
-  AIRDROP_COMPLETED = 6,
-  AIRDROP_ERROR = 7,
 }

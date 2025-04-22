@@ -17,6 +17,7 @@
     "buffer": "^6.0.3",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.9",
+    "jwt-decode": "^4.0.0",
     "query-string": "^9.1.0",
     "viem": "^2.23.4",
     "vue-papa-parse": "^3.1.0",

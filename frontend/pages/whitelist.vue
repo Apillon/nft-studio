@@ -38,7 +38,7 @@ async function validateWallet() {
 
   loading.value = true;
   try {
-    const { data } = await $api.post<SuccessResponse>('/users/validate', {
+    const { data } = await $api.post<SuccessResponse>('/claim/validate', {
       signature,
       address: walletAddress.value,
       timestamp: timestamp.value,
