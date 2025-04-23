@@ -27,25 +27,23 @@ export function stringLowerCaseParser() {
 }
 
 export function utcDateParser() {
-  const parser = dateParser();
-  return {
-    resolver: (value: any) => {
-      const parsedDate = parser(value);
-      if (parsedDate instanceof Date) {
-        return new Date(
-          Date.UTC(
-            parsedDate.getUTCFullYear(),
-            parsedDate.getUTCMonth(),
-            parsedDate.getUTCDate(),
-            parsedDate.getUTCHours(),
-            parsedDate.getUTCMinutes(),
-            parsedDate.getUTCSeconds(),
-            parsedDate.getUTCMilliseconds()
-          )
-        );
-      }
-      return parsedDate;
-    },
+  return (value: any) => {
+    const parser = dateParser();
+    const parsedDate = parser(value);
+    if (parsedDate instanceof Date) {
+      return new Date(
+        Date.UTC(
+          parsedDate.getUTCFullYear(),
+          parsedDate.getUTCMonth(),
+          parsedDate.getUTCDate(),
+          parsedDate.getUTCHours(),
+          parsedDate.getUTCMinutes(),
+          parsedDate.getUTCSeconds(),
+          parsedDate.getUTCMilliseconds()
+        )
+      );
+    }
+    return parsedDate;
   };
 }
 

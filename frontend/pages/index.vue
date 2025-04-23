@@ -8,7 +8,8 @@ const config = useRuntimeConfig();
 const { wallet } = useWallet();
 const { isLoggedIn, initEmbeddedWallet } = useWalletConnect();
 
-const type = config.public.CLAIM_TYPE;
+const type = ClaimType.WHITELIST;
+// const type = config.public.CLAIM_TYPE;
 
 onMounted(() => {
   if (!isLoggedIn.value) {
@@ -35,8 +36,8 @@ function openEmbeddedWallet() {
     <div class="my-8 text-center max-w-xl mx-auto">
       <h6 class="mb-2">Having trouble logging in?</h6>
       <p>
-        Only those with secret handshake (the designated wallet) can enter. Contact the master who set up your NFT
-        Studio to request access.
+        Only those with secret handshake (the designated wallet) can enter. Contact the master who
+        set up your NFT Studio to request access.
       </p>
     </div>
     <Footer />

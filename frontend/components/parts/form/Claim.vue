@@ -26,9 +26,9 @@ const getURI = () => {
     case ClaimType.FREE_MINT:
       return '/claim';
     case ClaimType.WHITELIST:
-      return 'claim/whitelist';
+      return '/claim/whitelist';
     default:
-      return 'claim/airdrop';
+      return '/claim/airdrop';
   }
 };
 
@@ -37,7 +37,8 @@ async function claim() {
 
   try {
     const timestamp = props.timestamp || new Date().getTime();
-    const signature = props.signature || (await sign(`test\n${timestamp}`).catch(e => contractError(e)));
+    const signature =
+      props.signature || (await sign(`test\n${timestamp}`).catch(e => contractError(e)));
 
     const { data } = await $api.post<ClaimResponse>(getURI(), {
       jwt: props.type === ClaimType.AIRDROP ? props.token : undefined,
@@ -83,8 +84,8 @@ async function claim() {
     <div class="my-8 text-center">
       <h3 class="mb-6">Great Success!</h3>
       <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is crucial for securely
-        receiving and managing the airdropped NFTs.
+        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is
+        crucial for securely receiving and managing the airdropped NFTs.
       </p>
     </div>
     <Btn size="large" :loading="loading" :disabled="walletUsed" @click="claim()">Claim NFT</Btn>
