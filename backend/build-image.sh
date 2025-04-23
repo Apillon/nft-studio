@@ -1,8 +1,7 @@
 #!/bin/bash
 
-# set -e
-#source .env
-set +a
+set -e
+[[ -f .env ]] && source .env
 
 docker build \
     --build-arg APP_ENV \
