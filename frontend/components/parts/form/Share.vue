@@ -1,8 +1,16 @@
 <script lang="ts" setup>
-import type { PropType } from 'vue';
-defineProps({
+const props = defineProps({
   metadata: { type: Object as PropType<Metadata>, default: null },
   txHash: { type: String, default: null },
+});
+const { parseLink } = useIpns();
+
+const loading = ref(true);
+const imageLink = ref(props.metadata.image);
+
+onMounted(async () => {
+  imageLink.value = await parseLink(props.metadata?.image || '');
+  loading.value = false;
 });
 </script>
 
@@ -13,7 +21,10 @@ defineProps({
     </div>
 
     <div class="rounded-lg overflow-hidden mb-6">
-      <img :src="parseImage(`${metadata.image}`)" class="w-full" alt="nft" />
+      <div v-if="loading" class="w-full h-40 flex-cc">
+        <Spinner :size="36" />
+      </div>
+      <img v-else-if="imageLink" :src="imageLink" class="w-full" alt="nft" />
 
       <div class="p-6 bg-grey-dark text-white">
         <h5>{{ metadata.name }}</h5>

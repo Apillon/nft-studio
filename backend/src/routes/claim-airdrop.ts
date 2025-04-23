@@ -5,7 +5,7 @@ import { ResourceError } from '../lib/errors';
 import { readEmailAirdropToken } from '../lib/jwt';
 import { User } from '../models/user';
 import { Identity } from '@apillon/sdk';
-import { claim } from '../lib/claim';
+import { claim, validateAirdropStatus, validateEvmWallet } from '../lib/claim';
 import { env } from '../config/env';
 
 /**
@@ -21,23 +21,8 @@ export function inject(app: Application) {
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 
-  if (!body.signature || !body.address) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
-
-  const identity = new Identity(null);
-  const { isValid } = identity.validateEvmWalletSignature({
-    walletAddress: body.address,
-    signature: body.signature,
-    signatureValidityMinutes: 10,
-    message: `test\n${body.timestamp}`,
-    timestamp: body.timestamp,
-  });
-
-  if (!isValid) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
   const wallet = body.address;
+  validateEvmWallet(wallet, body.signature, body.timestamp);
 
   if (!body.jwt) {
     throw new ResourceError(RouteErrorCode.REQUEST_TOKEN_NOT_PRESENT);
@@ -56,17 +41,6 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     } else {
       throw new ResourceError(RouteErrorCode.USER_DOES_NOT_EXIST);
     }
-  }
-
-  if (
-    ![
-      AirdropStatus.PENDING,
-      AirdropStatus.EMAIL_SENT,
-      AirdropStatus.WALLET_LINKED,
-      AirdropStatus.EMAIL_ERROR,
-    ].includes(user.airdrop_status)
-  ) {
-    throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
   }
 
   user.airdrop_status = AirdropStatus.WALLET_LINKED;

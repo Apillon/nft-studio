@@ -110,7 +110,5 @@ export const queryParam = (param: LocationQueryValue | LocationQueryValue[]) => 
   return Array.isArray(param) ? String(param.join()) : param ? String(param) : undefined;
 };
 export const parseImage = (img: string) => {
-  return img.startsWith('ipfs://')
-    ? removeLastSlash(img).replace('ipfs://', 'https://') + '.ipfs.nftstorage.link/'
-    : img;
+  return img.startsWith('ipfs://') ? removeLastSlash(img).replace('ipfs://', 'https://') + '.ipfs.dweb.link' : img;
 };

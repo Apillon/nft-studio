@@ -13,6 +13,19 @@ export function stringTrimParser() {
   };
 }
 
+/**
+ * Returns parser function which converts a value to a string.
+ */
+export function stringLowerCaseParser() {
+  return (value: any) => {
+    try {
+      return value.toString().toLowerCase();
+    } catch (e) {
+      return null;
+    }
+  };
+}
+
 export function utcDateParser() {
   const parser = dateParser();
   return {
@@ -27,8 +40,8 @@ export function utcDateParser() {
             parsedDate.getUTCHours(),
             parsedDate.getUTCMinutes(),
             parsedDate.getUTCSeconds(),
-            parsedDate.getUTCMilliseconds(),
-          ),
+            parsedDate.getUTCMilliseconds()
+          )
         );
       }
       return parsedDate;

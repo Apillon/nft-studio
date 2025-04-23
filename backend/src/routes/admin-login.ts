@@ -4,6 +4,7 @@ import { RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
 import { Identity } from '@apillon/sdk';
 import { generateAdminAuthToken } from '../lib/jwt';
+import { validateEvmWallet } from '../lib/claim';
 
 /**
  * Installs new route on the provided application.
@@ -18,23 +19,11 @@ export function inject(app: Application) {
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 
-  if (!body.signature) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
-
-  const identity = new Identity(null);
-
   if (!context.env.ADMIN_WALLET.includes(body.address?.toLowerCase())) {
     throw new ResourceError(RouteErrorCode.INVALID_ADMIN, context);
   }
 
-  const { isValid } = await identity.validateEvmWalletSignature({
-    walletAddress: body.address,
-    signature: body.signature,
-    signatureValidityMinutes: 10,
-    message: `test\n${body.timestamp}`,
-    timestamp: body.timestamp,
-  });
+  const isValid = validateEvmWallet(body.address, body.signature, body.timestamp);
 
   if (isValid) {
     const jwt = generateAdminAuthToken(body.address);

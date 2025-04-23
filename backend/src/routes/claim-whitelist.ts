@@ -3,8 +3,7 @@ import { NextFunction, Request, Response } from '../http';
 import { RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
 import { User } from '../models/user';
-import { Identity } from '@apillon/sdk';
-import { claim } from '../lib/claim';
+import { claim, validateEvmWallet } from '../lib/claim';
 
 /**∂
  * Installs new route on the provided application.
@@ -19,24 +18,10 @@ export function inject(app: Application) {
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 
-  if (!body.signature || !body.address) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
+  const wallet = body.address;
+  validateEvmWallet(wallet, body.signature, body.timestamp);
 
-  const identity = new Identity(null);
-  const { isValid } = identity.validateEvmWalletSignature({
-    walletAddress: body.address,
-    signature: body.signature,
-    signatureValidityMinutes: 10,
-    message: `test\n${body.timestamp}`,
-    timestamp: body.timestamp,
-  });
-
-  if (!isValid) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
-
-  const user = await new User({}, context).populateByWallet(body.address);
+  const user = await new User({}, context).populateByWallet(wallet);
 
   if (!user.exists()) {
     throw new ResourceError(RouteErrorCode.WALLET_NOT_VALID);

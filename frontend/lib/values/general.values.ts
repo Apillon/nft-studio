@@ -6,6 +6,7 @@ export const Environments = {
 
 export const WebStorageKeys = {
   AUTH: 'nft_studio_auth',
+  IPNS: 'nft_studio_ipns',
   USER: 'nft_studio_user',
   APP_VERSION: 'nft_studio_version',
 };

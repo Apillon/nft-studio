@@ -82,6 +82,7 @@ export const ErrorCodes = {
   422007: 'Captcha error. Please solve the captcha again.',
   422008: 'User has already minted. Duplicate minting is not allowed.',
   422009: 'Wallet belongs to another user. Please log in with a different wallet.',
+  422013: 'Wallet address is not valid.',
 
   // SystemErrorCode
   500000: 'DEFAULT_SYSTEM_ERROR',

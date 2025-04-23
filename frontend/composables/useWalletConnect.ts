@@ -1,9 +1,8 @@
 import type { Events } from '@apillon/wallet-sdk';
 import type { Config } from '@wagmi/vue';
-import { useAccount, useDisconnect } from '@wagmi/vue';
+import { useAccount, useChainId, useChains, useDisconnect, useSwitchChain } from '@wagmi/vue';
 import { useAccount as useAccountEW, useWallet } from '@apillon/wallet-vue';
 import { signMessage } from '@wagmi/vue/actions';
-import { moonbeam, moonbaseAlpha } from '@wagmi/vue/chains';
 
 export default function useWalletConnect() {
   const config = useRuntimeConfig();
@@ -15,14 +14,17 @@ export default function useWalletConnect() {
   const { signMessage: signEW, wallet } = useWallet();
 
   /** Wagmi */
+  const chains = useChains();
+  const chainId = useChainId();
+  const { switchChain } = useSwitchChain();
   const { address, isConnected } = useAccount();
   const { disconnect } = useDisconnect();
   const { $wagmiConfig } = useNuxtApp();
 
   const loading = ref<boolean>(false);
   const modalWalletVisible = ref<boolean>(false);
-  const network = config.public.CHAIN_ID === moonbeam.id ? moonbeam : moonbaseAlpha;
 
+  const network = computed(() => chains.value.find(c => c.id === config.public.CHAIN_ID));
   const connected = computed(() => isConnected.value || !!info.activeWallet?.address);
   const walletAddress = computed(() => (isConnected.value ? address.value : info.activeWallet?.address));
   const isLoggedIn = computed(() => connected.value && authStore.loggedIn);
@@ -30,6 +32,13 @@ export default function useWalletConnect() {
   const sign = async (message: string) => {
     return isConnected.value ? await signMessage($wagmiConfig as Config, { message }) : await signEW(message);
   };
+
+  async function ensureCorrectNetwork() {
+    if (chainId?.value !== config.public.CHAIN_ID) {
+      await switchChain({ chainId: config.public.CHAIN_ID });
+    }
+    return true;
+  }
 
   async function login(admin = false) {
     if (loading.value || authStore.loggedIn || !admin) return;
@@ -95,6 +104,7 @@ export default function useWalletConnect() {
     network,
     walletAddress,
     disconnectWallet,
+    ensureCorrectNetwork,
     initEmbeddedWallet,
     login,
     sign,

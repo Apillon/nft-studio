@@ -1,5 +1,5 @@
-import { useWallet } from '@apillon/wallet-vue';
-import { useChainId, useChains, useSwitchChain, useConnectorClient } from '@wagmi/vue';
+import { useAccount, useWallet } from '@apillon/wallet-vue';
+import { useConnectorClient } from '@wagmi/vue';
 import type { Address } from 'viem';
 import { createPublicClient, getContract, http } from 'viem';
 import { abi } from '~/lib/config/abi';
@@ -10,25 +10,14 @@ export default function useClaim() {
   const message = useMessage();
   const config = useRuntimeConfig();
   const { wallet } = useWallet();
-  const { parseIpnsLink } = useIpns();
-  const { walletAddress } = useWalletConnect();
+  const { parseLink } = useIpns();
+  const { network, walletAddress, ensureCorrectNetwork } = useWalletConnect();
 
-  const chainId = useChainId();
-  const chains = useChains();
-  const { switchChain } = useSwitchChain();
+  const { info } = useAccount();
   const { data: walletClient, refetch } = useConnectorClient();
-
-  const chain = computed(() => chains.value.find(c => c.id === config.public.CHAIN_ID));
-  const publicClient = createPublicClient({ chain: chain.value, transport: http() });
+  const publicClient = createPublicClient({ chain: network.value, transport: http() });
 
   const contractAddress = config.public.CONTRACT_ADDRESS as Address;
-
-  async function ensureCorrectNetwork() {
-    if (chainId?.value !== config.public.CHAIN_ID) {
-      await switchChain({ chainId: config.public.CHAIN_ID });
-    }
-    return true;
-  }
 
   /**
    * Read contract
@@ -46,6 +35,11 @@ export default function useClaim() {
     });
   }
 
+  async function getBalance() {
+    await initContract();
+    return (await contract.value.read.balanceOf([walletAddress.value])) as bigint;
+  }
+
   async function getTokenOfOwner(index: number) {
     await initContract();
     return (await contract.value.read.tokenOfOwnerByIndex([walletAddress.value, index])) as number;
@@ -54,55 +48,67 @@ export default function useClaim() {
   async function getTokenUri(id: number) {
     await initContract();
     const uri = (await contract.value.read.tokenURI([id])) as string;
-    return await parseIpnsLink(uri);
+    return await parseLink(uri);
   }
 
   /** Actions */
   async function loadNft(nftId?: string | number) {
-    const id = nftId || (await getTokenOfOwner(0));
-    const url = await getTokenUri(Number(id));
+    try {
+      if (!nftId) {
+        const balance = await getBalance();
+        if (Number(balance) === 0) return null;
+      }
+      const id = nftId || (await getTokenOfOwner(0));
+      const url = await getTokenUri(Number(id));
+      const parsedUrl = await parseLink(url);
 
-    return await fetch(url).then(response => {
-      return response.json();
-    });
+      return await fetch(parsedUrl).then(response => {
+        return response.json();
+      });
+    } catch (e) {
+      console.error('Error loading NFT:', e);
+    }
+    return null;
   }
 
-  async function addNftId(nftId: string | number) {
+  async function addNftId(nftId: string | number, metadata: Metadata) {
     await ensureCorrectNetwork();
-
-    if (wallet.value) {
-      wallet.value?.events.emit('addTokenNft', {
-        address: contractAddress,
-        tokenId: Number(nftId),
-      });
-    } else {
-      try {
+    let success: any = false;
+    const image = await parseLink(metadata?.image || '');
+    console.log(info);
+    console.log(image);
+    try {
+      if (wallet.value && info.activeWallet?.address) {
+        success = wallet.value?.events.emit('addTokenNft', {
+          address: contractAddress,
+          tokenId: Number(nftId),
+          imageUrl: image,
+          name: metadata.name || '',
+        });
+      } else {
         if (!walletClient.value) {
           await refetch();
           await sleep(200);
         }
         // Use the Ethereum provider to watch the NFT asset
-        const success = await walletClient.value?.request({
+        success = await walletClient.value?.request({
           method: 'wallet_watchAsset',
           params: {
             type: 'ERC721',
             options: {
               address: contractAddress,
               tokenId: nftId.toString(),
+              image,
             },
           },
         });
-
-        if (success) {
-          message.success('NFT successfully imported into the wallet!');
-        } else {
-          message.error('Failed to import NFT into the wallet.');
-        }
-      } catch (error) {
-        console.error('Error importing NFT:', error);
-        message.error('An error occurred while importing the NFT.');
       }
+    } catch (e) {
+      console.error('Error importing NFT:', e);
     }
+    success
+      ? message.success('NFT successfully imported into the wallet!')
+      : message.error('Failed to import NFT into the wallet.');
   }
 
   function contractError(e: any, showError = true) {

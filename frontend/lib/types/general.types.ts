@@ -1,4 +1,5 @@
 import type { TagProps } from 'naive-ui';
+import type { Address } from 'viem';
 
 export type AuthResponseProfile = {
   id: number;
@@ -43,7 +44,7 @@ declare global {
   type BalanceResponse = GeneralResponse<{ balance: number }>;
   type IpnsResponse = GeneralResponse<{ link: string }>;
   type TokenResponse = GeneralResponse<{ token: string }>;
-  type ClaimResponse = GeneralResponse<{ success: boolean; transactionHash: string }>;
+  type ClaimResponse = GeneralResponse<{ success: boolean; transactionHash: Address }>;
 
   interface UserInterface {
     airdrop_status: number;

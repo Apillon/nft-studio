@@ -5,6 +5,7 @@ import { ClaimType } from '~/lib/values/general.values';
 const config = useRuntimeConfig();
 const router = useRouter();
 const message = useMessage();
+const { addNftId } = useClaim();
 const type = config.public.CLAIM_TYPE;
 
 definePageMeta({
@@ -38,6 +39,10 @@ watch(
   async _ => {
     if (walletAddress.value) {
       metadata.value = await loadNft();
+      if (metadata.value) {
+        console.log(metadata.value);
+        // addNftId(1, metadata.value);
+      }
     } else {
       metadata.value = null;
     }

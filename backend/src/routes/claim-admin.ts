@@ -6,12 +6,9 @@ import { RouteErrorCode } from '../config/values';
 import { claim } from '../lib/claim';
 
 export function inject(app: Application) {
-  app.post(
-    '/users/claim-admin',
-    (req: Request, res: Response, next: NextFunction) => {
-      resolve(req, res).catch(next);
-    },
-  );
+  app.post('/users/claim-admin', (req: Request, res: Response, next: NextFunction) => {
+    resolve(req, res).catch(next);
+  });
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import type { Address } from 'viem';
 import SuccessSVG from '~/assets/images/success.svg';
+import { createPublicClient, http } from 'viem';
 import { ClaimType } from '~/lib/values/general.values';
 
 const props = defineProps({
@@ -14,8 +14,9 @@ const emits = defineEmits(['claim']);
 
 const message = useMessage();
 const txWait = useTxWait();
-const { contractError, loadNft } = useClaim();
-const { walletAddress, sign } = useWalletConnect();
+const { contractError, loadNft, addNftId } = useClaim();
+const { network, walletAddress, sign } = useWalletConnect();
+const publicClient = createPublicClient({ chain: network.value, transport: http() });
 
 const loading = ref<boolean>(false);
 const walletUsed = ref<boolean>(false);
@@ -45,19 +46,20 @@ async function claim() {
       address: walletAddress.value,
     });
     if (data.success) {
-      txWait.hash.value = data.transactionHash as Address;
-
+      txWait.hash.value = data.transactionHash;
       console.debug('Transaction', txWait.hash.value);
       message.info('Your NFT Mint has started');
 
       const receipt = await txWait.wait();
-      console.debug(receipt);
+      const receipt1 = await publicClient.waitForTransactionReceipt({ hash: data.transactionHash });
       message.success('You successfully claimed NFT');
 
-      if (receipt.data?.to && receipt.data?.logs[0].topics[3]) {
-        const nftId = Number(receipt.data?.logs[0].topics[3]);
+      const logs = receipt1?.logs || receipt.data?.logs;
 
+      if (logs && logs[0].topics[3]) {
+        const nftId = Number(logs[0].topics[3]);
         const metadata = await loadNft(nftId);
+        setTimeout(() => addNftId(nftId, metadata), 1000);
 
         emits('claim', metadata, data.transactionHash);
       } else {

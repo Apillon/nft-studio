@@ -1,33 +1,35 @@
-const ipnsLink = ref('');
-const ipnsToken = ref('');
-
-export default function useClaim() {
+export default function useIpns() {
+  const ipnsStore = useIpnsStore();
   const { handleError } = useErrors();
 
-  async function getIpns(ipns: string) {
-    if (ipnsLink.value && ipnsToken.value) {
-      // return;
+  async function getLink(ipns: string, type = 'ipfs'): Promise<null | IPNS> {
+    if (ipnsStore.hasIpns(ipns)) {
+      return ipnsStore.links[ipns];
     }
     try {
-      const { data } = await $api.get<IpnsResponse>('/ipns-link/' + ipns);
+      const { data } = await $api.get<IpnsResponse>('/ipns-link/' + ipns, { type });
       const url = URL.parse(data.link);
-      ipnsLink.value = `${url?.origin}${url?.pathname}`;
-      ipnsToken.value = url?.search || '';
+
+      ipnsStore.links[ipns] = {
+        link: `${url?.origin}${url?.pathname}`,
+        token: url?.search || '',
+      };
+      return ipnsStore.links[ipns];
     } catch (error) {
       handleError(error);
     }
+    return null;
   }
 
-  async function parseIpnsLink(url: string) {
-    if (url.startsWith('ipns://')) {
+  async function parseLink(url: string) {
+    if (url.startsWith('ipns://') || url.startsWith('ipfs://')) {
       const ipnsUrl = new URL(url);
-      await getIpns(ipnsUrl.hostname);
-      return `${ipnsLink.value}${ipnsUrl.pathname}${ipnsToken.value}`;
-    } else if (url.startsWith('ipfs://')) {
-      return parseImage(url);
-    }
+      const type = url.startsWith('ipns://') ? 'ipns' : 'ipfs';
+      const ipns = await getLink(ipnsUrl.hostname, type);
 
+      return ipns ? `${ipns.link}${removeLastSlash(ipnsUrl.pathname)}${ipns.token}` : url;
+    }
     return url;
   }
-  return { parseIpnsLink };
+  return { parseLink };
 }
