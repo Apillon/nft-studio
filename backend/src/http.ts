@@ -22,7 +22,7 @@ import { inject as injectGetProject } from './routes/get-project';
 import { inject as injectGetIpns } from './routes/get-ipns';
 import { inject as injectDropReservationToken } from './routes/drop-reservation-token';
 import { inject as injectReserveDrop } from './routes/reserve-drop';
-import { inject as injectClaimPoapAirdrop } from './routes/claim-poap-airdrop';
+import { inject as injectSendClaimMail } from './routes/send-claim-mail';
 
 export interface Request extends express.Request {
   context: Context;
@@ -89,7 +89,7 @@ export class HttpServer {
     injectGetIpns(this.app);
     injectDropReservationToken(this.app);
     injectReserveDrop(this.app);
-    injectClaimPoapAirdrop(this.app);
+    injectSendClaimMail(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);

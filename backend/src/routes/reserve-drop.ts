@@ -1,9 +1,9 @@
 import { Application } from 'express';
-import { AuthorizationErrorCode, RouteErrorCode, SerializedStrategy } from '../config/values';
+import { AirdropStatus, AuthorizationErrorCode, RouteErrorCode, SerializedStrategy } from '../config/values';
 import { NextFunction, Request, Response } from '../http';
 import { ResourceError } from '../lib/errors';
 import { generateEmailAirdropToken, readDropReservationToken } from '../lib/jwt';
-import { AirdropStatus, User } from '../models/user';
+import { User } from '../models/user';
 import { SmtpSendTemplate } from '../lib/node-mailer';
 import { env } from '../config/env';
 

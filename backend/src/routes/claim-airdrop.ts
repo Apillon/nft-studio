@@ -1,9 +1,9 @@
 import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
-import { ClaimType, RouteErrorCode } from '../config/values';
+import { ClaimType, AirdropStatus, RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
 import { readEmailAirdropToken } from '../lib/jwt';
-import { AirdropStatus, User } from '../models/user';
+import { User } from '../models/user';
 import { Identity } from '@apillon/sdk';
 import { claim } from '../lib/claim';
 import { env } from '../config/env';

@@ -1,9 +1,9 @@
 import { LogLevel, Nft } from '@apillon/sdk';
 import { env } from '../config/env';
-import { AirdropStatus, User } from '../models/user';
+import { User } from '../models/user';
 import { LogType, writeLog } from './logger';
 import { ResourceError } from './errors';
-import { RouteErrorCode } from '../config/values';
+import { AirdropStatus, RouteErrorCode } from '../config/values';
 
 export async function claim(user: User): Promise<string> {
   const collection = new Nft({
