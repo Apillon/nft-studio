@@ -8,8 +8,17 @@ import { AuthorizationErrorCode } from '../config/values';
  * @param _res Express response
  * @param next Express next function
  */
-export async function AuthenticateAdmin(req: Request, _res: Response, next: NextFunction) {
-  const token = (req.header('authToken') || req.header('Authorization') || req.query['token'] || ' ')
+export async function AuthenticateAdmin(
+  req: Request,
+  _res: Response,
+  next: NextFunction,
+) {
+  const token = (
+    req.header('authToken') ||
+    req.header('Authorization') ||
+    req.query['token'] ||
+    ' '
+  )
     .toString()
     .split(' ')
     .reverse()[0];
@@ -20,8 +29,8 @@ export async function AuthenticateAdmin(req: Request, _res: Response, next: Next
       new UnauthorizedError(
         AuthorizationErrorCode.MISSING_AUTH_TOKEN,
         context,
-        'authentication-middleware/AuthenticateUser'
-      )
+        'authentication-middleware/AuthenticateUser',
+      ),
     );
     return;
   }
@@ -33,6 +42,10 @@ export async function AuthenticateAdmin(req: Request, _res: Response, next: Next
     return;
   }
   next(
-    new UnauthorizedError(AuthorizationErrorCode.UNAUTHORIZED, context, 'authentication-middleware/AuthenticateUser')
+    new UnauthorizedError(
+      AuthorizationErrorCode.UNAUTHORIZED,
+      context,
+      'authentication-middleware/AuthenticateUser',
+    ),
   );
 }

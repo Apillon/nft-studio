@@ -23,6 +23,7 @@ import { inject as injectGetIpns } from './routes/get-ipns';
 import { inject as injectDropReservationToken } from './routes/drop-reservation-token';
 import { inject as injectReserveDrop } from './routes/reserve-drop';
 import { inject as injectSendClaimMail } from './routes/send-claim-mail';
+import { inject as injectClaimAdmin } from './routes/claim-admin';
 
 export interface Request extends express.Request {
   context: Context;
@@ -90,6 +91,7 @@ export class HttpServer {
     injectDropReservationToken(this.app);
     injectReserveDrop(this.app);
     injectSendClaimMail(this.app);
+    injectClaimAdmin(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);
@@ -102,8 +104,11 @@ export class HttpServer {
    * @param port Server listening port.
    */
   public async listen() {
-    await new Promise(res => {
-      this.server = this.app.listen(this.config.env.API_PORT, this.config.env.API_HOST);
+    await new Promise((res) => {
+      this.server = this.app.listen(
+        this.config.env.API_PORT,
+        this.config.env.API_HOST,
+      );
       res(null);
     });
 
@@ -114,7 +119,7 @@ export class HttpServer {
    * Stops the server.
    */
   public async close() {
-    await new Promise(resolve => {
+    await new Promise((resolve) => {
       this.server.close(resolve);
       this.server = null;
     });

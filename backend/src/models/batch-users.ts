@@ -1,5 +1,10 @@
 import { arrayLengthValidator, presenceValidator } from '@rawmodel/validators';
-import { PopulateStrategy, SerializedStrategy, SystemErrorCode, ValidatorErrorCode } from '../config/values';
+import {
+  PopulateStrategy,
+  SerializedStrategy,
+  SystemErrorCode,
+  ValidatorErrorCode,
+} from '../config/values';
 import { BaseSqlModel, prop } from './base-sql-model';
 import { User } from './user';
 import { Context } from '../context';
@@ -14,8 +19,16 @@ export class BatchUsers extends BaseSqlModel {
    */
   @prop({
     parser: { resolver: User, array: true },
-    populatable: [PopulateStrategy.DB, PopulateStrategy.PROFILE, PopulateStrategy.ADMIN],
-    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    populatable: [
+      PopulateStrategy.DB,
+      PopulateStrategy.PROFILE,
+      PopulateStrategy.ADMIN,
+    ],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     validators: [
       {
         resolver: presenceValidator(),
@@ -46,7 +59,12 @@ export class BatchUsers extends BaseSqlModel {
       await this.db().commit(conn);
     } catch (err) {
       await this.db().rollback(conn);
-      throw new SqlError(err, this.getContext(), SystemErrorCode.DATABASE_ERROR, 'disinfection-block-batch/create');
+      throw new SqlError(
+        err,
+        this.getContext(),
+        SystemErrorCode.DATABASE_ERROR,
+        'disinfection-block-batch/create',
+      );
     } finally {
       conn.release();
     }
@@ -71,14 +89,14 @@ export class BatchUsers extends BaseSqlModel {
         const createQuery = `
         INSERT INTO \`${this._tableName}\`
         ( ${Object.keys(batch[0])
-          .map(x => `\`${x}\``)
+          .map((x) => `\`${x}\``)
           .join(', ')} )
         VALUES
           ${batch
             .map((serializedModel, idx) => {
               return `(
               ${Object.keys(serializedModel)
-                .map(key => {
+                .map((key) => {
                   return `@${idx}_${key}`;
                 })
                 .join(', ')}

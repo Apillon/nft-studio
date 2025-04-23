@@ -59,9 +59,12 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   }
 
   if (
-    ![AirdropStatus.PENDING, AirdropStatus.EMAIL_SENT, AirdropStatus.WALLET_LINKED, AirdropStatus.EMAIL_ERROR].includes(
-      user.airdrop_status
-    )
+    ![
+      AirdropStatus.PENDING,
+      AirdropStatus.EMAIL_SENT,
+      AirdropStatus.WALLET_LINKED,
+      AirdropStatus.EMAIL_ERROR,
+    ].includes(user.airdrop_status)
   ) {
     throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
   }
