@@ -13,7 +13,7 @@ import { env } from '../config/env';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/claim/airdrop', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/claim-airdrop', (req: Request, res: Response, next: NextFunction) => {
     resolve(req, res).catch(next);
   });
 }

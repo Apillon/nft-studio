@@ -1,12 +1,30 @@
 <template>
-  <div v-if="connected && (!admin || authStore.loggedIn)" class="flex justify-end gap-2 items-center">
+  <div
+    v-if="connected && (!admin || authStore.loggedIn)"
+    v-bind="$attrs"
+    class="flex justify-end gap-2 items-center"
+  >
     <strong v-if="walletAddress"> ({{ shortHash(walletAddress) }}) </strong>
-    <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()"> Disconnect </Btn>
+    <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()">
+      Disconnect
+    </Btn>
   </div>
-  <Btn v-else-if="connected" :size="size" :loading="loading" @click="login(admin)"> Login </Btn>
-  <Btn v-else :size="size" :loading="loading" round @click="modalWalletVisible = true"> Connect wallet </Btn>
+  <Btn v-else-if="connected" v-bind="$attrs" :size="size" :loading="loading" @click="login(admin)">
+    Login
+  </Btn>
+  <Btn
+    v-else
+    :size="size"
+    v-bind="$attrs"
+    :loading="loading"
+    round
+    @click="modalWalletVisible = true"
+  >
+    Connect wallet
+  </Btn>
 
   <EmbeddedWallet
+    v-if="network"
     :client-id="config.public.EMBEDDED_WALLET_CLIENT"
     passkey-auth-mode="tab_form"
     :default-network-id="network.id"
@@ -15,8 +33,9 @@
         name: network.name,
         id: network.id,
         rpcUrl: network.rpcUrls.default.http[0],
-        explorerUrl: network.blockExplorers.default.url,
+        explorerUrl: network.blockExplorers.default.url || moonbaseAl.blockExplorers.default.url,
       },
+      moonbeam,
     ]"
   />
 
@@ -35,6 +54,7 @@
 
 <script lang="ts" setup>
 import type { Size } from 'naive-ui/es/button/src/interface';
+import { moonbeam } from 'viem/chains';
 import { useAccountEffect } from '@wagmi/vue';
 import { EmbeddedWallet, useWallet } from '@apillon/wallet-vue';
 
@@ -46,8 +66,16 @@ const props = defineProps({
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
 const { wallet } = useWallet();
-const { loading, modalWalletVisible, network, connected, walletAddress, disconnectWallet, initEmbeddedWallet, login } =
-  useWalletConnect();
+const {
+  loading,
+  modalWalletVisible,
+  network,
+  connected,
+  walletAddress,
+  disconnectWallet,
+  initEmbeddedWallet,
+  login,
+} = useWalletConnect();
 
 useAccountEffect({ onConnect: () => loginDelay() });
 

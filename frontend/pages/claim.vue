@@ -2,18 +2,13 @@
 import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
 
-const config = useRuntimeConfig();
-const router = useRouter();
-const message = useMessage();
-const { addNftId } = useClaim();
-
-const type = ClaimType.WHITELIST;
-// const type = config.public.CLAIM_TYPE;
-
 definePageMeta({
   layout: 'claim',
 });
 
+const config = useRuntimeConfig();
+const router = useRouter();
+const message = useMessage();
 const { query } = useRoute();
 const { handleError } = useErrors();
 const { contractError, loadNft } = useClaim();
@@ -24,6 +19,7 @@ const metadata = ref<Metadata | null>(null);
 const timestamp = ref<number>(new Date().getTime());
 const walletSignature = ref<string | undefined>();
 
+const type = config.public.CLAIM_TYPE;
 const timeToStart = computed(() => Number(config.public.CLAIM_START) - timestamp.value);
 const isWhitelist = computed(() => Number(type) === ClaimType.WHITELIST);
 const isAirdrop = computed(
@@ -35,10 +31,6 @@ watch(
   async _ => {
     if (walletAddress.value) {
       metadata.value = await loadNft();
-      if (metadata.value) {
-        console.log(metadata.value);
-        // addNftId(1, metadata.value);
-      }
     } else {
       metadata.value = null;
     }
@@ -57,7 +49,7 @@ async function validateWallet() {
   }
 
   try {
-    const { data } = await $api.post<SuccessResponse>('/claim/validate', {
+    const { data } = await $api.post<SuccessResponse>('/claim-validate', {
       signature,
       address: walletAddress.value,
       timestamp: timestamp.value,

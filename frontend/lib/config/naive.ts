@@ -43,47 +43,6 @@ const messageOverrides: MessageThemeOverrides = {
   textColorSuccess: colors.black,
   textColorWarning: colors.black,
 };
-const messageOverridesDark: MessageThemeOverrides = {
-  borderRadius: '8px',
-  closeIconColor: colors.bg.DEFAULT,
-  closeIconColorError: colors.bg.DEFAULT,
-  closeIconColorHover: colors.bg.DEFAULT,
-  closeIconColorHoverError: colors.bg.DEFAULT,
-  closeIconColorHoverInfo: colors.bg.DEFAULT,
-  closeIconColorHoverLoading: colors.bg.DEFAULT,
-  closeIconColorHoverSuccess: colors.bg.DEFAULT,
-  closeIconColorHoverWarning: colors.bg.DEFAULT,
-  closeIconColorInfo: colors.bg.DEFAULT,
-  closeIconColorLoading: colors.bg.DEFAULT,
-  closeIconColorPressed: colors.bg.DEFAULT,
-  closeIconColorPressedError: colors.bg.DEFAULT,
-  closeIconColorPressedInfo: colors.bg.DEFAULT,
-  closeIconColorPressedLoading: colors.bg.DEFAULT,
-  closeIconColorPressedSuccess: colors.bg.DEFAULT,
-  closeIconColorPressedWarning: colors.bg.DEFAULT,
-  closeIconColorSuccess: colors.bg.DEFAULT,
-  closeIconColorWarning: colors.bg.DEFAULT,
-  color: colors.white,
-  colorError: colors.white,
-  colorInfo: colors.white,
-  colorLoading: colors.white,
-  colorSuccess: colors.white,
-  colorWarning: colors.white,
-  iconColor: colors.bg.DEFAULT,
-  iconColorError: colors.bg.DEFAULT,
-  iconColorInfo: colors.bg.DEFAULT,
-  iconColorLoading: colors.bg.DEFAULT,
-  iconColorSuccess: colors.bg.DEFAULT,
-  iconColorWarning: colors.bg.DEFAULT,
-  maxWidth: '380px',
-  padding: '24px',
-  textColor: colors.bg.DEFAULT,
-  textColorError: colors.bg.DEFAULT,
-  textColorInfo: colors.bg.DEFAULT,
-  textColorLoading: colors.bg.DEFAULT,
-  textColorSuccess: colors.bg.DEFAULT,
-  textColorWarning: colors.bg.DEFAULT,
-};
 
 /**
  * Theme configs
@@ -243,7 +202,7 @@ export const NaiveTheme: GlobalThemeOverrides = {
     titleFontSize: '20px',
   },
   Drawer: {
-    color: colors.bg.dark,
+    color: colors.bg.DEFAULT,
   },
   Dropdown: {
     borderRadius: '8px',
@@ -553,6 +512,9 @@ export const NaiveThemeDark: GlobalThemeOverrides = {
     contentMargin: '16px 0',
     titleFontSize: '20px',
   },
+  Drawer: {
+    color: colors.bg.dark,
+  },
   Dropdown: {
     borderRadius: '8px',
     color: colors.bg.darker,
@@ -625,7 +587,7 @@ export const NaiveThemeDark: GlobalThemeOverrides = {
     textColor: colors.white,
     siderBorderColor: colors.bg.lighter,
   },
-  Message: messageOverridesDark,
+  Message: messageOverrides,
   Modal: {
     color: colors.bg.dark,
     zIndex: 80,

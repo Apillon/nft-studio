@@ -9,6 +9,12 @@
       <div v-else-if="dropReserved">
         <p>You have successfully reserved NFT. Check your mail for instructions on how to mint.</p>
       </div>
+      <FormClaim
+        v-else-if="connected && query.token"
+        :type="ClaimType.FREE_MINT"
+        :token="queryParam(query.token)"
+        @claim="onClaim"
+      />
       <template v-else>
         <h2 class="text-3xl mt-2">Enter your email to reserve NFT</h2>
         <p>
@@ -30,13 +36,19 @@
           <!--  Form submit -->
           <n-form-item :show-label="false" :show-feedback="false">
             <input type="submit" class="hidden" />
-            <Btn size="large" type="primary" :loading="loading" @click="handleSubmit">
+            <Btn size="large" type="secondary" :loading="loading" @click="handleSubmit">
               Proceed
             </Btn>
           </n-form-item>
         </n-form>
 
-        <div class="flex flex-col items-center mb-8">
+        <span class="text-grey">or</span>
+
+        <div class="mb-2">
+          <ConnectWallet class="w-full" />
+        </div>
+
+        <div class="flex flex-col items-center mb-1">
           <p>{{ timer }} min left</p>
           <n-progress
             class="mt-1"
@@ -52,8 +64,8 @@
         <HorizontalSlider class="flex gap-2">
           <img
             v-for="i in 5"
-            :key="i"
-            :src="`/images/nfts/${i}.png`"
+            :key="i + nfts.length"
+            :src="i - 1 in nfts ? nfts[i - 1] : `/images/nfts/1.png`"
             class="h-32 rounded-lg pointer-events-none"
           />
         </HorizontalSlider>
@@ -66,6 +78,7 @@
 import { jwtDecode } from 'jwt-decode';
 import dayjs from 'dayjs';
 import type { FormInst, FormRules, FormValidationError } from 'naive-ui/es/form';
+import { ClaimType } from '~/lib/values/general.values';
 
 useHead({
   title: 'Apillon POAP prebuilt solution',
@@ -73,14 +86,20 @@ useHead({
 definePageMeta({
   layout: 'poap',
 });
+
+const router = useRouter();
 const message = useMessage();
 const { query } = useRoute();
+const { loadNft } = useClaim();
+const { parseLink } = useIpns();
 const { handleError } = useErrors();
+const { connected } = useWalletConnect();
 
 const loading = ref(false);
 const isTokenValid = ref(true);
 const tokenValidityInPercent = ref(100);
 const dropReserved = ref(false);
+const nfts = ref<Array<string>>([]);
 const token = query.token?.toString();
 
 let calcRemainingTimeInterval: any = null as any;
@@ -117,6 +136,8 @@ function handleSubmit(e: Event | MouseEvent) {
 
 onMounted(() => {
   if (token) {
+    loadImages();
+
     const decoded = jwtDecode(token);
     if (!decoded.iat) {
       isTokenValid.value = false;
@@ -159,5 +180,20 @@ async function reserveMint() {
   }
 
   loading.value = false;
+}
+
+async function loadImages() {
+  [1, 2, 3, 4, 5].forEach(i => loadImage(i));
+}
+async function loadImage(i: number) {
+  const metadata = await loadNft(i);
+
+  const image = await parseLink(metadata?.image || '');
+  if (image) {
+    nfts.value.push(image);
+  }
+}
+function onClaim(metadata: Metadata, txHash?: string) {
+  router.push({ name: 'share', query: { ...metadata, txHash } });
 }
 </script>

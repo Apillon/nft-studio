@@ -14,6 +14,7 @@ const emits = defineEmits(['claim']);
 
 const message = useMessage();
 const txWait = useTxWait();
+const { handleError } = useErrors();
 const { contractError, loadNft, addNftId } = useClaim();
 const { network, walletAddress, sign } = useWalletConnect();
 const publicClient = createPublicClient({ chain: network.value, transport: http() });
@@ -26,9 +27,9 @@ const getURI = () => {
     case ClaimType.FREE_MINT:
       return '/claim';
     case ClaimType.WHITELIST:
-      return '/claim/whitelist';
+      return '/claim-whitelist';
     default:
-      return '/claim/airdrop';
+      return '/claim-airdrop';
   }
 };
 
@@ -48,7 +49,6 @@ async function claim() {
     });
     if (data.success) {
       txWait.hash.value = data.transactionHash;
-      console.debug('Transaction', txWait.hash.value);
       message.info('Your NFT Mint has started');
 
       const receipt = await txWait.wait();
@@ -71,7 +71,8 @@ async function claim() {
     }
     loading.value = false;
   } catch (e) {
-    contractError(e);
+    handleError(e);
+    // contractError(e);
     loading.value = false;
   }
 }
@@ -84,8 +85,8 @@ async function claim() {
     <div class="my-8 text-center">
       <h3 class="mb-6">Great Success!</h3>
       <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is
-        crucial for securely receiving and managing the airdropped NFTs.
+        Minting your NFT is almost done. Please sign the message with your wallet to confirm
+        ownership of the wallet and claim your NFT.
       </p>
     </div>
     <Btn size="large" :loading="loading" :disabled="walletUsed" @click="claim()">Claim NFT</Btn>

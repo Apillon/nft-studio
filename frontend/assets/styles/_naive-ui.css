@@ -111,6 +111,9 @@
     .n-drawer-footer {
       @apply bg-bg-light px-10 py-3;
     }
+    .n-drawer-content--native-scrollbar {
+      @apply overflow-x-hidden;
+    }
   }
 }
 

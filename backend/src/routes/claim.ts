@@ -1,9 +1,8 @@
 import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
 import { AirdropStatus, RouteErrorCode } from '../config/values';
-import { ResourceError } from '../lib/errors';
+import { ResourceError, ValidationError } from '../lib/errors';
 import { User } from '../models/user';
-import { Identity } from '@apillon/sdk';
 import { claim, validateEvmWallet } from '../lib/claim';
 
 /**∂
@@ -32,7 +31,12 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   user.wallet = wallet;
   user.signature = body.signature;
 
-  await user.update();
+  try {
+    await user.validate();
+    await user.create();
+  } catch (err) {
+    await user.handle(err);
+  }
 
   const txHash = await claim(user);
   user.tx_hash = txHash;

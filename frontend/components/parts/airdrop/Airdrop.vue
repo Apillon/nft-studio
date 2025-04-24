@@ -20,7 +20,7 @@
         <Btn @click="modalUploadCsvVisible = true">
           <span class="inline-flex items-center gap-1">
             <NuxtIcon name="action/add" class="text-lg" />
-            New NFT Airdrop
+            <span class="leading-6"> New NFT Airdrop </span>
           </span>
         </Btn>
       </n-space>

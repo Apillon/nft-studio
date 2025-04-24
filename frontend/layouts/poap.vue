@@ -12,7 +12,7 @@
     >
       <n-layout class="relative h-screen" :native-scrollbar="false">
         <div ref="headerRef">
-          <Header logo-center :hideLogin="authStore.loggedIn" />
+          <Header logo-center hide-login />
         </div>
         <div
           class="container max-w-6xl py-8 flex flex-col justify-center box-border"
@@ -37,7 +37,6 @@ useHead({
     class: 'dark',
   },
 });
-const authStore = useAuthStore();
 const { width } = useWindowSize();
 
 /** Heading height */

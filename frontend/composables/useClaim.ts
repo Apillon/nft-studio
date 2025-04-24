@@ -35,19 +35,28 @@ export default function useClaim() {
     });
   }
 
-  async function getBalance() {
+  async function getBalance(): Promise<bigint> {
     await initContract();
-    return (await contract.value.read.balanceOf([walletAddress.value])) as bigint;
+    return await contract.value.read.balanceOf([walletAddress.value]);
+  }
+
+  async function getMaxSupply(): Promise<number> {
+    await initContract();
+    return (await contract.value.read.maxSupply([])) as number;
+  }
+  async function getName(): Promise<string> {
+    await initContract();
+    return await contract.value.read.name([]);
   }
 
   async function getTokenOfOwner(index: number) {
     await initContract();
-    return (await contract.value.read.tokenOfOwnerByIndex([walletAddress.value, index])) as number;
+    return await contract.value.read.tokenOfOwnerByIndex([walletAddress.value, index]);
   }
 
-  async function getTokenUri(id: number) {
+  async function getTokenUri(id: number): Promise<string> {
     await initContract();
-    const uri = (await contract.value.read.tokenURI([id])) as string;
+    const uri = await contract.value.read.tokenURI([id]);
     return await parseLink(uri);
   }
 
@@ -75,8 +84,7 @@ export default function useClaim() {
     await ensureCorrectNetwork();
     let success: any = false;
     const image = await parseLink(metadata?.image || '');
-    console.log(info);
-    console.log(image);
+
     try {
       if (wallet.value && info.activeWallet?.address) {
         success = wallet.value?.events.emit('addTokenNft', {
@@ -115,7 +123,13 @@ export default function useClaim() {
     console.error('Use contracts error', e.code, e);
 
     // ignore user declined
-    const errorData = e?.reason || e?.data?.message || e?.error?.data?.message || e?.error?.message || e?.message || '';
+    const errorData =
+      e?.reason ||
+      e?.data?.message ||
+      e?.error?.data?.message ||
+      e?.error?.message ||
+      e?.message ||
+      '';
     let msg = '';
 
     if (errorData.includes('insufficient funds')) {
@@ -140,8 +154,12 @@ export default function useClaim() {
       // Problem with embedded signature
       msg = 'Problem with embedded wallet';
     } else if (errorData.includes('Suggested NFT is not owned by the selected account ')) {
-      msg = 'Suggested NFT is not owned by the selected account, please try again with other wallet.';
-    } else if (errorData.includes('user rejected transaction') || errorData.includes('User rejected the request')) {
+      msg =
+        'Suggested NFT is not owned by the selected account, please try again with other wallet.';
+    } else if (
+      errorData.includes('user rejected transaction') ||
+      errorData.includes('User rejected the request')
+    ) {
       // User rejected the transaction
       msg = 'Transaction was rejected.';
     } else {
@@ -160,6 +178,8 @@ export default function useClaim() {
     contract,
     addNftId,
     contractError,
+    getMaxSupply,
+    getName,
     loadNft,
   };
 }

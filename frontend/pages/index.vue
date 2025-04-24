@@ -6,9 +6,6 @@ const config = useRuntimeConfig();
 const { wallet } = useWallet();
 const { isLoggedIn, initEmbeddedWallet } = useWalletConnect();
 
-const type = ClaimType.POAP;
-// const type = config.public.CLAIM_TYPE;
-
 onMounted(() => {
   if (!isLoggedIn.value) {
     initEmbeddedWallet();
@@ -40,7 +37,7 @@ function openEmbeddedWallet() {
     </div>
     <Footer />
   </div>
-  <Poap v-else-if="Number(type) === ClaimType.POAP" />
-  <TablePoapReservation v-else-if="Number(type) === ClaimType.FREE_MINT" />
+  <Poap v-else-if="Number(config.public.CLAIM_TYPE) === ClaimType.POAP" />
+  <TablePoapReservation v-else-if="Number(config.public.CLAIM_TYPE) === ClaimType.FREE_MINT" />
   <Airdrop v-else />
 </template>

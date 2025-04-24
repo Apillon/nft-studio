@@ -10,7 +10,7 @@ import { validateAirdropStatus, validateEvmWallet } from '../lib/claim';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/claim/validate', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/claim-validate', (req: Request, res: Response, next: NextFunction) => {
     resolve(req, res).catch(next);
   });
 }

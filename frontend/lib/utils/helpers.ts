@@ -18,6 +18,12 @@ export const placeholderPixel =
 export function randomInteger(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+export function numToBigInt(input: number) {
+  return BigInt(input * 10 ** 18);
+}
+export function bigIntToNum(input: bigint | string | number) {
+  return Number(BigInt(input) / 10n ** 18n);
+}
 
 export function getEncodedPathAndQuery(route: any) {
   const query = !route.query

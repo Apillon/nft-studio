@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { NButton, NDatePicker, NInput, NInputNumber, type DataTableColumns } from 'naive-ui';
+import type { DataTableColumns } from 'naive-ui';
+import { NButton, NDatePicker, NInput, NInputNumber } from 'naive-ui';
 import { AirdropStatus, PaginationValues } from '~/lib/values/general.values';
 
 enum Step {
