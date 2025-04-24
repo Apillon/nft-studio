@@ -35,7 +35,7 @@
     @apply invisible absolute -z-1;
   }
   .oaw-btn-default-style {
-    @apply h-12 border border-grey-transparent bg-transparent w-full text-[0px];
+    @apply h-12 border border-grey-transparent dark:border-bg-lighter bg-transparent w-full text-[0px];
 
     &::after {
       content: '▶◀ Apillon Embedded Wallet';

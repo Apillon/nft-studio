@@ -109,7 +109,7 @@ const createColumns = (): DataTableColumns<UserInterface> => {
                 },
               });
             }
-            return h('span', { class: 'text-black' }, row.email);
+            return h('span', { class: 'text-black dark:text-white' }, row?.email || '');
           },
         },
         {
@@ -228,7 +228,8 @@ const createColumns = (): DataTableColumns<UserInterface> => {
 const rowKey = (row: UserInterface) =>
   items.value.findIndex(item => item.email === row?.email || item.wallet === row?.wallet);
 
-const isEditingRow = (i: number) => editingRow.value === (page.value - 1) * PaginationValues.PAGE_DEFAULT_LIMIT + i;
+const isEditingRow = (i: number) =>
+  editingRow.value === (page.value - 1) * PaginationValues.PAGE_DEFAULT_LIMIT + i;
 const keys = () => items.value.map(item => (isMethodWallet.value ? item.wallet : item.email));
 const hasEmptyRow = () => keys().some(item => item === '');
 const areKeysUnique = () => new Set(keys()).size === keys.length;
@@ -248,7 +249,10 @@ const createEmptyUser = (): UserInterface => ({
 const updateUser = async (row: UserInterface) => {
   if (isMethodWallet.value && !row.wallet) {
     message.warning('Please enter a valid wallet address');
-  } else if (!isMethodWallet.value && (!row.email || !row.email_start_send_time || !validateEmail(row.email))) {
+  } else if (
+    !isMethodWallet.value &&
+    (!row.email || !row.email_start_send_time || !validateEmail(row.email))
+  ) {
     message.warning('Please enter a valid email address and start time');
   } else if (areKeysUnique()) {
     message.warning('Please enter unique email addresses or wallet addresses');
@@ -295,7 +299,12 @@ async function deploy() {
 </script>
 
 <template>
-  <drawer :progress="uploadStep * 16" :steps="steps" :active-step="uploadStep" title="NFT mail airdrop">
+  <drawer
+    :progress="uploadStep * 16"
+    :steps="steps"
+    :active-step="uploadStep"
+    title="NFT mail airdrop"
+  >
     <div v-if="uploadStep === Step.TYPE" class="max-w-lg w-full mx-auto">
       <h4>Select distribution methods</h4>
       <div class="mt-2 mb-4">How do you want to distribute your NFTs? Choose an option below.</div>
@@ -318,7 +327,11 @@ async function deploy() {
           <a :href="`/files/${exampleFile}`" target="_blank"> Download CSV sample </a>
         </span>
       </div>
-      <FormUpload :auto-increment="autoIncrement" :wallet="isMethodWallet" @proceed="onFileUploaded" />
+      <FormUpload
+        :auto-increment="autoIncrement"
+        :wallet="isMethodWallet"
+        @proceed="onFileUploaded"
+      />
     </div>
     <div v-else-if="uploadStep === Step.DATA">
       <div class="flex justify-between items-center mb-6">
@@ -358,7 +371,14 @@ async function deploy() {
         </p>
         <span v-else></span>
         <div class="flex items-center gap-2">
-          <Btn v-if="uploadStep === Step.UPLOAD" class="min-w-40" type="secondary" @click="uploadStep -= 1"> Back </Btn>
+          <Btn
+            v-if="uploadStep === Step.UPLOAD"
+            class="min-w-40"
+            type="secondary"
+            @click="uploadStep -= 1"
+          >
+            Back
+          </Btn>
           <Btn class="min-w-40" :disabled="isButtonDisabled" @click="uploadStep += 1">Continue</Btn>
         </div>
       </div>

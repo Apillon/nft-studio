@@ -6,7 +6,7 @@ import { NaiveUiResolver } from 'unplugin-vue-components/resolvers';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import { ClaimType, Environments } from './lib/values/general.values';
 
-const meta = { title: 'NFT Studio', description: 'NFT Studio', url: 'https://nft-studio.io/' };
+const meta = { title: 'NFT Studio', description: 'NFT Studio' };
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -49,7 +49,9 @@ export default defineNuxtConfig({
 
   vite: {
     plugins: [
-      AutoImport({ imports: [{ 'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar'] }] }),
+      AutoImport({
+        imports: [{ 'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar'] }],
+      }),
 
       Components({ resolvers: [NaiveUiResolver()] }),
       mkcert(),
@@ -85,7 +87,7 @@ export default defineNuxtConfig({
       htmlAttrs: { lang: 'en' },
       bodyAttrs: { id: 'kalm' },
       title: meta.title,
-      titleTemplate: `%s - ${meta.title}`,
+      titleTemplate: ` %s - ${meta.title}`,
       charset: 'utf-8',
       viewport: 'width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no',
       meta: [
@@ -94,11 +96,9 @@ export default defineNuxtConfig({
         { name: 'description', content: meta.description },
         { name: 'og:title', content: meta.title },
         { name: 'og:description', content: meta.description },
-        { name: 'og:url', content: meta.url },
         { name: 'og:type', content: 'website' },
         { name: 'twitter:title', content: meta.title },
         { name: 'twitter:description', content: meta.description },
-        { name: 'twitter:url', content: meta.url },
         { name: 'twitter:card', content: 'summary_large_image' },
       ],
       link: [{ rel: 'icon', type: 'image/png', href: '/images/favicon.png' }],

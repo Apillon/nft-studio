@@ -1,17 +1,29 @@
 export const colors = {
+  primary: '#F9FF73',
+  secondary: '#78DCE8',
+
   transparent: 'transparent',
   current: 'currentColor',
   black: '#06080f',
   white: '#f5f5ee',
+  yellow: '#F9FF73',
+  orange: '#F7AF39',
   pink: '#FF6188',
   green: '#A9DC76',
   blue: '#78DCE8',
 
+  body: '#9D9E91',
+  bodyDark: '#6A6B63',
   placeholder: '#313442a3', // rgba(49, 52, 66, 0.64)
 
   bg: {
-    DEFAULT: '#f5f5ee',
+    lightest: '#F4F4EA',
+    lighter: '#313442',
     light: '#F0F2DA',
+    DEFAULT: '#f5f5ee',
+    bg: '#1e212b',
+    dark: '#141721',
+    darker: '#06080F',
   },
   grey: {
     DEFAULT: '#9c9c95',
@@ -56,7 +68,7 @@ export default {
     container: {
       center: true,
       screens: {
-        lx: '1320px',
+        lx: '1440px',
       },
       padding: {
         DEFAULT: '1rem',

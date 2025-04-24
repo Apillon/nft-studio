@@ -9,9 +9,13 @@
             <span class="font-normal">{{ item.label }}</span>
           </td>
           <td class="relative">
-            <strong class="text-black">{{ item.value }}</strong>
+            <strong class="text-black dark:text-white">{{ item.value }}</strong>
 
-            <Btn class="float-right text-white-primary no-underline" type="link" @click="$emit('back')">
+            <Btn
+              class="float-right text-white-primary no-underline"
+              type="link"
+              @click="$emit('back')"
+            >
               <span class="icon-edit align-sub text-xl" />
             </Btn>
           </td>

@@ -82,8 +82,8 @@ export function copyToClipboard(text: string) {
  * OG data
  */
 export function prepareOG(
-  title = 'Mint your NFT Token',
-  description = 'Powered by Apillon.',
+  title = 'NFT Brand Booster',
+  description = 'Send NFTs via email or wallet. Build a whitelist, reward the most loyal users, grow your email list in exchange for rewards, or hand-pick who gets the drop.',
   image = '/images/logo/apillon.jpg',
   url = 'https://apillon.io/'
 ) {

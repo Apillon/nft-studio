@@ -1,6 +1,8 @@
 <template>
-  <div class="frame max-w-sm mx-auto min-h-[calc(100vh-190px)]">
-    <div class="frame-border h-full min-h-60 flex flex-col justify-evenly gap-5 p-6 text-center">
+  <div class="frame flex dark:bg-bg-darker w-full max-w-sm mx-auto min-h-[calc(90vh-210px)]">
+    <div
+      class="frame-border self-stretch min-h-60 flex flex-col justify-evenly gap-5 p-6 text-center"
+    >
       <div v-if="!isTokenValid">
         <p>Token is invalid or has expired...</p>
       </div>
@@ -9,8 +11,17 @@
       </div>
       <template v-else>
         <h2 class="text-3xl mt-2">Enter your email to reserve NFT</h2>
-        <p>Once you have entered your e-mail address, you will receive instructions on how to claim NFT.</p>
-        <n-form ref="formRef" :model="formData" class="text-left mt-2" :rules="rules" @submit.prevent="handleSubmit">
+        <p>
+          Once you have entered your e-mail address, you will receive instructions on how to claim
+          NFT.
+        </p>
+        <n-form
+          ref="formRef"
+          :model="formData"
+          class="text-left mt-2"
+          :rules="rules"
+          @submit.prevent="handleSubmit"
+        >
           <!--  Project Quota value -->
           <n-form-item path="email" :show-label="false">
             <n-input v-model:value="formData.email" placeholder="Enter your email" clearable />
@@ -19,7 +30,9 @@
           <!--  Form submit -->
           <n-form-item :show-label="false" :show-feedback="false">
             <input type="submit" class="hidden" />
-            <Btn size="large" type="primary" :loading="loading" @click="handleSubmit"> Proceed </Btn>
+            <Btn size="large" type="primary" :loading="loading" @click="handleSubmit">
+              Proceed
+            </Btn>
           </n-form-item>
         </n-form>
 
@@ -35,9 +48,14 @@
             :show-indicator="false"
           />
         </div>
-        <h4>PoaP</h4>
+        <h6>Sneak peek:</h6>
         <HorizontalSlider class="flex gap-2">
-          <img v-for="i in 5" :key="i" :src="`/images/nfts/${i}.png`" class="h-32 rounded-lg pointer-events-none" />
+          <img
+            v-for="i in 5"
+            :key="i"
+            :src="`/images/nfts/${i}.png`"
+            class="h-32 rounded-lg pointer-events-none"
+          />
         </HorizontalSlider>
       </template>
     </div>
@@ -51,6 +69,9 @@ import type { FormInst, FormRules, FormValidationError } from 'naive-ui/es/form'
 
 useHead({
   title: 'Apillon POAP prebuilt solution',
+});
+definePageMeta({
+  layout: 'poap',
 });
 const message = useMessage();
 const { query } = useRoute();
@@ -85,7 +106,9 @@ function handleSubmit(e: Event | MouseEvent) {
   e.preventDefault();
   formRef.value?.validate((errors: Array<FormValidationError> | undefined) => {
     if (errors) {
-      errors.map(fieldErrors => fieldErrors.map(error => message.warning(error.message || 'Error')));
+      errors.map(fieldErrors =>
+        fieldErrors.map(error => message.warning(error.message || 'Error'))
+      );
     } else {
       reserveMint();
     }

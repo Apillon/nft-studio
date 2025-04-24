@@ -1,70 +1,60 @@
 <template>
-  <div class="max-w-5xl mx-auto">
-    <div class="card relative text-center">
-      <PoapStatus :status="poapStatus" class="mb-4" />
-      <h2 class="mb-4">POAP</h2>
-      <div v-if="poapStatus === PoapStatus.WAITING" class="flex flex-col items-center">
-        <strong>Event starts in</strong>
-        <Timer :date-time-to="config.public.CLAIM_START" />
-      </div>
-      <div v-else-if="poapStatus === PoapStatus.IN_PROGRESS" class="flex flex-col items-center">
-        <strong>Event ends in</strong>
-        <Timer :date-time-to="config.public.CLAIM_END" />
-      </div>
-      <div v-else-if="poapStatus === PoapStatus.FINISHED" class="w-full mt-6">
-        <strong class="inline-block mb-6 text-sm">Event statistics</strong>
-        <div class="flex justify-center gap-6">
-          <div class="flex flex-col items-center p-3 rounded-md bg-bg-light w-40">
-            <span class="font-bold" style="font-size: xx-large">{{ userStore.users.length }}</span>
-            <p class="text-xs">Total participants</p>
-          </div>
-          <div class="flex flex-col items-center p-3 rounded-md bg-bg-light w-40">
-            <span class="font-bold" style="font-size: xx-large">
-              {{ userStore.users.filter(x => x.airdrop_status == 6).length }} /
-              {{ userStore.users.length }}
-            </span>
-            <p class="text-xs">Minted NFTs</p>
-          </div>
+  <div class="pb-8">
+    <div class="flex justify-between gap-8">
+      <div class="max-w-4xl lg:pr-10">
+        <h6 class="mb-2 text-xs">NFT Event Experience</h6>
+        <h1 class="mb-4">Dashboard</h1>
+        <div>
+          Create PoAP-style drops in just a click. Let users mint on the spot or email-reserve their
+          NFTs for later. All NFTs are sent from your Apillon-hosted collection. You’ll need enough
+          NFTs in your collection to complete the drop.
         </div>
+      </div>
+      <Statistics :loading="userStore.loading" :statistics="userStore.statistics" />
+    </div>
+    <hr class="border-grey-transparent dark:border-bg-lighter my-8" />
+
+    <div class="card-light relative">
+      <div class="flex gap-4 items-center mb-4">
+        <h5>Your PoAP</h5>
+        <LazyPoapStatus v-if="poapStatus" :key="poapStatus" :status="poapStatus" />
       </div>
 
-      <div v-if="poapStatus === PoapStatus.WAITING" class="p-6 mt-8 border border-yellow rounded-2xl text-left">
-        <div class="flex gap-4">
-          <NuxtIcon name="icon/info" class="text-2xl" />
-          <h5>Next step is to personalize POAP drop</h5>
+      <div class="flex flex-col lg:flex-row items-center justify-between gap-y-4 gap-x-8">
+        <div v-if="poapStatus === PoapStatus.WAITING">
+          <strong>Event starts in</strong>
+          <Timer :date-time-to="config.public.CLAIM_START" />
         </div>
-        <p class="my-3">
-          Configure the domain and your own SMTP server in order to personalize the POAP drop. Hosting the POAP drop
-          from your custom domain and sending emails to your clients via your domain brings trust from the users and
-          increases the minting conversion rates.
-        </p>
-        <button class="text-yellow font-bold hover:underline">Configure domain and E-mail SMTP</button>
+        <div v-else-if="poapStatus === PoapStatus.IN_PROGRESS">
+          <strong>Event ends in</strong>
+          <Timer :date-time-to="config.public.CLAIM_END" />
+        </div>
+        <div v-else-if="poapStatus === PoapStatus.FINISHED" class="w-full mt-6">
+          <strong class="inline-block mb-6 text-sm">Event statistics</strong>
+          <div class="flex justify-center gap-6">
+            <div class="flex flex-col items-center p-3 rounded-md bg-bg-light w-40">
+              <span class="font-bold" style="font-size: xx-large">
+                {{ userStore.users.length }}
+              </span>
+              <p class="text-xs">Total participants</p>
+            </div>
+            <div class="flex flex-col items-center p-3 rounded-md bg-bg-light w-40">
+              <span class="font-bold" style="font-size: xx-large">
+                {{ userStore.users.filter(x => x.airdrop_status == 6).length }} /
+                {{ userStore.users.length }}
+              </span>
+              <p class="text-xs">Minted NFTs</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="border-l border-black mx-4 self-stretch" />
+        <PoapInfo class="w-full max-w-lg" />
       </div>
-      <template v-else-if="poapStatus === PoapStatus.IN_PROGRESS">
-        <div class="h-8"></div>
-        <div class="relative"></div>
-      </template>
     </div>
-    <n-tabs v-if="poapStatus === PoapStatus.IN_PROGRESS" class="-mt-9" :gap="32" justify-content="center" animated>
-      <n-tab-pane name="client" tab="Client side">
-        <PoapInfo />
-      </n-tab-pane>
-      <n-tab-pane name="activity" tab="Recent activity">
-        <template #tab>
-          Recent activity
-          <span
-            class="inline-flex justify-center items-center w-6 h-6 ml-2 rounded-full bg-pink font-bold text-bg-dark text-[10px]"
-          >
-            {{ userStore.users.length }}
-          </span>
-        </template>
-        <div class="p-8">
-          <h4 class="mb-4 text-center text-2xl">Recent activity</h4>
-          <TablePoapReservation />
-        </div>
-      </n-tab-pane>
-    </n-tabs>
-    <TablePoapReservation v-else-if="poapStatus === PoapStatus.FINISHED" class="mt-8" />
+
+    <h6 class="mt-8 mb-2">Recent activity</h6>
+    <TablePoapReservation />
   </div>
 </template>
 

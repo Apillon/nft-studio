@@ -1,11 +1,11 @@
 @layer components {
   /** Border */
   .card-border {
-    @apply border border-grey-transparent;
+    @apply border border-grey-transparent dark:border-bg-lighter;
   }
 
   .border-card {
-    @apply border border-grey-transparent rounded-2xl;
+    @apply border border-grey-transparent dark:border-bg-lighter rounded-2xl;
   }
   .card {
     @apply border-card bg-bg p-6 md:p-8 lg:p-10 xl:p-12;
@@ -20,6 +20,9 @@
   .card-dark {
     @apply card !bg-grey-darker !text-white;
   }
+  .card-white {
+    @apply card-border rounded-lg bg-bg text-black px-3 py-2 dark:bg-bg-bg dark:text-white;
+  }
 }
 
 @layer utilities {
@@ -28,7 +31,7 @@
 
     &:before {
       content: '';
-      @apply border-grey-transparent absolute left-0 right-0 top-0 h-8 rounded-t-2xl border;
+      @apply border-grey-transparent dark:border-bg-lighter absolute left-0 right-0 top-0 h-8 rounded-t-2xl border;
     }
     &:after {
       @apply absolute left-3 top-0 block h-8 w-8 bg-center bg-no-repeat;
@@ -37,7 +40,7 @@
     }
 
     .frame-border {
-      @apply border-grey-transparent w-full rounded-b-2xl border border-t-0;
+      @apply border-grey-transparent dark:border-bg-lighter w-full rounded-b-2xl border border-t-0;
       code {
         @apply w-full rounded-b-2xl;
       }

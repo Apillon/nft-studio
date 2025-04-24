@@ -2,13 +2,11 @@
 import { useWallet } from '@apillon/wallet-vue';
 import { ClaimType } from '~/lib/values/general.values';
 
-useHead({ title: 'NFT Studio' });
-
 const config = useRuntimeConfig();
 const { wallet } = useWallet();
 const { isLoggedIn, initEmbeddedWallet } = useWalletConnect();
 
-const type = ClaimType.WHITELIST;
+const type = ClaimType.POAP;
 // const type = config.public.CLAIM_TYPE;
 
 onMounted(() => {
@@ -26,7 +24,7 @@ function openEmbeddedWallet() {
 
 <template>
   <div v-if="!isLoggedIn">
-    <div class="border border-black rounded-lg mx-auto max-w-xl">
+    <div class="border border-black dark:bg-bg-darker rounded-lg mx-auto max-w-xl">
       <FormWallet>
         <Btn type="secondary" size="large" @click="openEmbeddedWallet">
           <span class="mr-1">▶◀</span> Apillon Embedded Wallet

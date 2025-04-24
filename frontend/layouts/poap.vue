@@ -1,5 +1,9 @@
 <template>
-  <n-config-provider :theme="lightTheme" :theme-overrides="NaiveTheme" class="flex h-full flex-col">
+  <n-config-provider
+    :theme="darkTheme"
+    :theme-overrides="NaiveThemeDark"
+    class="flex h-full flex-col"
+  >
     <n-message-provider
       placement="bottom-right"
       :keep-alive-on-hover="true"
@@ -8,7 +12,7 @@
     >
       <n-layout class="relative h-screen" :native-scrollbar="false">
         <div ref="headerRef">
-          <Header logo-center :hideLogin="!!($route.query?.txHash && $route.query?.image)" />
+          <Header logo-center :hideLogin="authStore.loggedIn" />
         </div>
         <div
           class="container max-w-6xl py-8 flex flex-col justify-center box-border"
@@ -25,9 +29,15 @@
 </template>
 
 <script lang="ts" setup>
-import { lightTheme } from 'naive-ui';
-import { NaiveTheme } from '~/lib/config/naive';
+import { darkTheme } from 'naive-ui';
+import { NaiveThemeDark } from '~/lib/config/naive';
 
+useHead({
+  htmlAttrs: {
+    class: 'dark',
+  },
+});
+const authStore = useAuthStore();
 const { width } = useWindowSize();
 
 /** Heading height */

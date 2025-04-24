@@ -22,8 +22,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   validateEvmWallet(wallet, body.signature, body.timestamp);
 
   const user = await new User({}, context).populateByWallet(wallet);
-  // if (!user.exists()) {
-  if (!user.id) {
+  if (!user.exists()) {
     throw new ResourceError(RouteErrorCode.WALLET_NOT_VALID);
   }
 

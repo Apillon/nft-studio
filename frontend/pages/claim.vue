@@ -13,14 +13,6 @@ const type = ClaimType.WHITELIST;
 definePageMeta({
   layout: 'claim',
 });
-useHead({
-  title:
-    type === ClaimType.POAP
-      ? 'Apillon POAP prebuilt solution'
-      : type === ClaimType.FREE_MINT
-        ? 'Apillon Gasless mint prebuilt solution'
-        : 'Apillon email airdrop prebuilt solution',
-});
 
 const { query } = useRoute();
 const { handleError } = useErrors();
