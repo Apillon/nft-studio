@@ -8,20 +8,72 @@ services:
   nft_studio_db:
     image: mysql
     container_name: nft_studio_db
-    
-    env_file:
-      - .env
     ports:
       - '3306:3306'
     restart: always
+    networks:
+      - app-network
+    environment:
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_POOL: ${MYSQL_POOL}
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      timeout: 5s
+      retries: 10
+      interval: 2s
 
   nft_studio_app:
-    image: nft-studio:latest
+    image: apillon/nft-studio:latest
     container_name: nft_studio_app
     depends_on:
-      - nft_studio_db
-    env_file:
-      - .env
+      nft_studio_db:
+        condition: service_healthy
     ports:
-      - '3000:3000'
+      - '80:3000'
+    expose:
+      - '80'
     restart: always
+    networks:
+      - app-network
+    environment:
+      APP_ENV: ${APP_ENV}
+      APP_SECRET: ${APP_SECRET}
+      APP_URL: ${APP_URL}
+      API_PORT: ${API_PORT}
+      API_HOST: ${API_HOST}
+      LOG_TARGET: ${LOG_TARGET}
+      PAGE_DEFAULT_LIMIT: ${PAGE_DEFAULT_LIMIT}
+      PAGE_MAX_LIMIT: ${PAGE_MAX_LIMIT}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_POOL: ${MYSQL_POOL}
+      ADMIN_WALLET: ${ADMIN_WALLET}
+      APILLON_KEY: ${APILLON_KEY}
+      APILLON_API_URL: ${APILLON_API_URL}
+      APILLON_SECRET: ${APILLON_SECRET}
+      COLLECTION_UUID: ${COLLECTION_UUID}
+      MAX_SUPPLY: ${MAX_SUPPLY}
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_PORT: ${SMTP_PORT}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      SMTP_EMAIL_FROM: ${SMTP_EMAIL_FROM}
+      SMTP_NAME_FROM: ${SMTP_NAME_FROM}
+      SMTP_EMAIL_FROM_HELLO: ${SMTP_EMAIL_FROM_HELLO}
+      CAPTCHA_SECRET: ${CAPTCHA_SECRET}
+      CLAIM_EXPIRES_IN: ${CLAIM_EXPIRES_IN}
+      SIGNATURE_PRIVATE_KEY: ${SIGNATURE_PRIVATE_KEY}
+      SIGNATURE_CONTRACT_ADDRESS: ${SIGNATURE_CONTRACT_ADDRESS}
+      CLAIM_START: ${CLAIM_START}
+networks:
+  app-network:
+    driver: bridge
