@@ -100,7 +100,9 @@ export default function useUser() {
 
   /** Recipients polling */
   function checkUnfinishedRecipients() {
-    const unfinishedRecipient = userStore.users.find(item => item.airdrop_status === AirdropStatus.PENDING);
+    const unfinishedRecipient = userStore.users.find(
+      item => item.airdrop_status === AirdropStatus.PENDING
+    );
     if (unfinishedRecipient === undefined) {
       return;
     }
@@ -117,6 +119,8 @@ export default function useUser() {
 
   return {
     saveRecipients,
+    fetchBalance,
+    getBalance,
     getUsers,
     getStatistics,
   };

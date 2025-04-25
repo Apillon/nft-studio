@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { DataTableColumns } from 'naive-ui';
 import { NButton, NDatePicker, NInput, NInputNumber } from 'naive-ui';
-import { AirdropStatus, PaginationValues } from '~/lib/values/general.values';
+import { AirdropStatus, ClaimType, PaginationValues } from '~/lib/values/general.values';
 
 enum Step {
   TYPE = 1,
@@ -11,56 +11,57 @@ enum Step {
   DEPLOYING = 5,
   DEPLOYED = 6,
 }
-enum Method {
-  EMAIL = 1,
-  WALLET = 2,
-}
 
 const emit = defineEmits(['close']);
 const props = defineProps({
   autoIncrement: { type: Boolean, default: true },
+  type: { type: Number, default: 0 },
 });
 const message = useMessage();
+const userStore = useUserStore();
 const { saveRecipients } = useUser();
+const { getMaxSupply } = useClaim();
 
+const maxSupply = await getMaxSupply();
 const page = ref(1);
 const editingRow = ref(-1);
 const items = ref<UserInterface[]>([]);
-const uploadStep = ref<number>(Step.TYPE);
+const uploadStep = ref<number>(props.type > 0 ? Step.UPLOAD : Step.TYPE);
 const steps = [
   { label: 'Method', value: Step.TYPE },
   { label: 'Upload', value: Step.UPLOAD },
   { label: 'Data', value: Step.DATA },
   { label: 'Review', value: Step.REVIEW },
 ];
-const selectedMethod = ref<number>(0);
+const selectedMethod = ref<number>(props.type);
 const methods = [
   {
-    value: Method.EMAIL,
+    value: ClaimType.AIRDROP,
     title: 'NFT Email Airdrop',
     content: 'Upload a list of emails and send minting invites.',
     icon: 'icon/airdrop',
   },
   {
-    value: Method.WALLET,
+    value: ClaimType.WHITELIST,
     title: 'NFT Wallet Airdrop',
-    content: 'Upload a list of emails and send minting invites.',
+    content: 'Upload a list of wallet addresses and send minting invites.',
     icon: 'icon/wallet',
   },
 ];
+
+const availableNFTs = computed(() => maxSupply - userStore.users.length - items.value.length);
 
 const isButtonDisabled = computed(() => {
   switch (uploadStep.value) {
     case Step.TYPE:
       return !selectedMethod.value;
-    case Step.UPLOAD:
     case Step.DATA:
-      return items.value.length === 0;
+      return items.value.length === 0 || availableNFTs.value < 0;
     default:
       return false;
   }
 });
-const isMethodWallet = computed(() => selectedMethod.value === Method.WALLET);
+const isMethodWallet = computed(() => selectedMethod.value === ClaimType.WHITELIST);
 const exampleFile = computed(() => {
   const isWallet = isMethodWallet.value ? '-wallet' : '';
   const isAutoIncrement = props.autoIncrement ? '' : '-nft';
@@ -269,12 +270,17 @@ function onFileUploaded(csvData: CsvItem[]) {
     items.value = data;
   } else {
     data.forEach(item => {
-      if (emailAlreadyExists(item.email)) {
+      if (emailAlreadyExists(item?.email || '')) {
         message.warning(`Email: ${item.email} is already on the list`);
       } else {
         items.value.unshift(item as UserInterface);
       }
     });
+  }
+  if (availableNFTs.value < 0) {
+    message.warning(
+      `You uploaded too many NFTs. Please remove ${Math.abs(availableNFTs.value)} NFTs on next step.`
+    );
   }
 }
 
@@ -293,6 +299,7 @@ function removeUser(user: UserInterface) {
 async function deploy() {
   uploadStep.value = Step.DEPLOYING;
   const res = await saveRecipients(items.value);
+  userStore.balance = 0;
 
   uploadStep.value = res ? Step.UPLOAD : Step.REVIEW;
   if (res) emit('close');
@@ -319,8 +326,13 @@ async function deploy() {
     </div>
     <div v-else-if="uploadStep === Step.UPLOAD" class="max-w-lg w-full mx-auto">
       <div class="mb-4">
-        <h4>Upload your CSV file with recipients’ emails</h4>
-        <div class="mt-2 mb-4">
+        <h4 v-if="isMethodWallet">Upload your CSV file with recipients’ wallet addresses</h4>
+        <h4 v-else>Upload your CSV file with recipients’ emails</h4>
+        <div v-if="isMethodWallet" class="mt-2 mb-4">
+          Select and upload the CSV file containing wallet addresses to which you wish to distribute
+          NFTs.
+        </div>
+        <div v-else class="mt-2 mb-4">
           Select and upload the CSV file containing emails to which you wish to distribute NFTs.
         </div>
         <span class="text-xs">
@@ -336,12 +348,18 @@ async function deploy() {
     </div>
     <div v-else-if="uploadStep === Step.DATA">
       <div class="flex justify-between items-center mb-6">
-        <div>
+        <div v-if="isMethodWallet">
+          <h3 class="mb-2">List of NFT wallet airdrop</h3>
+          <span>Please check list before proceed</span>
+        </div>
+        <div v-else>
           <h3 class="mb-2">List of NFT mail airdrop</h3>
           <span>Please check list before proceed</span>
         </div>
 
-        <Btn type="secondary" @click="uploadStep = Step.UPLOAD"> Upload more </Btn>
+        <Btn v-if="availableNFTs > 0" type="secondary" @click="uploadStep = Step.UPLOAD">
+          Upload more
+        </Btn>
       </div>
 
       <n-data-table
@@ -352,13 +370,14 @@ async function deploy() {
         :row-key="rowKey"
         @update:page="p => (page = p)"
       />
-      <div class="lg:-mt-8">
+      <div v-if="availableNFTs > 0" class="lg:-mt-8">
         <Btn type="secondary" @click="addNewUser"> Add recipient </Btn>
       </div>
     </div>
     <PreviewUpload
       v-else-if="uploadStep === Step.REVIEW"
       :num-of-nfts="items.length"
+      :max-supply="Number(maxSupply)"
       @back="uploadStep = Step.DATA"
       @deploy="deploy"
     />
@@ -368,7 +387,7 @@ async function deploy() {
       <div class="flex w-full items-center justify-between gap-4 px-10 py-3">
         <p v-if="uploadStep === Step.DATA">
           <strong>Total credits: </strong>
-          <span>28 000 credits</span>
+          <span>{{ userStore.balance }} credits</span>
         </p>
         <span v-else></span>
         <div class="flex items-center gap-2">
@@ -380,7 +399,10 @@ async function deploy() {
           >
             Back
           </Btn>
-          <Btn class="min-w-40" :disabled="isButtonDisabled" @click="uploadStep += 1">Continue</Btn>
+          <Btn class="min-w-40" :disabled="isButtonDisabled" @click="uploadStep += 1">
+            <span v-if="uploadStep === Step.UPLOAD && items.length === 0"> Skip </span>
+            <span v-else> Continue </span>
+          </Btn>
         </div>
       </div>
     </template>

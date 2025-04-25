@@ -17,12 +17,20 @@
       />
       <NuxtIcon v-else name="icon/NFTs" class="text-3xl inline-block" />
     </div>
-    <div class="">
+    <div class="flex-1">
       <span v-if="collectionName">{{ collectionName || name }}</span>
-      <span v-if="name">Collection: {{ name }}</span>
+      <span v-if="name">NFT Collection: {{ name }}</span>
       <span v-else>NFT Collection</span>
-      <h3 class="mt-2 mb-1">{{ statistics.airdropped || 0 }}/{{ statistics.total || allNfts }}</h3>
-      <span class="">available NFTs</span>
+      <div class="flex gap-2 justify-between w-full">
+        <div>
+          <h3 class="mt-2 mb-1">{{ statistics.airdropped || 0 }}/{{ statistics.total }}</h3>
+          <span class="">claimed NFTs</span>
+        </div>
+        <div>
+          <h3 class="mt-2 mb-1">{{ statistics.total || 0 }}/{{ allNfts }}</h3>
+          <span class="">available NFTs</span>
+        </div>
+      </div>
     </div>
   </div>
 </template>

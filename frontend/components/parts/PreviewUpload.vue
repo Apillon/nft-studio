@@ -28,6 +28,7 @@
         <strong class="block w-1/2">Total spend</strong>
         <div class="flex w-1/2 flex-col gap-1 text-right">
           <strong>{{ numOfNfts * mintPrice() }} credits</strong>
+          <p class="mt-2 text-xs">Your balance: {{ userStore.balance }} credits</p>
         </div>
       </div>
       <Btn size="large" type="primary" @click="$emit('deploy')"> Send minting invites </Btn>
@@ -37,16 +38,19 @@
 
 <script setup lang="ts">
 defineEmits(['back', 'deploy']);
-defineProps({
+const props = defineProps({
   numOfNfts: { type: Number, default: 0 },
+  maxSupply: { type: Number, default: 0 },
 });
 
+const userStore = useUserStore();
+
 const data = ref<Record<string, string | boolean>[]>([
-  { label: 'Total NFTs to distribute this round', value: '20 NFTs' },
+  { label: 'Total NFTs to distribute this round', value: props.numOfNfts + ' NFTs' },
   {
     label: 'Remaining NFTs in the collection',
-    value: '80 NFTs',
+    value: props.maxSupply - userStore.users.length - props.numOfNfts + ' NFTs',
   },
-  { label: 'Price per NFT', value: '20 credits' },
+  { label: 'Price per NFT', value: mintPrice() + ' credits' },
 ]);
 </script>

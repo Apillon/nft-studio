@@ -9,6 +9,8 @@ const contract = ref();
 export default function useClaim() {
   const message = useMessage();
   const config = useRuntimeConfig();
+  const contractStore = useContractStore();
+
   const { wallet } = useWallet();
   const { parseLink } = useIpns();
   const { network, walletAddress, ensureCorrectNetwork } = useWalletConnect();
@@ -36,17 +38,26 @@ export default function useClaim() {
   }
 
   async function getBalance(): Promise<bigint> {
-    await initContract();
-    return await contract.value.read.balanceOf([walletAddress.value]);
+    if (!contractStore.balance) {
+      await initContract();
+      contractStore.balance = await contract.value.read.balanceOf([walletAddress.value]);
+    }
+    return contractStore.balance;
   }
 
   async function getMaxSupply(): Promise<number> {
-    await initContract();
-    return (await contract.value.read.maxSupply([])) as number;
+    if (!contractStore.maxSupply) {
+      await initContract();
+      contractStore.maxSupply = await contract.value.read.maxSupply([]);
+    }
+    return contractStore.maxSupply;
   }
   async function getName(): Promise<string> {
-    await initContract();
-    return await contract.value.read.name([]);
+    if (!contractStore.name) {
+      await initContract();
+      contractStore.name = await contract.value.read.name([]);
+    }
+    return contractStore.name;
   }
 
   async function getTokenOfOwner(index: number) {
@@ -58,6 +69,14 @@ export default function useClaim() {
     await initContract();
     const uri = await contract.value.read.tokenURI([id]);
     return await parseLink(uri);
+  }
+
+  async function isAutoIncrement(): Promise<boolean> {
+    if (contractStore.autoIncrement === null) {
+      await initContract();
+      contractStore.autoIncrement = await contract.value.read.isAutoIncrement([]);
+    }
+    return contractStore.autoIncrement || true;
   }
 
   /** Actions */
@@ -180,6 +199,7 @@ export default function useClaim() {
     contractError,
     getMaxSupply,
     getName,
+    isAutoIncrement,
     loadNft,
   };
 }

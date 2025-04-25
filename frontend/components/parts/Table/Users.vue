@@ -5,6 +5,7 @@
     :data="Object.values(data)"
     :default-expanded-row-keys="[1]"
     :indent="0"
+    :loading="userStore.loading"
     :row-key="row => row.batch || Number(`${row.airdrop_status}${row.id}`)"
     :pagination="{ pageSize: PaginationValues.PAGE_DEFAULT_LIMIT }"
   />
