@@ -6,10 +6,10 @@ const mysql = new MySql(env);
 const api = new HttpServer({ env, mysql });
 
 (async () => {
-  await mysql.connect();
+  mysql.connect();
 
   const cron = new Cron(mysql);
-  await cron.start();
+  cron.start();
 
   await api.listen();
   writeLog(

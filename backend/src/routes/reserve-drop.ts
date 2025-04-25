@@ -18,7 +18,7 @@ export function inject(app: Application) {
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {
-  const { context, params, body } = req;
+  const { context, body } = req;
   //validate token
   const token = body.token;
   const jwtData = readDropReservationToken(token);

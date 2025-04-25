@@ -8,15 +8,15 @@ import { AuthorizationErrorCode } from '../config/values';
  * @param _res Express response
  * @param next Express next function
  */
-export async function AuthenticateAdmin(
+export function AuthenticateAdmin(
   req: Request,
   _res: Response,
   next: NextFunction,
 ) {
   const token = (
-    req.header('authToken') ||
-    req.header('Authorization') ||
-    req.query['token'] ||
+    String(req.header('authToken')) ||
+    String(req.header('Authorization')) ||
+    String(req.query['token']) ||
     ' '
   )
     .toString()
@@ -35,7 +35,7 @@ export async function AuthenticateAdmin(
     return;
   }
 
-  await context.authenticateAdmin(token);
+  context.authenticateAdmin(token);
 
   if (context && context.isAdmin) {
     next();

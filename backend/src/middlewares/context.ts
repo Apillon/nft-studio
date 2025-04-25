@@ -16,7 +16,7 @@ export function inject(app: Application, env: IEnv, mysql: MySql): void {
  * saves it to the request object.
  */
 export function createContext(env: IEnv, mysql: MySql): RequestHandler {
-  return async (req: Request, _res: Response, next: NextFunction) => {
+  return (req: Request, _res: Response, next: NextFunction) => {
     req.context = new Context(env, mysql);
 
     // authenticating is done with authentication middleware

@@ -1,12 +1,11 @@
 import { Application } from 'express';
+import { env } from '../config/env';
+import { AirdropStatus, ClaimType, RouteErrorCode } from '../config/values';
 import { NextFunction, Request, Response } from '../http';
-import { ClaimType, AirdropStatus, RouteErrorCode } from '../config/values';
+import { claim, validateEvmWallet } from '../lib/claim';
 import { ResourceError } from '../lib/errors';
 import { readEmailAirdropToken } from '../lib/jwt';
 import { User } from '../models/user';
-import { Identity } from '@apillon/sdk';
-import { claim, validateAirdropStatus, validateEvmWallet } from '../lib/claim';
-import { env } from '../config/env';
 
 /**
  * Installs new route on the provided application.

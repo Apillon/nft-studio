@@ -8,11 +8,16 @@ import { AuthenticateAdmin } from '../middlewares/authentication';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.get('/drop-reservation-token', AuthenticateAdmin, (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
+  app.get(
+    '/drop-reservation-token',
+    AuthenticateAdmin,
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export async function resolve(req: Request, res: Response): Promise<void> {
-  return res.respond(200, { token: await generateDropReservationToken() });
+  return res.respond(200, { token: generateDropReservationToken() });
 }

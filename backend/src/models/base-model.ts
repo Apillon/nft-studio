@@ -106,7 +106,7 @@ export abstract class BaseModel extends Model<Context> {
     return this;
   }
 
-  public populate(data: Object, strategy?: any) {
+  public populate(data: object, strategy?: any) {
     const mappedObj = {};
     if (!data) {
       return super.populate(mappedObj, strategy);

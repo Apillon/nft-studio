@@ -5,7 +5,7 @@ import { LogType, writeLog } from './logger';
 import { ResourceError } from './errors';
 import { AirdropStatus, RouteErrorCode } from '../config/values';
 
-export function validateEvmWallet(walletAddress?: string, signature?: string, timestamp?: number): Boolean {
+export function validateEvmWallet(walletAddress?: string, signature?: string, timestamp?: number): boolean {
   if (!signature || !walletAddress) {
     throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
   }

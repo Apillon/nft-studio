@@ -12,15 +12,12 @@ export interface Stage {
 export async function createContextAndStartServer(
   overrideEnv?: any,
 ): Promise<Stage> {
-  let useEnv = env;
-  if (overrideEnv) {
-    useEnv = { ...env, ...overrideEnv };
-  }
+  const useEnv = overrideEnv ? { ...env, ...overrideEnv } : env;
   useEnv.APP_ENV = 'testing';
   const mysql = new MySql(useEnv);
   const api = new HttpServer({ env: useEnv, mysql });
   try {
-    await mysql.connect();
+    mysql.connect();
     await api.listen();
     console.log(`Running server on ${useEnv.API_HOST}:${useEnv.API_PORT}`);
 

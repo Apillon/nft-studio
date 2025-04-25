@@ -2,7 +2,6 @@ import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
 import { RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
-import { Identity } from '@apillon/sdk';
 import { generateAdminAuthToken } from '../lib/jwt';
 import { validateEvmWallet } from '../lib/claim';
 
@@ -16,6 +15,7 @@ export function inject(app: Application) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 

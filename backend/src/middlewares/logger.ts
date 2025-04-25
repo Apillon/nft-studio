@@ -35,8 +35,8 @@ export function writeLog(
     //   error: [bgRed, black],
     //   sql: [bgBlack, green]
     // });
-    let bgColor = bgBlack;
-    let color = black;
+    let bgColor;
+    let color;
     switch (type) {
       case LogType.INFO:
         bgColor = bgYellow;
