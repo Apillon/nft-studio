@@ -43,7 +43,7 @@
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
               <Btn class="flex-1" type="secondary">Details</Btn>
-              <Btn class="flex-1" type="primary" @click="openAirdrop(ClaimType.AIRDROP)"
+              <Btn class="flex-1" type="primary" @click="openAirdrop(AirdropMethod.EMAIL)"
                 >Proceed</Btn
               >
             </div>
@@ -58,9 +58,9 @@
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
               <Btn class="flex-1" type="secondary">Details</Btn>
-              <Btn class="flex-1" type="primary" @click="openAirdrop(ClaimType.WHITELIST)"
-                >Proceed</Btn
-              >
+              <Btn class="flex-1" type="primary" @click="openAirdrop(AirdropMethod.WALLET)">
+                Proceed
+              </Btn>
             </div>
           </template>
         </Card>
@@ -78,7 +78,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { ClaimType } from '~/lib/values/general.values';
+import { AirdropMethod } from '~/lib/values/general.values';
 
 const userStore = useUserStore();
 const { getBalance } = useUser();

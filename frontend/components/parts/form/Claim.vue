@@ -24,12 +24,10 @@ const walletUsed = ref<boolean>(false);
 
 const getURI = () => {
   switch (props.type) {
-    case ClaimType.FREE_MINT:
-      return '/claim';
-    case ClaimType.WHITELIST:
-      return '/claim-whitelist';
+    case ClaimType.AIRDROP:
+      return props.token ? '/claim-airdrop' : '/claim-whitelist';
     default:
-      return '/claim-airdrop';
+      return '/claim';
   }
 };
 
@@ -42,7 +40,7 @@ async function claim() {
       props.signature || (await sign(`test\n${timestamp}`).catch(e => contractError(e)));
 
     const { data } = await $api.post<ClaimResponse>(getURI(), {
-      jwt: props.type === ClaimType.AIRDROP ? props.token : undefined,
+      jwt: props?.token || undefined,
       signature,
       timestamp,
       address: walletAddress.value,
@@ -72,7 +70,6 @@ async function claim() {
     loading.value = false;
   } catch (e) {
     handleError(e);
-    // contractError(e);
     loading.value = false;
   }
 }
