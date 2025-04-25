@@ -10,9 +10,12 @@ import { claim, validateEvmWallet } from '../lib/claim';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/claim-whitelist', (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
+  app.post(
+    '/claim-whitelist',
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {

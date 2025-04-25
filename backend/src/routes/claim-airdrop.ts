@@ -12,9 +12,12 @@ import { User } from '../models/user';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/claim-airdrop', (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
+  app.post(
+    '/claim-airdrop',
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {

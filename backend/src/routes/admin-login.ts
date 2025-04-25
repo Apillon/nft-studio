@@ -23,7 +23,11 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     throw new ResourceError(RouteErrorCode.INVALID_ADMIN, context);
   }
 
-  const isValid = validateEvmWallet(body.address, body.signature, body.timestamp);
+  const isValid = validateEvmWallet(
+    body.address,
+    body.signature,
+    body.timestamp,
+  );
 
   if (isValid) {
     const jwt = generateAdminAuthToken(body.address);

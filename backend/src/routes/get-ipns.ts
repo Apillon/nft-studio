@@ -10,9 +10,12 @@ type LinkType = 'ipfs' | 'ipns';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.get('/ipns-link/:ipns', (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
+  app.get(
+    '/ipns-link/:ipns',
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {

@@ -4,11 +4,16 @@ import { User } from '../models/user';
 import { ResourceError } from '../lib/errors';
 import { RouteErrorCode } from '../config/values';
 import { claim } from '../lib/claim';
+import { AuthenticateAdmin } from '../middlewares/authentication';
 
 export function inject(app: Application) {
-  app.post('/claim-admin', (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
+  app.post(
+    '/claim-admin',
+    AuthenticateAdmin,
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {
