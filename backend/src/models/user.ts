@@ -1,3 +1,4 @@
+import { ethAddressValidator } from '@rawmodel/validators';
 import {
   AirdropStatus,
   PopulateStrategy,
@@ -14,9 +15,6 @@ import { ResourceError, SqlError } from '../lib/errors';
 import { getQueryParams, selectAndCountQuery } from '../lib/sql-utils';
 
 export class User extends BaseSqlModel {
-  /**
-   * wallet
-   */
   protected _tableName = 'user';
 
   /**
@@ -25,11 +23,7 @@ export class User extends BaseSqlModel {
   @prop({
     parser: { resolver: stringTrimParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [
-      SerializedStrategy.DB,
-      SerializedStrategy.PROFILE,
-      SerializedStrategy.ADMIN,
-    ],
+    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     validators: [
       {
         resolver: uniqueFieldValue('user', 'email', undefined, true),
@@ -38,7 +32,7 @@ export class User extends BaseSqlModel {
     ],
     fakeValue: 'test@email.com',
   })
-  public email?: string | null;
+  public email: string | null;
 
   /**
    * email_start_send_time
@@ -46,11 +40,7 @@ export class User extends BaseSqlModel {
   @prop({
     parser: { resolver: utcDateParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [
-      PopulateStrategy.DB,
-      SerializedStrategy.PROFILE,
-      SerializedStrategy.ADMIN,
-    ],
+    serializable: [PopulateStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     validators: [],
     defaultValue: new Date(),
     fakeValue: new Date(),
@@ -66,35 +56,26 @@ export class User extends BaseSqlModel {
     serializable: [SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     validators: [],
   })
-  public email_sent_time: Date;
+  public email_sent_time: Date | null;
 
   /**
    * nft_id
    */
-  // TO-DO Not exist on signup
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [
-      SerializedStrategy.DB,
-      SerializedStrategy.PROFILE,
-      SerializedStrategy.ADMIN,
-    ],
+    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     fakeValue: null,
   })
-  public nft_id: number;
+  public nft_id: number | null;
 
   /**
    * signature
    */
   @prop({
     parser: { resolver: stringParser() },
-    populatable: [PopulateStrategy.DB],
-    serializable: [
-      SerializedStrategy.DB,
-      SerializedStrategy.PROFILE,
-      SerializedStrategy.ADMIN,
-    ],
+    populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
+    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     fakeValue: null,
   })
   public signature: string | null;
@@ -105,11 +86,7 @@ export class User extends BaseSqlModel {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [
-      SerializedStrategy.DB,
-      SerializedStrategy.PROFILE,
-      SerializedStrategy.ADMIN,
-    ],
+    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
     validators: [],
     defaultValue: 1,
     fakeValue: 1,
@@ -121,15 +98,21 @@ export class User extends BaseSqlModel {
    */
   @prop({
     parser: { resolver: stringParser() },
-    populatable: [PopulateStrategy.DB],
-    serializable: [
-      SerializedStrategy.DB,
-      SerializedStrategy.PROFILE,
-      SerializedStrategy.ADMIN,
+    validators: [
+      {
+        resolver: ethAddressValidator(),
+        code: ValidatorErrorCode.PROFILE_WALLET_NOT_VALID,
+      },
+      {
+        resolver: uniqueFieldValue('user', 'wallet'),
+        code: ValidatorErrorCode.WALLET_BELONGS_TO_ANOTHER_USER,
+      },
     ],
-    fakeValue: null,
+    populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
+    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    fakeValue: '0x375207c35e670bdF4d2bC45d182117F2f67618B1',
   })
-  public wallet: string;
+  public wallet: string | null;
 
   /**
    * tx hash
@@ -140,7 +123,7 @@ export class User extends BaseSqlModel {
     serializable: [SerializedStrategy.DB, SerializedStrategy.ADMIN],
     fakeValue: null,
   })
-  public tx_hash: string;
+  public tx_hash: string | null;
 
   /**
    * airdrop status
@@ -179,12 +162,9 @@ export class User extends BaseSqlModel {
       await this.db().commit(conn);
     } catch (err) {
       await this.db().rollback(conn);
-      throw new SqlError(
-        err,
-        this.getContext(),
-        SystemErrorCode.DATABASE_ERROR,
-        'user/create',
-      );
+      throw new SqlError(err, this.getContext(), SystemErrorCode.DATABASE_ERROR, 'user/create');
+    } finally {
+      conn.release();
     }
   }
 
@@ -199,12 +179,10 @@ export class User extends BaseSqlModel {
       {
         email: this.email,
         wallet: this.wallet,
-      },
+      }
     );
     if (data && data.length) {
-      throw new ResourceError(
-        ValidatorErrorCode.WALLET_BELONGS_TO_ANOTHER_USER,
-      );
+      throw new ResourceError(ValidatorErrorCode.WALLET_BELONGS_TO_ANOTHER_USER);
     }
   }
 
@@ -214,7 +192,7 @@ export class User extends BaseSqlModel {
       SELECT * FROM ${this._tableName}
       WHERE wallet = @wallet
     `,
-      { wallet: wallet.toLowerCase() },
+      { wallet: wallet.toLowerCase() }
     );
 
     if (data && data.length) {
@@ -230,7 +208,7 @@ export class User extends BaseSqlModel {
       SELECT * FROM ${this._tableName}
       WHERE email = @email
     `,
-      { email },
+      { email }
     );
 
     if (data && data.length) {
@@ -254,7 +232,7 @@ export class User extends BaseSqlModel {
         SUM(IF(airdrop_status = 6, 1, 0)) as airdropped,
         SUM(IF(airdrop_status in (3, 7), 1, 0)) as threwError
     FROM user;
-    `,
+    `
     );
     if (data && data.length) {
       return data[0];
@@ -273,6 +251,7 @@ export class User extends BaseSqlModel {
       id: null,
       email: null,
       status: null,
+      wallet: null,
     };
 
     // map url query with sql fields
@@ -280,23 +259,17 @@ export class User extends BaseSqlModel {
       id: 'u.id',
       email: 'u.email',
       status: 'u.status',
+      wallet: 'u.wallet',
     };
-    const { params, filters } = getQueryParams(
-      defaultParams,
-      'u',
-      fieldMap,
-      urlQuery,
-    );
+    const { params, filters } = getQueryParams(defaultParams, 'u', fieldMap, urlQuery);
     if (filters.limit === -1) {
       filters.limit = null;
     }
-
-    let serializedStrategy = SerializedStrategy.ADMIN;
     const sqlQuery = {
       qSelect: `
         SELECT
           u.id, u.email, u.nft_id,
-          u.tx_hash, u.status,
+          u.tx_hash, u.status, u.amount,
           u.createTime, u.updateTime,
           u.airdrop_status, u.email_start_send_time,
           u.email_sent_time, u.wallet
@@ -311,32 +284,21 @@ export class User extends BaseSqlModel {
       qGroup: `
         `,
       qFilter: `
-        ORDER BY ${
-          filters.orderArr
-            ? `${filters.orderArr.join(', ') || 'u.updateTime DESC'}`
-            : 'u.updateTime DESC'
-        }
+        ORDER BY ${filters.orderArr ? `${filters.orderArr.join(', ') || 'u.updateTime DESC'}` : 'u.updateTime DESC'}
         ${filters.limit !== null ? `LIMIT ${filters.limit} OFFSET ${filters.offset}` : ''};
       `,
     };
 
-    const { items, total } = await selectAndCountQuery(
-      this.db(),
-      sqlQuery,
-      params,
-      'u.id',
-    );
+    const { items, total } = await selectAndCountQuery(this.db(), sqlQuery, params, 'u.id');
     const conn = await this.db().db.getConnection();
     try {
       const populatedItems = await Promise.all(
-        items.map(async (item) => {
-          const u = new User({}, this.getContext()).populate(
-            item,
-            PopulateStrategy.DB,
-          );
-          return u.serialize(serializedStrategy);
-        }),
+        items.map(async item => {
+          const u = new User({}, this.getContext()).populate(item, PopulateStrategy.DB);
+          return u.serialize(SerializedStrategy.ADMIN);
+        })
       );
+      await conn.release();
       return { items: populatedItems, total };
     } catch (e) {
       throw e;

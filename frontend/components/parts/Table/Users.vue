@@ -2,137 +2,149 @@
   <n-data-table
     :bordered="false"
     :columns="columns"
-    :data="users"
+    :data="Object.values(data)"
+    :default-expanded-row-keys="[1]"
+    :indent="0"
+    :loading="userStore.loading"
+    :row-key="row => row.batch || Number(`${row.airdrop_status}${row.id}`)"
     :pagination="{ pageSize: PaginationValues.PAGE_DEFAULT_LIMIT }"
   />
 </template>
 
 <script lang="ts" setup>
 import type { DataTableColumns } from 'naive-ui';
-import { NInput, NDatePicker } from 'naive-ui';
+import { createPublicClient, http } from 'viem';
 import { AirdropStatus, PaginationValues } from '~/lib/values/general.values';
-import { validateEmail } from '~/lib/utils/validation';
+
+type Batch = {
+  batch: number;
+  date: string;
+  email_sent_time: string;
+  children: UserInterface[];
+};
 
 const props = defineProps({
+  autoIncrement: { type: Boolean, default: true },
   users: { type: Array<UserInterface>, required: true },
+  wallet: { type: Boolean, default: false },
 });
-const emit = defineEmits(['addUser', 'removeUser']);
 const message = useMessage();
+const txWait = useTxWait();
+const userStore = useUserStore();
+const { handleError } = useErrors();
+const { network } = useWalletConnect();
+const publicClient = createPublicClient({ chain: network.value, transport: http() });
 
-const newUser = ref<UserInterface>({
-  airdrop_status: AirdropStatus.PENDING,
-  email: '',
-  email_sent_time: null,
-  email_start_send_time: null,
-  nft_id: null,
-  wallet: null,
+const loading = ref<number>(-1);
+
+const updateUserStatus = (id: number, status: number) =>
+  ((userStore.users.find(u => u.id === id) || ({} as UserInterface)).airdrop_status = status);
+
+const data = computed(() => {
+  return props.users.reduce(
+    (acc, user) => {
+      const date = dateTimeToDateAndTime(user?.createTime || '');
+      if (!acc[date]) {
+        acc[date] = {
+          batch: (Object.keys(acc).length || 0) + 1,
+          date,
+          email_sent_time: dateTimeToDate(user?.createTime || ''),
+          children: [],
+        };
+      }
+      acc[date].children.push(user);
+      return acc;
+    },
+    {} as Record<string, Batch>
+  );
 });
-
-function isEditable(row: UserInterface, index: number) {
-  return !row.email && props.users.length === index + 1;
-}
 
 const createColumns = (): DataTableColumns<UserInterface> => {
   return [
     {
+      key: 'id',
+      title: 'ID',
+      width: 50,
+    },
+    {
+      key: 'method',
+      title: 'Method',
+      render(row: UserInterface | Batch) {
+        return 'batch' in row
+          ? h('strong', { class: 'text-grey-dark' }, `Batch ${row.batch}`)
+          : row.email
+            ? 'Email Airdrop'
+            : 'Wallet Airdrop';
+      },
+    },
+    {
       key: 'email',
-      title: 'Email',
-      render(row: UserInterface, index: number) {
-        if (isEditable(row, index)) {
-          return h(NInput, {
-            value: newUser.value.email,
-            type: 'email',
-            onUpdateValue(v) {
-              newUser.value.email = v;
-            },
-          });
-        } else {
-          return h('span', { class: 'whitespace-nowrap' }, row.email);
-        }
-      },
-    },
-    {
-      key: 'nft_id',
-      title: 'NFT ID',
-      render(row: UserInterface, index: number) {
-        if (isEditable(row, index)) {
-          return h(NInput, {
-            value: newUser.value.nft_id,
-            type: 'number',
-            onUpdateValue(v: string) {
-              newUser.value.nft_id = parseInt(v);
-            },
-          });
-        } else {
-          return h('span', { class: 'whitespace-nowrap' }, row.nft_id);
-        }
-      },
-    },
-    {
-      key: 'email_start_send_time',
-      title: 'Start time',
+      title: 'Email/Wallet',
+      className: '!text-grey-dark',
       minWidth: 100,
-      render(row: UserInterface, index: number) {
-        if (isEditable(row, index)) {
-          return h(NDatePicker, {
-            value: newUser.value.email_start_send_time,
-            type: 'datetime',
-            onUpdateValue(v: string) {
-              newUser.value.email_start_send_time = v;
-            },
-          });
-        } else {
-          return dateTimeToDateAndTime(row?.email_start_send_time || '');
-        }
+      ellipsis: {
+        tooltip: true,
       },
-    },
-    {
-      key: 'wallet',
-      title: 'Wallet',
-      minWidth: 100,
       render(row: UserInterface) {
-        return h(resolveComponent('TableEllipsis'), { text: row.wallet }, '');
+        return row.email || row.wallet || '';
       },
     },
-    {
-      key: 'tx_hash',
-      title: 'Transaction hash',
-      minWidth: 100,
-      render(row: UserInterface) {
-        return h(resolveComponent('TableEllipsis'), { text: row.tx_hash }, '');
-      },
-    },
+    ...(!props.autoIncrement
+      ? [
+          {
+            key: 'nft_id',
+            title: 'Assigned NFT',
+            render(row: UserInterface) {
+              return row?.nft_id || '';
+            },
+          },
+        ]
+      : [
+          {
+            key: 'amount',
+            title: 'NFT amount',
+            render(row: UserInterface) {
+              return row?.amount || '1';
+            },
+          },
+        ]),
     {
       key: 'airdrop_status',
       title: 'Status',
       minWidth: 100,
       render(row: UserInterface) {
-        return AirdropStatus[row.airdrop_status].replaceAll('_', ' ');
+        return 'batch' in row
+          ? h('strong', { class: 'text-grey-dark' }, dateTimeToDate(row?.email_sent_time || ''))
+          : row.airdrop_status
+            ? h(resolveComponent('AirdropStatus'), { status: row.airdrop_status || 0 })
+            : '';
       },
     },
     {
       key: 'email_sent_time',
-      title: 'Email sent time',
+      title: 'Distributed',
       minWidth: 100,
       render(row: UserInterface) {
-        return dateTimeToDateAndTime(row?.email_sent_time || '');
+        return 'batch' in row
+          ? h('strong', { class: 'text-grey-dark' }, dateTimeToDate(row?.email_sent_time || ''))
+          : dateTimeToDate(row?.email_sent_time || '');
       },
     },
     {
       key: 'action_remove',
-      title: '',
-      render(row: UserInterface, index: number) {
-        if (isEditable(row, index)) {
+      title: 'Actions',
+      render(row: UserInterface) {
+        if (row.airdrop_status === AirdropStatus.PENDING) {
+          return h('button', { class: 'icon-delete text-xl', onClick: () => {} }, '');
+        } else if (row.id && row.airdrop_status < AirdropStatus.TRANSACTION_CREATED && row.wallet) {
           return h(
-            'button',
-            { class: 'icon-check text-xl text-green', onClick: () => addItem(row) },
-            ''
-          );
-        } else if (!row.id) {
-          return h(
-            'button',
-            { class: 'icon-delete text-xl text-white', onClick: () => removeItem(row) },
-            ''
+            resolveComponent('Btn'),
+            {
+              size: 'small',
+              loading: loading.value === row.id,
+              onClick: () => mint(Number(row.id)),
+            },
+            'Mint'
           );
         }
         return '';
@@ -142,26 +154,38 @@ const createColumns = (): DataTableColumns<UserInterface> => {
 };
 const columns = createColumns();
 
-function addItem(user: UserInterface) {
-  if (!validateEmail(newUser.value.email)) {
-    message.warning('Please enter a valid email address');
-    return;
-  } else if (!newUser.value.email_start_send_time) {
-    message.warning('Please select start time');
-    return;
+async function mint(userId: number) {
+  loading.value = userId;
+
+  try {
+    const { data } = await $api.post<ClaimResponse>('/claim-admin', {
+      userId,
+    });
+    if (data.success) {
+      txWait.hash.value = data.transactionHash;
+      message.info('Your NFT Mint has started');
+      updateUserStatus(userId, AirdropStatus.TRANSACTION_CREATED);
+
+      const receipt = await txWait.wait();
+      const receipt1 = await publicClient.waitForTransactionReceipt({ hash: data.transactionHash });
+      const logs = receipt1?.logs || receipt.data?.logs;
+
+      if (logs && logs[0].topics[3]) {
+        message.success('You successfully minted NFT');
+        updateUserStatus(userId, AirdropStatus.AIRDROP_COMPLETED);
+      } else {
+        message.error('Mint failed, missing NFT ID!');
+        updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
+      }
+    } else {
+      message.error('Failed to claim NFT, please try again later.');
+      updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
+    }
+    loading.value = -1;
+  } catch (e) {
+    handleError(e);
+    updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
+    loading.value = -1;
   }
-
-  user.email = newUser.value.email;
-  user.nft_id = newUser.value.nft_id;
-  user.email_start_send_time = newUser.value.email_start_send_time;
-  newUser.value.email = '';
-  newUser.value.nft_id = null;
-  newUser.value.email_start_send_time = null;
-
-  emit('addUser', newUser.value);
-}
-
-function removeItem(user: UserInterface) {
-  emit('removeUser', user.email);
 }
 </script>

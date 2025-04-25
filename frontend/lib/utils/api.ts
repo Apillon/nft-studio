@@ -1,11 +1,8 @@
-import qs from 'query-string';
+import queryString from 'query-string';
 
 class Api {
   settings: { headers: Headers; basePath: string; publicPath: string } = {
-    headers: new Headers({
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    }),
+    headers: new Headers({ Accept: 'application/json', 'Content-Type': 'application/json' }),
     basePath: '',
     publicPath: '',
   };
@@ -13,10 +10,7 @@ class Api {
   async post<T>(path: string, data?: any, isPublic = false, requestOptions?: RequestInit) {
     this.initSettings();
 
-    const requestData = {
-      method: 'POST',
-      body: data ? JSON.stringify(data) : null,
-    };
+    const requestData = { method: 'POST', body: data ? JSON.stringify(data) : null };
 
     const response = await fetch(
       (isPublic ? this.settings.publicPath : this.settings.basePath) + path,
@@ -34,7 +28,7 @@ class Api {
   ) {
     this.initSettings();
 
-    const q = !query ? '' : '?' + qs.stringify(query, { arrayFormat: 'index' });
+    const q = !query ? '' : '?' + queryString.stringify(query, { arrayFormat: 'index' });
     const requestData = { method: 'GET', query: q };
 
     const response = await fetch(
@@ -48,10 +42,7 @@ class Api {
   async put<T>(path: string, data?: any, isPublic = false, requestOptions?: RequestInit) {
     this.initSettings();
 
-    const requestData = {
-      method: 'PUT',
-      body: data ? JSON.stringify(data) : null,
-    };
+    const requestData = { method: 'PUT', body: data ? JSON.stringify(data) : null };
 
     const response = await fetch(
       (isPublic ? this.settings.publicPath : this.settings.basePath) + path,
@@ -64,10 +55,7 @@ class Api {
   async patch<T>(path: string, data?: any, isPublic = false, requestOptions?: RequestInit) {
     this.initSettings();
 
-    const requestData = {
-      method: 'PATCH',
-      body: data ? JSON.stringify(data) : null,
-    };
+    const requestData = { method: 'PATCH', body: data ? JSON.stringify(data) : null };
 
     const response = await fetch(
       (isPublic ? this.settings.publicPath : this.settings.basePath) + path,
@@ -80,10 +68,7 @@ class Api {
   async delete(path: string, isPublic = false, requestOptions?: RequestInit) {
     this.initSettings();
 
-    const requestData = {
-      method: 'DELETE',
-      headers: this.settings.headers,
-    };
+    const requestData = { method: 'DELETE', headers: this.settings.headers };
 
     const response = await fetch(
       (isPublic ? this.settings.publicPath : this.settings.basePath) + path,
@@ -149,18 +134,14 @@ class Api {
   }
 
   onForbidden(_errorData: any, _requestData: Request | any) {
-    const route = useRoute();
     const router = useRouter();
-    const user = useUserStore();
+    const authStore = useAuthStore();
 
     /**
      * User does not have permission to view resource.
      * Log them out and redirect to login page.
      */
-    if (user.loggedIn) {
-      user.logout();
-    }
-
+    authStore.logout();
     router.replace({ path: '/' });
   }
 }

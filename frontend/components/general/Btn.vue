@@ -56,14 +56,13 @@
 </template>
 
 <script lang="ts" setup>
+import type { PropType } from 'vue';
 import { NButton } from 'naive-ui';
-import {
-  type Type as NButtonType,
-  type Size as ButtonSize,
-} from 'naive-ui/es/button/src/interface';
+import type { Type as NButtonType, Size as ButtonSize } from 'naive-ui/es/button/src/interface';
 
 type ButtonType = NButtonType | 'secondary' | 'builders' | 'link';
 
+const emit = defineEmits(['click']);
 const props = defineProps({
   href: { type: String, default: null },
   to: { type: [String, Object], default: null },
@@ -77,7 +76,6 @@ const props = defineProps({
   faded: { type: Boolean, default: false }, // greyed out
   quaternary: { type: Boolean, default: false },
 });
-const emit = defineEmits(['click']);
 
 const NuxtLink = resolveComponent('NuxtLink');
 
@@ -89,11 +87,10 @@ const btnClass = computed(() => {
   return [
     {
       'w-full': props.type !== 'link' && props.size === 'large',
-      'text-primary underline': props.type === 'link',
+      'text-grey-darker underline': props.type === 'link',
       'font-bold': props.type !== 'link',
-      '!text-white': props.type === 'secondary',
       'pointer-events-none pointer-default': props.disabled || props.loading,
-      'opacity-60': props.disabled,
+      'opacity-60 !text-grey': props.disabled,
       'hover-bounce': props.type !== 'link' && props.type !== 'builders',
       quaternary: props.quaternary || props.type === 'builders',
       locked: isBtnLocked.value,

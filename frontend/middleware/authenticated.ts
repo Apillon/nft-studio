@@ -1,3 +1,5 @@
+import { useAuthStore } from '~/stores/auth';
+
 /**
  * Use in page components:
     definePageMeta({
@@ -5,13 +7,13 @@
     });
  */
 export default defineNuxtRouteMiddleware(_to => {
-  const user = useUserStore();
+  const authStore = useAuthStore();
 
   if (process?.server) {
     return;
   }
 
-  if (!user.loggedIn) {
+  if (!authStore.loggedIn) {
     return navigateTo('/');
   }
 });

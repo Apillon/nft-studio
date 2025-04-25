@@ -54,7 +54,7 @@ export class MySql {
           connectionLimit:
             (this.env.APP_ENV === 'testing'
               ? this.env.MYSQL_POOL_TEST
-              : this.env.MYSQL_POOL) || 10,
+              : this.env.MYSQL_POOL) || 100,
 
           queueLimit: 100,
           // ssl: env.USE_DB_SSL ? {

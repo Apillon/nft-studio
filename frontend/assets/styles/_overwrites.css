@@ -5,13 +5,13 @@
     @apply flex justify-between;
 
     &__piece {
-      @apply relative bg-bg-light rounded-2xl mx-0 w-20 pt-4 pb-3;
+      @apply relative rounded-2xl mx-0 w-20 pt-4 pb-3;
 
       &:not(:last-child) {
         &::before,
         &::after {
           content: '';
-          @apply absolute left-[112%] block w-[6px] h-[6px] rounded-full bg-bodyDark;
+          @apply absolute left-[112%] block w-[6px] h-[6px] rounded-full;
         }
         &::before {
           @apply top-9;
@@ -28,6 +28,18 @@
 
     .no-animation__card {
       @apply font-bold;
+    }
+  }
+
+  #oaw-wallet-widget-btn {
+    @apply invisible absolute -z-1;
+  }
+  .oaw-btn-default-style {
+    @apply h-12 border border-grey-transparent dark:border-bg-lighter bg-transparent w-full text-[0px];
+
+    &::after {
+      content: '▶◀ Apillon Embedded Wallet';
+      @apply text-sm;
     }
   }
 }

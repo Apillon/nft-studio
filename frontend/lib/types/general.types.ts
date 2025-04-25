@@ -1,49 +1,24 @@
-export interface ConfigInterface {
-  APP_URL: string;
-  API_BASE: string;
-  CLAIM_START: number;
-  CHAIN_ID: number;
-  CAPTCHA_KEY: string;
-  CONTRACT_ADDRESS: string | null;
-  METADATA_BASE_URI: string | null;
-  METADATA_TOKEN: string | null;
-}
+import type { TagProps } from 'naive-ui';
+import type { Address } from 'viem';
 
 export type AuthResponseProfile = {
   id: number;
-  authUser: {
-    id: number;
-    status: number;
-    username: string;
-    email?: string;
-    roles: any[];
-    permissions: any[];
-  };
+  authUser: { id: number; status: number; username: string; email?: string; roles: any[]; permissions: any[] };
 };
 
-export type AuthResponse = {
-  profile: AuthResponseProfile;
-  authToken: {
-    status: boolean;
-    data: string;
-  };
-};
+export type AuthResponse = { profile: AuthResponseProfile; authToken: { status: boolean; data: string } };
 
 declare global {
-  type WhitelistCsvItem = {
-    amount?: number | null;
-    signature?: string | null;
-    status?: number | null;
-    wallet: string;
-  }
+  type TagType = TagProps['type'];
 
   type CsvItem = {
-    email: string;
-    email_start_send_time: string;
+    amount?: number | null;
+    email?: string | null;
+    email_start_send_time?: string;
     email_send_time?: string | null;
     nft_id?: number | null;
     tx_hash?: string | null;
-    wallet: string;
+    wallet?: string | null;
     airdrop_status?: number | null;
     status?: number | null;
   };
@@ -62,39 +37,20 @@ declare global {
     };
   };
 
-
-
   /** Response */
-  type GeneralResponse<T> = {
-    data: T;
-    id: string;
-    status: number;
-  };
-  type GeneralItemsResponse<T> = {
-    data: {
-      items: Array<T>;
-      total: number;
-    };
-    id: string;
-    status: number;
-  };
+  type GeneralResponse<T> = { data: T; id: string; status: number };
+  type GeneralItemsResponse<T> = { data: { items: Array<T>; total: number }; id: string; status: number };
   type SuccessResponse = GeneralResponse<{ success: boolean }>;
-  interface WhitelistClaimInterface {
-    amount: number;
-    createTime: string;
-    id: number;
-    signature: string;
-    status: number;
-    updateTime: string;
-    wallet: string;
-  }
-  type WhitelistClaimResponse = GeneralResponse<WhitelistClaimInterface>;
-  type ClaimResponse = GeneralResponse<{ success: boolean; transactionHash: string }>;
+  type BalanceResponse = GeneralResponse<{ balance: number }>;
+  type IpnsResponse = GeneralResponse<{ link: string }>;
+  type TokenResponse = GeneralResponse<{ token: string }>;
+  type ClaimResponse = GeneralResponse<{ success: boolean; transactionHash: Address }>;
 
   interface UserInterface {
     airdrop_status: number;
+    amount: number;
     createTime?: string;
-    email: string;
+    email: string | null;
     email_sent_time: string | null;
     email_start_send_time: string | null;
     id?: number | null;
@@ -105,18 +61,11 @@ declare global {
     wallet: string | null;
   }
 
+  type UserResponse = GeneralResponse<UserInterface>;
   type UsersResponse = GeneralItemsResponse<UserInterface>;
 
-  interface WhitelistUserInterface {
-    amount: number;
-    createTime?: string;
-    id?: number | null;
-    signature: string | null;
-    status?: number;
-    updateTime?: string;
-    wallet: string | null;
-  }
-  type WhitelistUsersResponse = GeneralItemsResponse<WhitelistUserInterface>;
+  type LoginInterface = { jwt: string };
+  type LoginResponse = GeneralResponse<LoginInterface>;
 
   interface StatisticsInterface {
     airdropped: number;
@@ -129,16 +78,5 @@ declare global {
 
   type StatisticsResponse = GeneralResponse<StatisticsInterface>;
 
-  interface WhitelistStatisticsInterface {
-    generatedSignature: number;
-    total: number;
-  }
-
-  type WhitelistStatisticsResponse = GeneralResponse<WhitelistStatisticsInterface>;
-
-  type Metadata = {
-    name: string;
-    description: string;
-    image: string;
-  };
+  type Metadata = { name?: string | null; description?: string | null; image?: string | null };
 }

@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+import { Chains, PoapStatus } from '../values/general.values';
+
 export function sleep(timeMs = 1000) {
   return new Promise(resolve => setTimeout(resolve, timeMs));
 }
@@ -14,6 +17,12 @@ export const placeholderPixel =
  */
 export function randomInteger(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+export function numToBigInt(input: number) {
+  return BigInt(input * 10 ** 18);
+}
+export function bigIntToNum(input: bigint | string | number) {
+  return Number(BigInt(input) / 10n ** 18n);
 }
 
 export function getEncodedPathAndQuery(route: any) {
@@ -79,8 +88,8 @@ export function copyToClipboard(text: string) {
  * OG data
  */
 export function prepareOG(
-  title = 'Mint your NFT Token',
-  description = 'Powered by Apillon.',
+  title = 'NFT Brand Booster',
+  description = 'Send NFTs via email or wallet. Build a whitelist, reward the most loyal users, grow your email list in exchange for rewards, or hand-pick who gets the drop.',
   image = '/images/logo/apillon.jpg',
   url = 'https://apillon.io/'
 ) {
@@ -95,4 +104,41 @@ export function prepareOG(
     twitterImage: image,
     ogUrl: url,
   };
+}
+
+export function mintPrice(chainId?: number): number {
+  switch (chainId) {
+    case Chains.MOONBEAM:
+      return 4;
+    case Chains.MOONBASE:
+      return 0;
+    case Chains.ASTAR:
+      return 2;
+    default:
+      console.warn('Missing chainId');
+      return 0;
+  }
+}
+export function formatNumber(n: number) {
+  return new Intl.NumberFormat('en-US').format(n);
+}
+
+export function getPoapStatus(start?: string | number, end?: string | number) {
+  if (!start && !end) return PoapStatus.IN_PROGRESS;
+
+  const currDate = dayjs(new Date());
+  const startTime = dayjs(start);
+  const endTime = dayjs(end);
+
+  if (!endTime) {
+    return currDate >= startTime ? PoapStatus.IN_PROGRESS : PoapStatus.WAITING;
+  } else if (!startTime) {
+    return currDate > endTime ? PoapStatus.FINISHED : PoapStatus.IN_PROGRESS;
+  }
+
+  return currDate >= startTime && currDate > endTime
+    ? PoapStatus.FINISHED
+    : currDate >= startTime
+      ? PoapStatus.IN_PROGRESS
+      : PoapStatus.WAITING;
 }

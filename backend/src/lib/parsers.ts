@@ -13,26 +13,37 @@ export function stringTrimParser() {
   };
 }
 
+/**
+ * Returns parser function which converts a value to a string.
+ */
+export function stringLowerCaseParser() {
+  return (value: any) => {
+    try {
+      return value.toString().toLowerCase();
+    } catch (e) {
+      return null;
+    }
+  };
+}
+
 export function utcDateParser() {
-  const parser = dateParser();
-  return {
-    resolver: (value: any) => {
-      const parsedDate = parser(value);
-      if (parsedDate instanceof Date) {
-        return new Date(
-          Date.UTC(
-            parsedDate.getUTCFullYear(),
-            parsedDate.getUTCMonth(),
-            parsedDate.getUTCDate(),
-            parsedDate.getUTCHours(),
-            parsedDate.getUTCMinutes(),
-            parsedDate.getUTCSeconds(),
-            parsedDate.getUTCMilliseconds(),
-          ),
-        );
-      }
-      return parsedDate;
-    },
+  return (value: any) => {
+    const parser = dateParser();
+    const parsedDate = parser(value);
+    if (parsedDate instanceof Date) {
+      return new Date(
+        Date.UTC(
+          parsedDate.getUTCFullYear(),
+          parsedDate.getUTCMonth(),
+          parsedDate.getUTCDate(),
+          parsedDate.getUTCHours(),
+          parsedDate.getUTCMinutes(),
+          parsedDate.getUTCSeconds(),
+          parsedDate.getUTCMilliseconds()
+        )
+      );
+    }
+    return parsedDate;
   };
 }
 

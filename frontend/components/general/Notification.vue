@@ -1,8 +1,5 @@
 <template>
-  <div
-    class="inline-block py-2 px-5 border-l-4 w-full bg-bg-dark text-sm"
-    :class="notificationClass"
-  >
+  <div class="inline-block py-2 px-5 border-l-4 w-full bg-bg-dark text-sm" :class="notificationClass">
     <span :class="iconClass"></span>
     <slot />
   </div>
@@ -24,7 +21,7 @@ const notificationClass = computed(() => {
     $style.notification,
     {
       'border-blue': props.type === 'info',
-      'border-yellow': props.type === 'warning',
+      'border-grey': props.type === 'warning',
       'border-pink': props.type === 'error',
       'border-green': props.type === 'success',
     },
@@ -36,7 +33,7 @@ const iconClass = computed(() => {
     $style.icon,
     {
       'text-blue icon-info': props.type === 'info',
-      'text-yellow icon-info': props.type === 'warning',
+      'text-grey icon-info': props.type === 'warning',
       'text-pink icon-info': props.type === 'error',
       'text-green icon-check': props.type === 'success',
     },

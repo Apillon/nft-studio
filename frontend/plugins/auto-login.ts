@@ -1,9 +1,10 @@
+import { useAuthStore } from '~/stores/auth';
+
 export default defineNuxtPlugin(() => {
-  const user = useUserStore();
-  if (user.jwt) {
-    $api.setToken(user.jwt);
-    user.refresh();
+  const authStore = useAuthStore();
+  if (authStore.jwt) {
+    $api.setToken(authStore.jwt);
   } else {
-    user.logout();
+    authStore.logout();
   }
 });

@@ -5,9 +5,19 @@ export const Environments = {
 };
 
 export const WebStorageKeys = {
-  USER: 'kal_user',
-  APP_VERSION: 'kal_version',
+  AUTH: 'nft_studio_auth',
+  CONTRACT: 'nft_studio_contract',
+  IPNS: 'nft_studio_ipns',
+  USER: 'nft_studio_user',
+  APP_VERSION: 'nft_studio_version',
 };
+
+export enum ClaimType {
+  AIRDROP = 1,
+  WHITELIST = 2,
+  FREE_MINT = 3,
+  POAP = 4,
+}
 
 /** NFT Chains */
 export enum Chains {
@@ -35,4 +45,13 @@ export enum AirdropStatus {
   AIRDROP_ERROR = 7,
   AIRDROP_CLAIM_EXPIRED = 8,
   IN_WAITING_LINE = 9,
+}
+
+/**
+ * 0 = Not yet started, 1 = In progress, 2 = Finished
+ */
+export enum PoapStatus {
+  WAITING = 0,
+  IN_PROGRESS = 1,
+  FINISHED = 2,
 }

@@ -2,15 +2,18 @@
   box-sizing: border-box;
 }
 
+html {
+  @apply overflow-hidden;
+}
+
 html,
 body,
 #__nuxt {
-  height: 100%;
   margin: 0;
 }
 
 body {
-  @apply text-white font-normal;
+  @apply text-grey-darker font-normal font-inter;
   font-size: 14px;
 }
 

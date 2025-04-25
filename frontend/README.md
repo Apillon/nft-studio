@@ -57,11 +57,7 @@ Its styles can be modified globally in `/lib/config/naive.ts` - [docs](https://w
 Each naive component also has the `:theme-overrides` prop to overwrite styles per specific usage.
 
 ```html
-<n-tabs
-  type="segment"
-  size="small"
-  :theme-overrides="{ panePaddingSmall: '1.5rem 0 0 0' }"
-></n-tabs>
+<n-tabs type="segment" size="small" :theme-overrides="{ panePaddingSmall: '1.5rem 0 0 0' }"></n-tabs>
 ```
 
 ### API
@@ -100,7 +96,7 @@ Add icon svg to `/assets/icons`, then use `<NuxtIcon :name="" />` component to u
 Control size with font-size.
 
 ```html
-<NuxtIcon name="close" class="inline-block text-[18px] mr-3 align-middle" />
+<NuxtIcon name="action/close" class="inline-block text-[18px] mr-3 align-middle" />
 ```
 
 ### Breakpoints

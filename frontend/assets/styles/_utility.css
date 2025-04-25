@@ -1,0 +1,95 @@
+@layer components {
+  /** Border */
+  .card-border {
+    @apply border border-grey-transparent dark:border-bg-lighter;
+  }
+
+  .border-card {
+    @apply border border-grey-transparent dark:border-bg-lighter rounded-2xl;
+  }
+  .card {
+    @apply border-card bg-bg p-6 md:p-8 lg:p-10 xl:p-12;
+
+    &.small {
+      @apply !p-4;
+    }
+  }
+  .card-light {
+    @apply card !bg-bg-light;
+  }
+  .card-dark {
+    @apply card !bg-grey-darker !text-white;
+  }
+  .card-white {
+    @apply card-border rounded-lg bg-bg text-black px-3 py-2 dark:bg-bg-bg dark:text-white;
+  }
+}
+
+@layer utilities {
+  .frame {
+    @apply relative rounded-2xl pt-8;
+
+    &:before {
+      content: '';
+      @apply border-grey-transparent dark:border-bg-lighter absolute left-0 right-0 top-0 h-8 rounded-t-2xl border;
+    }
+    &:after {
+      @apply absolute left-3 top-0 block h-8 w-8 bg-center bg-no-repeat;
+      content: '';
+      background-image: url('data:image/svg+xml,<svg width="30" height="10" viewBox="0 0 30 10" fill="none" xmlns="http://www.w3.org/2000/svg"><g><circle cx="5" cy="5" r="5" fill="%23313442"/><circle cx="15" cy="5" r="5" fill="%23313442"/><circle cx="25" cy="5" r="5" fill="%23313442"/></g></svg>');
+    }
+
+    .frame-border {
+      @apply border-grey-transparent dark:border-bg-lighter w-full rounded-b-2xl border border-t-0;
+      code {
+        @apply w-full rounded-b-2xl;
+      }
+    }
+  }
+  /** scrollbar */
+  .scrollable {
+    @apply transition-all duration-300 cursor-grab;
+
+    &::-webkit-scrollbar-thumb,
+    &::-webkit-scrollbar-track {
+      @apply bg-transparent;
+    }
+
+    &::-webkit-scrollbar {
+      @apply h-[5px] w-[5px] rounded-[5px];
+    }
+
+    &:hover {
+      &::-webkit-scrollbar-thumb {
+        @apply rounded-[5px] bg-white/20;
+
+        &:hover {
+          @apply bg-white/30;
+        }
+      }
+    }
+  }
+
+  .link {
+    @apply text-grey-darker underline;
+  }
+
+  .flex-cc {
+    @apply flex items-center justify-center;
+  }
+
+  .inline-flex-cc {
+    @apply inline-flex items-center justify-center;
+  }
+
+  /** Button */
+  .btn-close {
+    @apply absolute h-10 w-10 -translate-y-1/2 translate-x-1/2 rounded-full border border-solid border-white bg-bg transition-colors duration-300;
+    &::before {
+      display: none;
+    }
+    &:hover {
+      @apply bg-white text-bg;
+    }
+  }
+}

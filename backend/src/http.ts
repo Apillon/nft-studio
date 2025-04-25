@@ -6,7 +6,6 @@ import { Context } from './context';
 import { MySql } from './lib/mysql';
 import { inject as injectContext } from './middlewares/context';
 import { inject as injectCors } from './middlewares/cors';
-// import { inject as injectCompression } from './middlewares/compression';
 import { inject as injectErrors } from './middlewares/errors';
 import { inject as injectDataParser } from './middlewares/parser';
 import { inject as injectRenders } from './middlewares/renders';
@@ -14,19 +13,17 @@ import { inject as injectGetRoot } from './routes/get-root';
 import { inject as injectCreateUser } from './routes/create-user';
 import { inject as injectGetUser } from './routes/get-user';
 import { inject as injectGetStatistics } from './routes/get-statistics';
-import { inject as injectClaimAirdrop } from './routes/claim-airdrop';
 import { inject as injectAdminLogin } from './routes/admin-login';
-import { inject as injectCreateUserAdmin } from './routes/create-user-admin';
-import { inject as injectClaimAirdropSignupEmailClaim } from './routes/claim-airdrop-signup-email-claim';
-import { inject as injectCreateUserSignupEmailClaim } from './routes/create-user-signup-email-claim';
+import { inject as injectClaim } from './routes/claim';
+import { inject as injectClaimAirdrop } from './routes/claim-airdrop';
+import { inject as injectClaimValidate } from './routes/claim-validate';
 import { inject as injectClaimWhitelist } from './routes/claim-whitelist';
 import { inject as injectGetProject } from './routes/get-project';
-import { inject as injectPoapDrop } from './routes/poap-drop';
+import { inject as injectGetIpns } from './routes/get-ipns';
 import { inject as injectDropReservationToken } from './routes/drop-reservation-token';
-import { inject as injectGetCollections } from './routes/get-collection';
 import { inject as injectReserveDrop } from './routes/reserve-drop';
-import { inject as injectPoapClaimAirdrop } from './routes/poap-claim-airdrop';
 import { inject as injectSendClaimMail } from './routes/send-claim-mail';
+import { inject as injectClaimAdmin } from './routes/claim-admin';
 
 export interface Request extends express.Request {
   context: Context;
@@ -80,23 +77,21 @@ export class HttpServer {
     injectDataParser(this.app);
 
     // ROUTES
-    injectGetRoot(this.app);
+    injectAdminLogin(this.app);
+    injectClaim(this.app);
     injectClaimAirdrop(this.app);
-    injectCreateUserAdmin(this.app);
+    injectClaimValidate(this.app);
+    injectClaimWhitelist(this.app);
     injectCreateUser(this.app);
+    injectGetRoot(this.app);
     injectGetStatistics(this.app);
     injectGetUser(this.app);
-    injectAdminLogin(this.app);
-    injectClaimAirdropSignupEmailClaim(this.app);
-    injectCreateUserSignupEmailClaim(this.app);
-    injectClaimWhitelist(this.app);
     injectGetProject(this.app);
-    injectPoapDrop(this.app);
+    injectGetIpns(this.app);
     injectDropReservationToken(this.app);
-    injectGetCollections(this.app);
     injectReserveDrop(this.app);
-    injectPoapClaimAirdrop(this.app);
     injectSendClaimMail(this.app);
+    injectClaimAdmin(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);

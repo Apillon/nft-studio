@@ -1,83 +1,64 @@
 <script lang="ts" setup>
-type Address = `0x${string}`;
-
 import SuccessSVG from '~/assets/images/success.svg';
-import { useAccount, useConnect, useWalletClient } from 'use-wagmi';
+import { ClaimType } from '~/lib/values/general.values';
 
 definePageMeta({
   layout: 'claim',
 });
-useHead({
-  title: 'Apillon email airdrop prebuilt solution',
-});
 
 const config = useRuntimeConfig();
-const { query } = useRoute();
 const router = useRouter();
 const message = useMessage();
-const txWait = useTxWait();
+const { query } = useRoute();
 const { handleError } = useErrors();
-
-const { address, isConnected } = useAccount();
-const { data: walletClient, refetch } = useWalletClient();
-const { connect, connectors } = useConnect();
-const { initContract, getTokenOfOwner, getTokenUri } = useContract();
+const { contractError, loadNft } = useClaim();
+const { connected, walletAddress, disconnectWallet, sign } = useWalletConnect();
 
 const loading = ref<boolean>(false);
+const metadata = ref<Metadata | null>(null);
+const timestamp = ref<number>(new Date().getTime());
+const walletSignature = ref<string | undefined>();
 
-onBeforeMount(() => {
-  if (!query.token) {
-    router.push('/');
-  }
-});
+const type = config.public.CLAIM_TYPE;
+const timeToStart = computed(() => Number(config.public.CLAIM_START) - timestamp.value);
+const isWhitelist = computed(() => Number(type) === ClaimType.WHITELIST);
+const isAirdrop = computed(
+  () => Number(type) === ClaimType.AIRDROP || Number(type) === ClaimType.POAP
+);
 
-async function claimAirdrop() {
-  loading.value = true;
-  try {
-    await refetch();
-    const timestamp = new Date().getTime();
-
-    if (!walletClient.value) {
-      await connect({ connector: connectors.value[0] });
-
-      if (!walletClient.value) {
-        message.error('Could not connect with wallet');
-        loading.value = false;
-        return;
-      }
+watch(
+  () => walletAddress.value,
+  async _ => {
+    if (walletAddress.value) {
+      metadata.value = await loadNft();
+    } else {
+      metadata.value = null;
     }
+  },
+  { immediate: true }
+);
 
-    const signature = await walletClient.value.signMessage({ message: `test\n${timestamp}` });
-    const res = await $api.post<ClaimResponse>('/users/claim', {
-      jwt: query.token?.toString() || '',
+async function validateWallet() {
+  loading.value = true;
+  timestamp.value = new Date().getTime();
+
+  const signature = await sign(`test\n${timestamp.value}`).catch(e => contractError(e));
+  if (!signature) {
+    loading.value = false;
+    return;
+  }
+
+  try {
+    const { data } = await $api.post<SuccessResponse>('/claim-validate', {
       signature,
-      address: address.value,
-      timestamp,
+      address: walletAddress.value,
+      timestamp: timestamp.value,
     });
-
-    if (res.data && res.data.success) {
-      txWait.hash.value = res.data.transactionHash as Address;
-
-      console.debug('Transaction', txWait.hash.value);
-      message.info('Your NFT Mint has started');
-
-      const receipt = await txWait.wait();
-      console.debug(receipt);
-      message.success('You successfully claimed NFT');
-
-      if (
-        config.public.METADATA_BASE_URI &&
-        config.public.METADATA_TOKEN &&
-        receipt.data?.logs[0].topics[3]
-      ) {
-        getMetadata(Number(receipt.data?.logs[0].topics[3]), res.data.transactionHash);
-      } else if (receipt.data?.to && receipt.data?.logs[0].topics[3]) {
-        const nftId = Number(receipt.data?.logs[0].topics[3]);
-
-        await loadNft(receipt.data.to, nftId, res.data.transactionHash);
-      } else {
-        message.error('Mint failed, missing NFT ID!');
-      }
+    if (data) {
+      message.success('You have successfully validated your wallet and can now claim your NFT.');
+      walletSignature.value = signature;
+    } else {
+      disconnectWallet();
     }
   } catch (e) {
     handleError(e);
@@ -85,60 +66,21 @@ async function claimAirdrop() {
   loading.value = false;
 }
 
-async function loadNft(contractAddress: Address, id: number, transactionHash: string) {
-  try {
-    await initContract(contractAddress);
-    const url = await getTokenUri(id);
-
-    const metadata = await fetch(url).then(response => {
-      return response.json();
-    });
-    router.push({ name: 'share', query: { ...metadata, nftId: id, txHash: transactionHash } });
-  } catch (e) {
-    console.error(e);
-    message.error('Fetch failed, missing NFT metadata!');
-  }
-}
-
-async function getMyNFT(contract: Address) {
-  try {
-    await initContract(contract);
-    const id = await getTokenOfOwner(0);
-    const url = await getTokenUri(Number(id));
-
-    const metadata = await fetch(url).then(response => {
-      return response.json();
-    });
-
-    if (metadata) {
-      message.success('You already claimed NFT');
-      router.push({ name: 'share', query: { ...metadata } });
-    } else {
-      return false;
-    }
-  } catch (e) {
-    console.error(e);
-    return false;
-  }
-}
-
-async function getMetadata(id: number, transactionHash: string) {
-  try {
-    const url = `${config.public.METADATA_BASE_URI}${id}.json?token=${config.public.METADATA_TOKEN}`;
-
-    const metadata = await fetch(url).then(response => {
-      return response.json();
-    });
-    router.push({ name: 'share', query: { ...metadata, nftId: id, txHash: transactionHash } });
-  } catch (e) {
-    console.error(e);
-    message.error('Fetch failed, missing NFT metadata!');
-  }
+function onClaim(metadata: Metadata, txHash?: string) {
+  router.push({ name: 'share', query: { ...metadata, txHash } });
 }
 </script>
 
 <template>
-  <div class="max-w-md w-full md:px-6 my-12 mx-auto">
+  <div v-if="!query.token && isAirdrop" class="my-8 text-center max-w-sm mx-auto">
+    <h3 class="mb-6">Claim not available</h3>
+    <p>
+      To claim your NFT, you need to provide a valid token. Please check the link you received in
+      email and try again.
+    </p>
+  </div>
+  <FormShare v-else-if="metadata" :metadata="metadata" />
+  <div v-else-if="!connected" class="max-w-md w-full md:px-6 my-12 mx-auto">
     <img :src="SuccessSVG" class="mx-auto" width="165" height="169" alt="airdrop" />
 
     <div class="my-8 text-center">
@@ -149,7 +91,18 @@ async function getMetadata(id: number, transactionHash: string) {
       </p>
     </div>
 
-    <ConnectWallet v-if="!isConnected" size="large" />
-    <Btn v-else size="large" :loading="loading" @click="claimAirdrop()">Claim airdrop</Btn>
+    <ConnectWallet size="large" />
   </div>
+  <div v-else-if="isWhitelist && !walletSignature" class="max-w-md w-full md:px-6 my-12 mx-auto">
+    <Btn size="large" :loading="loading" @click="validateWallet()"> Wallet eligibility check </Btn>
+  </div>
+  <NftCountdown v-else-if="timeToStart > 0" :timestamp="config.public.CLAIM_START" />
+  <FormClaim
+    v-else
+    :signature="walletSignature"
+    :timestamp="timestamp"
+    :type="type"
+    :token="queryParam(query.token)"
+    @claim="onClaim"
+  />
 </template>

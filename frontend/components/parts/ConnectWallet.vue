@@ -1,134 +1,95 @@
 <template>
-  <div>
-    <span v-if="address && (!admin || userStore.jwt)" class="mr-4">{{ shortHash(address) }}</span>
-    <Btn
-      v-if="isConnected && (!admin || userStore.jwt)"
-      v-bind="$attrs"
-      :size="size"
-      :loading="loading || isLoading"
-      @click="disconnectWallet()"
-    >
+  <div
+    v-if="connected && (!admin || authStore.loggedIn)"
+    v-bind="$attrs"
+    class="flex justify-end gap-2 items-center"
+  >
+    <strong v-if="walletAddress"> ({{ shortHash(walletAddress) }}) </strong>
+    <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()">
       Disconnect
     </Btn>
-    <Btn
-      v-else-if="isConnected"
-      v-bind="$attrs"
-      :size="size"
-      :loading="loading || isLoading"
-      @click="login()"
-    >
-      Login
-    </Btn>
-    <Btn
-      v-else
-      v-bind="$attrs"
-      :size="size"
-      :loading="loading || isLoading"
-      @click="modalWalletVisible = true"
-    >
-      Connect wallet
-    </Btn>
   </div>
+  <Btn v-else-if="connected" v-bind="$attrs" :size="size" :loading="loading" @click="login(admin)">
+    Login
+  </Btn>
+  <Btn
+    v-else
+    :size="size"
+    v-bind="$attrs"
+    :loading="loading"
+    round
+    @click="modalWalletVisible = true"
+  >
+    Connect wallet
+  </Btn>
+
+  <EmbeddedWallet
+    v-if="network"
+    :client-id="config.public.EMBEDDED_WALLET_CLIENT"
+    passkey-auth-mode="tab_form"
+    :default-network-id="network.id"
+    :networks="[
+      {
+        name: network.name,
+        id: network.id,
+        rpcUrl: network.rpcUrls.default.http[0],
+        explorerUrl: network.blockExplorers.default.url || moonbaseAl.blockExplorers.default.url,
+      },
+      moonbeam,
+    ]"
+  />
 
   <modal
     :show="modalWalletVisible"
     @close="() => (modalWalletVisible = false)"
     @update:show="modalWalletVisible = false"
   >
-    <FormWallet />
+    <FormWallet>
+      <Btn type="secondary" size="large" @click="openWallet">
+        <span class="mr-1">▶◀</span> Apillon Embedded Wallet
+      </Btn>
+    </FormWallet>
   </modal>
 </template>
 
 <script lang="ts" setup>
 import type { Size } from 'naive-ui/es/button/src/interface';
-import { useAccount, useConnect, useDisconnect, useWalletClient } from 'use-wagmi';
-
-type LoginInterface = {
-  jwt: string;
-};
-type LoginResponse = GeneralResponse<LoginInterface>;
+import { moonbeam } from 'viem/chains';
+import { useAccountEffect } from '@wagmi/vue';
+import { EmbeddedWallet, useWallet } from '@apillon/wallet-vue';
 
 const props = defineProps({
   admin: { type: Boolean, default: false },
-  size: { type: String as PropType<Size>, default: 'small' },
+  size: { type: String as PropType<Size>, default: 'medium' },
 });
 
-const { error } = useMessage();
-const userStore = useUserStore();
-const { handleError } = useErrors();
+const config = useRuntimeConfig();
+const authStore = useAuthStore();
+const { wallet } = useWallet();
+const {
+  loading,
+  modalWalletVisible,
+  network,
+  connected,
+  walletAddress,
+  disconnectWallet,
+  initEmbeddedWallet,
+  login,
+} = useWalletConnect();
 
-const { connect, connectors, isLoading } = useConnect({
-  onSuccess: () => {
-    console.log('success');
-  },
+useAccountEffect({ onConnect: () => loginDelay() });
+
+onMounted(() => {
+  initEmbeddedWallet();
 });
-const { data: walletClient, refetch } = useWalletClient();
-const { address, isConnected } = useAccount({ onConnect: loginDelay });
-const { disconnect } = useDisconnect();
 
-const loading = ref<boolean>(false);
-const modalWalletVisible = ref<boolean>(false);
-
-watch(
-  () => isConnected.value,
-  async _ => {
-    if (isConnected.value) {
-      loginDelay();
-    }
+function openWallet() {
+  if (wallet.value) {
+    wallet.value.events.emit('open', true);
   }
-);
-
-async function login() {
-  if (loading.value) return;
-  loading.value = true;
-
-  try {
-    await refetch();
-
-    if (!walletClient.value) {
-      await connect({ connector: connectors.value[0] });
-
-      if (!walletClient.value) {
-        error('Could not connect with wallet');
-        loading.value = false;
-        return;
-      }
-    }
-
-    if (!props.admin) {
-      loading.value = false;
-      modalWalletVisible.value = false;
-      return;
-    }
-
-    const timestamp = new Date().getTime();
-    const message = 'test';
-
-    const signature = await walletClient.value.signMessage({
-      message: `${message}\n${timestamp}`,
-    });
-    const res = await $api.post<LoginResponse>('/login', {
-      signature,
-      timestamp,
-      address: walletClient.value.account.address,
-    });
-    if (res.data.jwt) {
-      userStore.jwt = res.data.jwt;
-      $api.setToken(res.data.jwt);
-    }
-    modalWalletVisible.value = false;
-  } catch (e) {
-    handleError(e);
-  }
-  loading.value = false;
 }
 
 function loginDelay() {
-  setTimeout(() => login(), 100);
-}
-
-function disconnectWallet() {
-  userStore.jwt = '';
-  disconnect();
+  setTimeout(() => login(props.admin), 100);
 }
 </script>

@@ -1,5 +1,5 @@
-import { MessageRenderMessage, NAlert } from 'naive-ui';
-import { RenderMessageProps } from 'naive-ui/es/message/src/types';
+import { type MessageRenderMessage, NAlert } from 'naive-ui';
+import type { RenderMessageProps } from 'naive-ui/es/message/src/types';
 import { apiError } from '~/lib/misc/errors';
 
 export default function useErrors() {
@@ -14,15 +14,9 @@ export default function useErrors() {
         closable: true,
         type: 'error',
         title: messageTitle.value,
-        style: {
-          boxShadow: 'var(--n-box-shadow)',
-          maxWidth: 'calc(100vw - 32px)',
-          width: '320px',
-        },
+        style: { boxShadow: 'var(--n-box-shadow)', maxWidth: 'calc(100vw - 32px)', width: '320px' },
       },
-      {
-        default: () => props.content,
-      }
+      { default: () => props.content }
     );
   };
 
@@ -45,8 +39,5 @@ export default function useErrors() {
     return { errors, fields };
   }
 
-  return {
-    fieldErrors,
-    handleError,
-  };
+  return { fieldErrors, handleError };
 }

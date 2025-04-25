@@ -65,6 +65,8 @@ export class BatchUsers extends BaseSqlModel {
         SystemErrorCode.DATABASE_ERROR,
         'disinfection-block-batch/create',
       );
+    } finally {
+      conn.release();
     }
     return;
   }

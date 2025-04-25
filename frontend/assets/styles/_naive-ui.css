@@ -22,11 +22,11 @@
     @apply bg-transparent;
   }
   &--tertiary-type:not(.n-button--disabled):hover {
-    @apply bg-bg-lighter;
+    /* @apply bg-bg-lighter; */
   }
 
   &--builders-type:not(.n-button--disabled) {
-    @apply text-primary;
+    @apply text-grey-darker;
 
     &:hover {
       @apply text-bg;
@@ -40,7 +40,7 @@
   /** Type error */
   &--error-type {
     .n-button__border {
-      border-color: theme('colors.bg.lighter');
+      /* border-color: theme('colors.bg.lighter'); */
     }
   }
 
@@ -55,7 +55,17 @@
 
 /** Container */
 .container {
-  @apply md:px-20;
+  @apply md:px-14;
+}
+
+/** Data table */
+.n-data-table {
+  .n-data-table-expand-placeholder {
+    @apply hidden;
+  }
+  .n-data-table-expand-trigger {
+    @apply text-black dark:text-white;
+  }
 }
 
 /** Date picker */
@@ -68,11 +78,50 @@
   }
 }
 
+/** Drawer */
+.n-drawer-mask {
+  @apply bg-black/70;
+}
+.n-drawer {
+  max-width: 100vw;
+
+  .n-drawer-body-content-wrapper {
+    @apply scrollable;
+  }
+
+  &.n-drawer--bottom-placement {
+    @apply rounded-t-2xl;
+
+    .n-drawer-header {
+      @apply card-border relative h-18 rounded-t-2xl p-4 pl-10;
+
+      &__main {
+        @apply block w-full;
+      }
+    }
+    .n-drawer-header__close {
+      @apply btn-close !relative right-5 top-5;
+    }
+    .n-drawer-body {
+      @apply relative;
+    }
+    .n-drawer-body-content-wrapper {
+      @apply lg:px-10 lg:pt-8;
+    }
+    .n-drawer-footer {
+      @apply bg-bg-light px-10 py-3;
+    }
+    .n-drawer-content--native-scrollbar {
+      @apply overflow-x-hidden;
+    }
+  }
+}
+
 /** Dropdown */
 .n-dropdown {
   .n-dropdown-option-body {
     &.active::before {
-      @apply bg-bg-lighter;
+      /* @apply bg-bg-lighter; */
     }
 
     &.dropdown-new-project {
@@ -135,8 +184,11 @@
 }
 #kalm .nuxt-icon {
   &.icon-auto svg {
-    width: auto;
-    height: auto;
+    @apply max-w-full;
+
+    svg {
+      @apply w-auto h-auto max-w-full object-contain;
+    }
   }
   svg {
     margin-bottom: 0;
@@ -162,8 +214,6 @@
 
 /** Layout */
 .n-layout {
-  background-color: transparent;
-
   &.has-scrollbar {
     @apply -mr-3;
     width: calc(100% + 0.75rem);
@@ -203,7 +253,7 @@
 /** Message */
 .n-message {
   @apply relative flex flex-wrap;
-  border: 3px solid theme('colors.bg.lighter');
+  border: 3px solid theme('colors.grey.darkerTransparent');
 
   &--error-type {
     border-color: theme('colors.pink');
@@ -215,7 +265,7 @@
     border-color: theme('colors.green');
   }
   &--warning-type {
-    border-color: theme('colors.yellow');
+    border-color: theme('colors.pink');
   }
 
   .n-message__icon {
@@ -284,6 +334,41 @@ body > .n-message-container {
       }
     }
   }
+  &.hide-header {
+    &.n-dialog .n-dialog__content {
+      @apply mt-0;
+    }
+  }
+
+  .n-card {
+    &-header {
+      @apply py-4;
+
+      &__main {
+        @apply font-bold;
+      }
+      &__close,
+      .n-card__close {
+        @apply btn-close right-0 top-0;
+      }
+    }
+
+    &__content {
+      @apply py-4 mobile:px-4;
+
+      &:not(:first-child) {
+        @apply border-t-0;
+      }
+    }
+
+    &__footer {
+      @apply pt-4;
+
+      &:not(:first-child) {
+        @apply border-t-0;
+      }
+    }
+  }
 }
 
 /** Pagination */
@@ -300,7 +385,7 @@ body > .n-message-container {
   @apply max-w-md;
 
   &__content {
-    @apply body-sm text-white;
+    @apply body-sm;
   }
   &.n-popover-shared.n-popover-shared--show-arrow {
     @apply max-w-md;
@@ -332,6 +417,14 @@ body > .n-message-container {
   }
 }
 
+.n-select-menu {
+  @apply border-card !rounded-xl overflow-hidden;
+
+  .v-vl-visible-items {
+    @apply py-1;
+  }
+}
+
 /** Tag */
 .n-tag {
   @apply uppercase font-bold;
@@ -353,7 +446,7 @@ body > .n-message-container {
   .n-upload-file-info {
     &__action {
       .n-button {
-        @apply w-8 h-8 p-2 hover:bg-bg-lighter;
+        /* @apply w-8 h-8 p-2 hover:bg-bg-lighter; */
       }
       .n-button__icon {
         width: var(--n-icon-size);

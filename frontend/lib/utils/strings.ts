@@ -1,3 +1,5 @@
+import type { LocationQueryValue } from 'vue-router';
+
 export function toHtmlNewlines(text: string, breaks = '<br/>') {
   if (!text) {
     return '';
@@ -50,11 +52,7 @@ export function getOneOrRange(val1: number | string, val2: number | string) {
   return val1 + '-' + val2;
 }
 
-export function getFormattedPrice(
-  val = 0,
-  moreOptions?: Intl.NumberFormatOptions,
-  locale = 'en-US'
-) {
+export function getFormattedPrice(val = 0, moreOptions?: Intl.NumberFormatOptions, locale = 'en-US') {
   const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: 'USD',
@@ -107,3 +105,10 @@ export function getCompactValue(value: number | string, decimals = 2) {
 
   return `${getFixed(value, decimals)}`;
 }
+
+export const queryParam = (param: LocationQueryValue | LocationQueryValue[]) => {
+  return Array.isArray(param) ? String(param.join()) : param ? String(param) : undefined;
+};
+export const parseImage = (img: string) => {
+  return img.startsWith('ipfs://') ? removeLastSlash(img).replace('ipfs://', 'https://') + '.ipfs.dweb.link' : img;
+};

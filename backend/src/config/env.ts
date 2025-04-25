@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv';
+import { ClaimType } from './values';
 /**
  * Environment object interface.
  */
@@ -49,9 +50,8 @@ export interface IEnv {
 
   CLAIM_EXPIRES_IN: number;
 
-  SIGNATURE_PRIVATE_KEY: string;
-  SIGNATURE_CONTRACT_ADDRESS: string;
   CLAIM_START: number;
+  CLAIM_TYPE: number;
 }
 /**
  * Load variables from .env.
@@ -83,8 +83,7 @@ export const env: IEnv = {
   /**
    * Admin
    */
-  ADMIN_WALLET:
-    process.env['ADMIN_WALLET']?.toLocaleLowerCase().split(/[,;]/) || [],
+  ADMIN_WALLET: process.env['ADMIN_WALLET']?.toLocaleLowerCase().split(/[,;]/) || [],
 
   /**
    * Mysql URL.
@@ -137,7 +136,6 @@ export const env: IEnv = {
   CAPTCHA_SECRET: process.env['CAPTCHA_SECRET'],
   CLAIM_EXPIRES_IN: parseInt(process.env['CLAIM_EXPIRES_IN']) || 72,
 
-  SIGNATURE_PRIVATE_KEY: process.env['SIGNATURE_PRIVATE_KEY'],
-  SIGNATURE_CONTRACT_ADDRESS: process.env['SIGNATURE_CONTRACT_ADDRESS'],
   CLAIM_START: parseInt(process.env['CLAIM_START']),
+  CLAIM_TYPE: ClaimType.AIRDROP,
 };

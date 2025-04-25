@@ -25,11 +25,14 @@ export async function AuthenticateAdmin(
 
   const { context } = req;
   if (!token) {
-    throw new UnauthorizedError(
-      AuthorizationErrorCode.MISSING_AUTH_TOKEN,
-      context,
-      'authentication-middleware/AuthenticateUser',
+    next(
+      new UnauthorizedError(
+        AuthorizationErrorCode.MISSING_AUTH_TOKEN,
+        context,
+        'authentication-middleware/AuthenticateUser',
+      ),
     );
+    return;
   }
 
   await context.authenticateAdmin(token);
