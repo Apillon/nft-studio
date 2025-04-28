@@ -14,9 +14,12 @@ export const WebStorageKeys = {
 
 export enum ClaimType {
   AIRDROP = 1,
-  WHITELIST = 2,
-  FREE_MINT = 3,
-  POAP = 4,
+  FREE_MINT = 2,
+  POAP = 3,
+}
+export enum AirdropMethod {
+  EMAIL = 1,
+  WALLET = 2,
 }
 
 /** NFT Chains */

@@ -28,9 +28,8 @@ export enum DefaultUserRoles {
 
 export enum ClaimType {
   AIRDROP = 1,
-  WHITELIST = 2,
-  FREE_MINT = 3,
-  POAP = 4,
+  FREE_MINT = 2,
+  POAP = 3,
 }
 
 /**

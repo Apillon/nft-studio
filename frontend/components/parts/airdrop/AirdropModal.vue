@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { DataTableColumns } from 'naive-ui';
 import { NButton, NDatePicker, NInput, NInputNumber } from 'naive-ui';
-import { AirdropStatus, ClaimType, PaginationValues } from '~/lib/values/general.values';
+import { AirdropStatus, AirdropMethod, PaginationValues } from '~/lib/values/general.values';
 
 enum Step {
   TYPE = 1,
@@ -36,13 +36,13 @@ const steps = [
 const selectedMethod = ref<number>(props.type);
 const methods = [
   {
-    value: ClaimType.AIRDROP,
+    value: AirdropMethod.EMAIL,
     title: 'NFT Email Airdrop',
     content: 'Upload a list of emails and send minting invites.',
     icon: 'icon/airdrop',
   },
   {
-    value: ClaimType.WHITELIST,
+    value: AirdropMethod.WALLET,
     title: 'NFT Wallet Airdrop',
     content: 'Upload a list of wallet addresses and send minting invites.',
     icon: 'icon/wallet',
@@ -61,7 +61,7 @@ const isButtonDisabled = computed(() => {
       return false;
   }
 });
-const isMethodWallet = computed(() => selectedMethod.value === ClaimType.WHITELIST);
+const isMethodWallet = computed(() => selectedMethod.value === AirdropMethod.WALLET);
 const exampleFile = computed(() => {
   const isWallet = isMethodWallet.value ? '-wallet' : '';
   const isAutoIncrement = props.autoIncrement ? '' : '-nft';
