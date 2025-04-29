@@ -22,7 +22,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      API_BASE: '',
+      API_BASE: 'http://localhost:3001',
       CHAIN_ID: moonbaseAlpha.id,
       CLAIM_START: 0,
       CLAIM_END: 0,
