@@ -26,7 +26,7 @@
   <EmbeddedWallet
     v-if="network"
     :client-id="config.public.EMBEDDED_WALLET_CLIENT"
-    passkey-auth-mode="tab_form"
+    passkey-auth-mode="popup"
     :default-network-id="network.id"
     :networks="[
       {
