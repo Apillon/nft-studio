@@ -1,33 +1,9 @@
-import { Identity, LogLevel, Nft } from '@apillon/sdk';
+import { LogLevel, Nft } from '@apillon/sdk';
 import { env } from '../config/env';
 import { User } from '../models/user';
 import { LogType, writeLog } from './logger';
 import { ResourceError } from './errors';
 import { AirdropStatus, RouteErrorCode } from '../config/values';
-
-export function validateEvmWallet(
-  walletAddress?: string,
-  signature?: string,
-  timestamp?: number,
-): boolean {
-  if (!signature || !walletAddress) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
-
-  const identity = new Identity(null);
-  const { isValid } = identity.validateEvmWalletSignature({
-    walletAddress,
-    signature,
-    signatureValidityMinutes: 10,
-    message: `test\n${timestamp}`,
-    timestamp,
-  });
-
-  if (!isValid) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
-  return isValid;
-}
 
 export async function claim(user: User): Promise<string> {
   const collection = new Nft({
@@ -54,13 +30,7 @@ export async function claim(user: User): Promise<string> {
       ? AirdropStatus.AIRDROP_COMPLETED
       : AirdropStatus.AIRDROP_ERROR;
   } catch (e) {
-    writeLog(
-      LogType.ERROR,
-      'Error creating airdrop',
-      'claim-airdrop.ts',
-      'resolve',
-      e,
-    );
+    writeLog(LogType.ERROR, 'Error creating airdrop', 'claim-airdrop.ts', 'resolve', e);
     user.airdrop_status = AirdropStatus.AIRDROP_ERROR;
     throw new Error(e);
   }

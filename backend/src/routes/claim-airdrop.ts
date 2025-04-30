@@ -2,29 +2,27 @@ import { Application } from 'express';
 import { env } from '../config/env';
 import { AirdropStatus, ClaimType, RouteErrorCode } from '../config/values';
 import { NextFunction, Request, Response } from '../http';
-import { claim, validateEvmWallet } from '../lib/claim';
+import { claim } from '../lib/claim';
 import { ResourceError } from '../lib/errors';
 import { readEmailAirdropToken } from '../lib/jwt';
 import { User } from '../models/user';
+import { validateEvmWallet } from '../lib/wallet-verify';
 
 /**
  * Installs new route on the provided application.
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post(
-    '/claim-airdrop',
-    (req: Request, res: Response, next: NextFunction) => {
-      resolve(req, res).catch(next);
-    },
-  );
+  app.post('/claim-airdrop', (req: Request, res: Response, next: NextFunction) => {
+    resolve(req, res).catch(next);
+  });
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 
   const wallet = body.address;
-  validateEvmWallet(wallet, body.signature, body.timestamp);
+  validateEvmWallet(wallet, body.signature, body.timestamp, body.isSmart);
 
   if (!body.jwt) {
     throw new ResourceError(RouteErrorCode.REQUEST_TOKEN_NOT_PRESENT);

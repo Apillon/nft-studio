@@ -22,8 +22,13 @@ function openEmbeddedWallet() {
 <template>
   <div v-if="!isLoggedIn">
     <div class="border border-black dark:bg-bg-darker rounded-lg mx-auto max-w-xl">
-      <FormWallet>
-        <Btn type="secondary" size="large" @click="openEmbeddedWallet">
+      <FormWallet admin>
+        <Btn
+          v-if="!!config.public.EMBEDDED_WALLET_CLIENT"
+          type="secondary"
+          size="large"
+          @click="openEmbeddedWallet"
+        >
           <span class="mr-1">▶◀</span> Apillon Embedded Wallet
         </Btn>
       </FormWallet>

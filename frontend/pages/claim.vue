@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { isErc6492Signature } from 'viem';
 import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
 
@@ -51,6 +52,7 @@ async function validateWallet() {
       signature,
       address: walletAddress.value,
       timestamp: timestamp.value,
+      isSmart: isErc6492Signature(signature as `0x${string}`),
     });
     if (data) {
       message.success('You have successfully validated your wallet and can now claim your NFT.');

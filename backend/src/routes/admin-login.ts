@@ -3,7 +3,7 @@ import { NextFunction, Request, Response } from '../http';
 import { RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
 import { generateAdminAuthToken } from '../lib/jwt';
-import { validateEvmWallet } from '../lib/claim';
+import { validateEvmWallet } from '../lib/wallet-verify';
 
 /**
  * Installs new route on the provided application.
@@ -23,10 +23,11 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     throw new ResourceError(RouteErrorCode.INVALID_ADMIN, context);
   }
 
-  const isValid = validateEvmWallet(
+  const isValid = await validateEvmWallet(
     body.address,
     body.signature,
     body.timestamp,
+    body.isSmart
   );
 
   if (isValid) {
