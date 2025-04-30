@@ -1,17 +1,12 @@
 import { http, createConfig, WagmiPlugin, createStorage } from '@wagmi/vue';
-import { moonbeam, moonbaseAlpha } from '@wagmi/vue/chains';
+import { mainnet, moonbeam, moonbaseAlpha } from '@wagmi/vue/chains';
 import { type Chain } from '@wagmi/vue/chains';
 import { VueQueryPlugin } from '@tanstack/vue-query';
 import { metaMask, coinbaseWallet, walletConnect } from '@wagmi/vue/connectors';
 
 export default defineNuxtPlugin(nuxtApp => {
   const config = useRuntimeConfig();
-  const chains: readonly [Chain, ...Chain[]] = [moonbeam, moonbaseAlpha];
-
-  const transports = chains.reduce((acc, chain) => {
-    acc[chain.id] = http();
-    return acc;
-  }, {});
+  const chains: readonly [Chain, ...Chain[]] = [mainnet, moonbeam, moonbaseAlpha];
 
   const connectors = [
     metaMask({
@@ -32,7 +27,11 @@ export default defineNuxtPlugin(nuxtApp => {
     connectors,
     multiInjectedProviderDiscovery: false,
     storage: createStorage({ storage: window.sessionStorage }),
-    transports,
+    transports: {
+      [mainnet.id]: http(),
+      [moonbaseAlpha.id]: http(),
+      [moonbeam.id]: http(),
+    },
   });
   nuxtApp.provide('wagmiConfig', wagmiConfig);
   nuxtApp.vueApp.use(WagmiPlugin, { config: wagmiConfig });

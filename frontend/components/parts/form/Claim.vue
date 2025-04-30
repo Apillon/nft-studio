@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import SuccessSVG from '~/assets/images/success.svg';
-import { createPublicClient, http } from 'viem';
+import { createPublicClient, http, isErc6492Signature } from 'viem';
 import { ClaimType } from '~/lib/values/general.values';
 
 const props = defineProps({
@@ -44,6 +44,7 @@ async function claim() {
       signature,
       timestamp,
       address: walletAddress.value,
+      isSmart: isErc6492Signature(signature as `0x${string}`),
     });
     if (data.success) {
       txWait.hash.value = data.transactionHash;

@@ -24,7 +24,7 @@
   </Btn>
 
   <EmbeddedWallet
-    v-if="network"
+    v-if="!!config.public.EMBEDDED_WALLET_CLIENT && !!network"
     :client-id="config.public.EMBEDDED_WALLET_CLIENT"
     passkey-auth-mode="popup"
     :default-network-id="network.id"
@@ -33,7 +33,7 @@
         name: network.name,
         id: network.id,
         rpcUrl: network.rpcUrls.default.http[0],
-        explorerUrl: network.blockExplorers.default.url || moonbaseAl.blockExplorers.default.url,
+        explorerUrl: network.blockExplorers.default.url,
       },
       moonbeam,
     ]"
@@ -44,8 +44,13 @@
     @close="() => (modalWalletVisible = false)"
     @update:show="modalWalletVisible = false"
   >
-    <FormWallet>
-      <Btn type="secondary" size="large" @click="openWallet">
+    <FormWallet :admin="admin">
+      <Btn
+        v-if="!!config.public.EMBEDDED_WALLET_CLIENT"
+        type="secondary"
+        size="large"
+        @click="openWallet"
+      >
         <span class="mr-1">▶◀</span> Apillon Embedded Wallet
       </Btn>
     </FormWallet>
@@ -86,6 +91,7 @@ onMounted(() => {
 function openWallet() {
   if (wallet.value) {
     wallet.value.events.emit('open', true);
+    modalWalletVisible.value = false;
   }
 }
 
