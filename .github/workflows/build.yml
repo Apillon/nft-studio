@@ -1,0 +1,30 @@
+name: Build Website
+
+on:
+  push:
+    branches:
+      - develop
+      - main
+
+defaults:
+  run:
+    working-directory: ./frontend
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run generate

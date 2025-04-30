@@ -5,6 +5,7 @@
   "scripts": {
     "test": "npx jest --config jestconfig.json --forceExit --detectOpenHandles --runInBand",
     "development:run": "node -r ts-node/register --inspect ./src/scripts/start-http",
+    "start": "npm run development:run",
     "dev": "npm run development:run",
     "tsc": "tsc",
     "build": "tsc",
@@ -14,7 +15,8 @@
     "db-downgrade": "node -r ts-node/register ./src/scripts/db/downgrade-db",
     "db-rebuild": "node -r ts-node/register ./src/scripts/db/rebuild-db",
     "db-drop": "node -r ts-node/register ./src/scripts/db/drop-db",
-    "format": "prettier --write \"**/*.{ts,tsx,md}\""
+    "format": "prettier --write \"**/*.{ts,tsx,md}\"",
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
   },
   "author": "Apillon",
   "license": "ISC",
@@ -41,6 +43,11 @@
     "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.25.1",
+    "eslint": "^9.25.1",
+    "eslint-plugin-sonarjs": "^3.0.2",
+    "typescript-eslint": "^8.31.0",
     "@types/cron": "^2.4.3",
     "@types/express": "^5.0.1",
     "@types/handlebars": "^4.1.0",

@@ -34,7 +34,7 @@ export interface Request extends express.Request {
  * ExpressJS response object interface which includes middlewares features.
  */
 export interface Response extends express.Response {
-  respond(status: number, data: Object, meta?: Object): void;
+  respond(status: number, data: object, meta?: object): void;
   throw(status: number, errors: any): void;
 }
 

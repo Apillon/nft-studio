@@ -1,7 +1,7 @@
 import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
 import { AirdropStatus, RouteErrorCode } from '../config/values';
-import { ResourceError, ValidationError } from '../lib/errors';
+import { ResourceError } from '../lib/errors';
 import { User } from '../models/user';
 import { claim, validateEvmWallet } from '../lib/claim';
 

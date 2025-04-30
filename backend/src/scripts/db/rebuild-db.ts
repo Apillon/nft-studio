@@ -1,6 +1,6 @@
 import * as readline from 'readline';
 import { env } from '../../config/env';
-import { rebuildDatabase } from '../../lib/migrations';
+import { clearDatabase } from '../../lib/migrations';
 
 const rl = readline.createInterface({
   input: process.stdin,
@@ -8,7 +8,7 @@ const rl = readline.createInterface({
 });
 
 const run = async () => {
-  await rebuildDatabase();
+  await clearDatabase();
 };
 
 rl.question(

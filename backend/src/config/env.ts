@@ -83,7 +83,8 @@ export const env: IEnv = {
   /**
    * Admin
    */
-  ADMIN_WALLET: process.env['ADMIN_WALLET']?.toLocaleLowerCase().split(/[,;]/) || [],
+  ADMIN_WALLET:
+    process.env['ADMIN_WALLET']?.toLocaleLowerCase().split(/[,;]/) || [],
 
   /**
    * Mysql URL.
@@ -103,7 +104,7 @@ export const env: IEnv = {
   /**
    * Pagination maximum size limit.
    */
-  PAGE_MAX_LIMIT: parseInt(process.env['PAGE_MAX_LIMIT']),
+  PAGE_MAX_LIMIT: parseInt(process.env['PAGE_MAX_LIMIT']) || 500,
 
   /** SMTP */
   SMTP_HOST: process.env['SMTP_HOST'],

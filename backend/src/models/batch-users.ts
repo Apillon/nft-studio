@@ -68,7 +68,6 @@ export class BatchUsers extends BaseSqlModel {
     } finally {
       conn.release();
     }
-    return;
   }
 
   async batchInsertUsers(strategy: SerializedStrategy, conn: PoolConnection) {
@@ -93,15 +92,13 @@ export class BatchUsers extends BaseSqlModel {
           .join(', ')} )
         VALUES
           ${batch
-            .map((serializedModel, idx) => {
-              return `(
+            .map(
+              (serializedModel, idx) => `(
               ${Object.keys(serializedModel)
-                .map((key) => {
-                  return `@${idx}_${key}`;
-                })
+                .map((key) => `@${idx}_${key}`)
                 .join(', ')}
-            )`;
-            })
+            )`,
+            )
             .join(', ')}
         `;
 
