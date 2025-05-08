@@ -76,6 +76,7 @@ export enum AuthorizationErrorCode {
   NOT_ACTIVATED = 403004,
   INVALID_TOKEN = 403005,
   TOKEN_EXPIRED = 403006,
+  UNSUPPORTED_CLAIM_TYPE = 403007,
 }
 
 /**

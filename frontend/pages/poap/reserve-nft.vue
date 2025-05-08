@@ -1,8 +1,6 @@
 <template>
   <div class="frame flex dark:bg-bg-darker w-full max-w-sm mx-auto min-h-[calc(90vh-210px)]">
-    <div
-      class="frame-border self-stretch min-h-60 flex flex-col justify-evenly gap-5 p-6 text-center"
-    >
+    <div class="frame-border self-stretch min-h-60 flex flex-col justify-evenly gap-5 p-6 text-center">
       <div v-if="!isTokenValid">
         <p>Token is invalid or has expired...</p>
       </div>
@@ -10,24 +8,15 @@
         <p>You have successfully reserved NFT. Check your mail for instructions on how to mint.</p>
       </div>
       <FormClaim
-        v-else-if="connected && query.token"
+        v-else-if="connected && query.nftToken"
         :type="ClaimType.FREE_MINT"
-        :token="queryParam(query.token)"
+        :token="queryParam(query.nftToken)"
         @claim="onClaim"
       />
       <template v-else>
         <h2 class="text-3xl mt-2">Enter your email to reserve NFT</h2>
-        <p>
-          Once you have entered your e-mail address, you will receive instructions on how to claim
-          NFT.
-        </p>
-        <n-form
-          ref="formRef"
-          :model="formData"
-          class="text-left mt-2"
-          :rules="rules"
-          @submit.prevent="handleSubmit"
-        >
+        <p>Once you have entered your e-mail address, you will receive instructions on how to claim NFT.</p>
+        <n-form ref="formRef" :model="formData" class="text-left mt-2" :rules="rules" @submit.prevent="handleSubmit">
           <!--  Project Quota value -->
           <n-form-item path="email" :show-label="false">
             <n-input v-model:value="formData.email" placeholder="Enter your email" clearable />
@@ -36,9 +25,7 @@
           <!--  Form submit -->
           <n-form-item :show-label="false" :show-feedback="false">
             <input type="submit" class="hidden" />
-            <Btn size="large" type="secondary" :loading="loading" @click="handleSubmit">
-              Proceed
-            </Btn>
+            <Btn size="large" type="secondary" :loading="loading" @click="handleSubmit"> Proceed </Btn>
           </n-form-item>
         </n-form>
 
@@ -85,10 +72,12 @@ useHead({
 });
 definePageMeta({
   layout: 'poap',
+  middleware: 'poap',
 });
 
 const router = useRouter();
 const message = useMessage();
+
 const { query } = useRoute();
 const { loadNft } = useClaim();
 const { parseLink } = useIpns();
@@ -100,7 +89,7 @@ const isTokenValid = ref(true);
 const tokenValidityInPercent = ref(100);
 const dropReserved = ref(false);
 const nfts = ref<Array<string>>([]);
-const token = query.token?.toString();
+const token = query.nftToken?.toString();
 
 let calcRemainingTimeInterval: any = null as any;
 
@@ -125,9 +114,7 @@ function handleSubmit(e: Event | MouseEvent) {
   e.preventDefault();
   formRef.value?.validate((errors: Array<FormValidationError> | undefined) => {
     if (errors) {
-      errors.map(fieldErrors =>
-        fieldErrors.map(error => message.warning(error.message || 'Error'))
-      );
+      errors.map(fieldErrors => fieldErrors.map(error => message.warning(error.message || 'Error')));
     } else {
       reserveMint();
     }
@@ -182,7 +169,7 @@ async function reserveMint() {
   loading.value = false;
 }
 
-async function loadImages() {
+function loadImages() {
   [1, 2, 3, 4, 5].forEach(i => loadImage(i));
 }
 async function loadImage(i: number) {

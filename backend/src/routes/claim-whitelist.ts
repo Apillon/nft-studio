@@ -5,13 +5,14 @@ import { ResourceError } from '../lib/errors';
 import { User } from '../models/user';
 import { claim } from '../lib/claim';
 import { validateEvmWallet } from '../lib/wallet-verify';
+import { ClaimGuard } from '../middlewares/claim';
 
 /**∂
  * Installs new route on the provided application.
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/claim-whitelist', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/claim-whitelist', ClaimGuard, (req: Request, res: Response, next: NextFunction) => {
     resolve(req, res).catch(next);
   });
 }
