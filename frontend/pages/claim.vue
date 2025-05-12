@@ -22,7 +22,7 @@ const walletSignature = ref<string | undefined>();
 
 const type = config.public.CLAIM_TYPE;
 const timeToStart = computed(() => Number(config.public.CLAIM_START) - timestamp.value);
-const isWhitelist = computed(() => Number(type) === ClaimType.AIRDROP && !query?.token);
+const isWhitelist = computed(() => Number(type) === ClaimType.AIRDROP && !query?.nftToken);
 const isPoap = computed(() => Number(type) === ClaimType.POAP);
 
 watch(
@@ -72,11 +72,10 @@ function onClaim(metadata: Metadata, txHash?: string) {
 </script>
 
 <template>
-  <div v-if="!query.token && isPoap" class="my-8 text-center max-w-sm mx-auto">
+  <div v-if="!query.nftToken && isPoap" class="my-8 text-center max-w-sm mx-auto">
     <h3 class="mb-6">Claim not available</h3>
     <p>
-      To claim your NFT, you need to provide a valid token. Please check the link you received in
-      email and try again.
+      To claim your NFT, you need to provide a valid token. Please check the link you received in email and try again.
     </p>
   </div>
   <FormShare v-else-if="metadata" :metadata="metadata" />
@@ -86,8 +85,8 @@ function onClaim(metadata: Metadata, txHash?: string) {
     <div class="my-8 text-center">
       <h3 class="mb-6">Great Success!</h3>
       <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is
-        crucial for securely receiving and managing the airdropped NFTs.
+        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is crucial for securely
+        receiving and managing the airdropped NFTs.
       </p>
     </div>
 
@@ -102,7 +101,7 @@ function onClaim(metadata: Metadata, txHash?: string) {
     :signature="walletSignature"
     :timestamp="timestamp"
     :type="type"
-    :token="queryParam(query.token)"
+    :token="queryParam(query.nftToken)"
     @claim="onClaim"
   />
 </template>

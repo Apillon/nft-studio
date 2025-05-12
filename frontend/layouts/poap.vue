@@ -1,23 +1,11 @@
 <template>
-  <n-config-provider
-    :theme="darkTheme"
-    :theme-overrides="NaiveThemeDark"
-    class="flex h-full flex-col"
-  >
-    <n-message-provider
-      placement="bottom-right"
-      :keep-alive-on-hover="true"
-      :duration="3000"
-      closable
-    >
+  <n-config-provider :theme="darkTheme" :theme-overrides="NaiveThemeDark" class="flex h-full flex-col">
+    <n-message-provider placement="bottom-right" :keep-alive-on-hover="true" :duration="3000" closable>
       <n-layout class="relative h-screen" :native-scrollbar="false">
         <div ref="headerRef">
           <Header logo-center hide-login />
         </div>
-        <div
-          class="container max-w-6xl py-8 flex flex-col justify-center box-border"
-          :style="containerStyle"
-        >
+        <div class="container max-w-6xl py-8 flex flex-col justify-center box-border" :style="containerStyle">
           <slot />
         </div>
         <div ref="footerRef" class="justify-center">

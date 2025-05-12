@@ -14,6 +14,7 @@ import {
 import { User } from '../models/user';
 import { SmtpSendTemplate } from '../lib/node-mailer';
 import { env } from '../config/env';
+import { parseUrl } from '../lib/claim';
 
 /**
  * Installs new route on the provided application.
@@ -24,7 +25,7 @@ export function inject(app: Application) {
     '/reserve-drop',
     (req: Request, res: Response, next: NextFunction) => {
       resolve(req, res).catch(next);
-    },
+    }
   );
 }
 
@@ -49,15 +50,14 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   const emailAirdropToken = generateEmailAirdropToken(user.email);
 
   try {
-    console.warn(`${env.APP_URL}/claim?token=${emailAirdropToken}`);
     //Send email
     await SmtpSendTemplate(
       [user.email],
       'Claim your proof of attendance NFT',
       'en-airdrop-claim',
       {
-        link: `${env.APP_URL}/claim?token=${emailAirdropToken}`,
-      },
+        link: parseUrl(emailAirdropToken),
+      }
     );
 
     user.airdrop_status = AirdropStatus.EMAIL_SENT;

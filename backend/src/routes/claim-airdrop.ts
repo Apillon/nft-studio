@@ -7,13 +7,14 @@ import { ResourceError } from '../lib/errors';
 import { readEmailAirdropToken } from '../lib/jwt';
 import { User } from '../models/user';
 import { validateEvmWallet } from '../lib/wallet-verify';
+import { ClaimGuard } from '../middlewares/claim';
 
 /**
  * Installs new route on the provided application.
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/claim-airdrop', (req: Request, res: Response, next: NextFunction) => {
+  app.post('/claim-airdrop', ClaimGuard, (req: Request, res: Response, next: NextFunction) => {
     resolve(req, res).catch(next);
   });
 }

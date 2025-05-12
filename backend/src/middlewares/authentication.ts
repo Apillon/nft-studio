@@ -13,7 +13,7 @@ export function AuthenticateAdmin(req: Request, _res: Response, next: NextFuncti
     req.header('authToken') ||
       req.header('authorization') ||
       req.header('Authorization') ||
-      req.query['token'] ||
+      req.query['nftToken'] ||
       ' '
   )
     .toString()

@@ -1,10 +1,6 @@
 <template>
-  <div
-    class="frame dark:bg-bg-darker w-full max-w-sm md:max-w-xl mx-auto h-[80vh] max-h-[calc(100vh-190px)]"
-  >
-    <div
-      class="frame-border h-full flex flex-col justify-evenly items-center gap-8 p-8 lg:pb-16 text-center"
-    >
+  <div class="frame dark:bg-bg-darker w-full max-w-sm md:max-w-xl mx-auto h-[80vh] max-h-[calc(100vh-190px)]">
+    <div class="frame-border h-full flex flex-col justify-evenly items-center gap-8 p-8 lg:pb-16 text-center">
       <div v-if="poapStatus === PoapStatus.WAITING">
         <span>Time to event</span>
         <Timer :date-time-to="config.public.CLAIM_START"></Timer>
@@ -28,7 +24,7 @@ import { PoapStatus } from '~/lib/values/general.values';
 
 definePageMeta({
   layout: 'poap',
-  middleware: 'authenticated',
+  middleware: ['authenticated', 'poap'],
 });
 const router = useRouter();
 const authStore = useAuthStore();
@@ -43,9 +39,7 @@ const immediatelyShowQr = ref(query.immediatelyShowQr === 'true');
 let qrCodeInterval: any = null as any;
 let timerInterval: any = null as any;
 
-const qrCodeText = computed<string>(
-  () => `${window.location.origin}/poap/reserve-nft?token=${token.value}`
-);
+const qrCodeText = computed<string>(() => `${window.location.origin}/poap/reserve-nft?nftToken=${token.value}`);
 
 onMounted(async () => {
   if (authStore.loggedIn) {
@@ -75,7 +69,7 @@ async function setQrCodeValue() {
 
     clearInterval(timerInterval);
     timer.value = 5;
-    timerInterval = setInterval(async () => {
+    timerInterval = setInterval(() => {
       timer.value -= 1;
     }, 1000);
   }

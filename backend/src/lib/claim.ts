@@ -48,3 +48,10 @@ export function validateAirdropStatus(airdropStatus: AirdropStatus) {
     throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
   }
 }
+
+export function parseUrl(token: string) {
+  const appUrl = new URL(env.APP_URL);
+  appUrl.searchParams.set('nftToken', token);
+
+  return `${appUrl.origin}/claim?${appUrl.searchParams.toString()}`;
+}

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import SuccessSVG from '~/assets/images/success.svg';
 import { createPublicClient, http, isErc6492Signature } from 'viem';
+import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
 
 const props = defineProps({
@@ -36,8 +36,7 @@ async function claim() {
 
   try {
     const timestamp = props.timestamp || new Date().getTime();
-    const signature =
-      props.signature || (await sign(`test\n${timestamp}`).catch(e => contractError(e)));
+    const signature = props.signature || (await sign(`test\n${timestamp}`).catch(e => contractError(e)));
 
     const { data } = await $api.post<ClaimResponse>(getURI(), {
       jwt: props?.token || undefined,
@@ -83,8 +82,8 @@ async function claim() {
     <div class="my-8 text-center">
       <h3 class="mb-6">Great Success!</h3>
       <p>
-        Minting your NFT is almost done. Please sign the message with your wallet to confirm
-        ownership of the wallet and claim your NFT.
+        Minting your NFT is almost done. Please sign the message with your wallet to confirm ownership of the wallet and
+        claim your NFT.
       </p>
     </div>
     <Btn size="large" :loading="loading" :disabled="walletUsed" @click="claim()">Claim NFT</Btn>
