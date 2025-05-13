@@ -110,6 +110,6 @@ The `package.json` file includes several scripts that can be used to manage and 
 
 - `COLLECTION_UUID`: UUID of the NFT collection from Apillon NFT Service
 - `MAX_SUPPLY`: Maximum supply of the NFT collection
-- `CLAIM_TYPE`: Type of claim for the NFT collections - 1 = AIRDROP, 2 = WHITELIST, 3 = FREE_MINT, 4 = POAP
+- `CLAIM_TYPE`: Type of claim for the NFT collections - 1 = AIRDROP, 2 = FREE_MINT, 3 = POAP
 
 - `CLAIM_EXPIRES_IN`: Number of hours users have to claim NFT, before they are removed from line and become ineligible to claim

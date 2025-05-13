@@ -5,7 +5,7 @@
         <h6 class="mb-2 text-xs">NFT Brand Booster</h6>
         <h1 class="mb-4">Dashboard</h1>
         <div>
-          Reach your audience through email or their wallet address.All NFTs are sent from your
+          Reach your audience through email or their wallet address. All NFTs are sent from your
           Apillon-hosted collection. You’ll need enough NFTs in your collection to complete the
           drop.
         </div>
@@ -37,7 +37,7 @@
         <Card
           icon="icon/airdrop"
           title="Email Mint"
-          content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT—no wallet required."
+          content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT - no wallet required."
           :tags="['Gasless for users', 'Email user base', 'Rewards', 'Easy claim']"
         >
           <template #additional>
@@ -52,7 +52,7 @@
         <Card
           icon="icon/wallet"
           title="Wallet Mint"
-          content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT—no wallet required."
+          content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT."
           :tags="['Whitelisting', 'Rewards', 'Gasless for users']"
         >
           <template #additional>

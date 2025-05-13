@@ -30,7 +30,13 @@ export async function claim(user: User): Promise<string> {
       ? AirdropStatus.AIRDROP_COMPLETED
       : AirdropStatus.AIRDROP_ERROR;
   } catch (e) {
-    writeLog(LogType.ERROR, 'Error creating airdrop', 'claim-airdrop.ts', 'resolve', e);
+    writeLog(
+      LogType.ERROR,
+      'Error creating airdrop',
+      'claim-airdrop.ts',
+      'resolve',
+      e,
+    );
     user.airdrop_status = AirdropStatus.AIRDROP_ERROR;
     throw new Error(e);
   }

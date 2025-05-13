@@ -311,7 +311,7 @@ async function deploy() {
     :progress="uploadStep * 16"
     :steps="steps"
     :active-step="uploadStep"
-    title="NFT mail airdrop"
+    title="NFT email airdrop"
   >
     <div v-if="uploadStep === Step.TYPE" class="max-w-lg w-full mx-auto">
       <h4>Select distribution methods</h4>
@@ -353,7 +353,7 @@ async function deploy() {
           <span>Please check list before proceed</span>
         </div>
         <div v-else>
-          <h3 class="mb-2">List of NFT mail airdrop</h3>
+          <h3 class="mb-2">List of NFT email airdrop</h3>
           <span>Please check list before proceed</span>
         </div>
 
