@@ -5,9 +5,9 @@
         <h6 class="mb-2 text-xs">NFT Event Experience</h6>
         <h1 class="mb-4">Dashboard</h1>
         <div>
-          Create PoAP-style drops in just a click. Let users mint on the spot or email-reserve their
-          NFTs for later. All NFTs are sent from your Apillon-hosted collection. You’ll need enough
-          NFTs in your collection to complete the drop.
+          Create PoAP-style drops in just a click. Let users mint on the spot or email-reserve their NFTs for later. All
+          NFTs are sent from your Apillon-hosted collection. You’ll need enough NFTs in your collection to complete the
+          drop.
         </div>
       </div>
       <Statistics :loading="userStore.loading" :statistics="userStore.statistics" />
@@ -17,13 +17,19 @@
     <div class="card-light relative">
       <div class="flex gap-4 items-center mb-4">
         <h5>Your PoAP</h5>
-        <LazyPoapStatus v-if="poapStatus" :key="poapStatus" :status="poapStatus" />
+        <LazyPoapStatus v-if="poapStatus !== null" :key="poapStatus" :status="poapStatus" />
       </div>
 
       <div class="flex flex-col lg:flex-row items-center justify-between gap-y-4 gap-x-8">
         <div v-if="poapStatus === PoapStatus.WAITING">
           <strong>Event starts in</strong>
           <Timer :date-time-to="config.public.CLAIM_START" />
+        </div>
+        <div
+          v-else-if="poapStatus === PoapStatus.IN_PROGRESS && Number(config.public.CLAIM_END) === 0"
+          class="md:w-1/3"
+        >
+          <strong>Event in progress</strong>
         </div>
         <div v-else-if="poapStatus === PoapStatus.IN_PROGRESS">
           <strong>Event ends in</strong>
@@ -69,7 +75,7 @@ const poapStatus = ref(PoapStatus.WAITING);
 
 let refreshEventTimeInterval: any = null as any;
 
-onMounted(async () => {
+onMounted(() => {
   getUsers();
   calculatePoapStatus();
 
