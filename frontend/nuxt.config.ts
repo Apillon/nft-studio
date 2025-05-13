@@ -27,6 +27,7 @@ export default defineNuxtConfig({
       CLAIM_START: 0,
       CLAIM_END: 0,
       CLAIM_TYPE: ClaimType.AIRDROP,
+      COLLECTION_LOGO: '',
       CONTRACT_ADDRESS: '',
       EMBEDDED_WALLET_CLIENT: '',
       ENV: process.env.ENV || process.env.NODE_ENV || Environments.dev,

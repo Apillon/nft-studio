@@ -13,7 +13,7 @@ const { login } = useWalletConnect();
 const connectorName = ref('');
 
 function connectWallet(conn: Connector<CreateConnectorFn>) {
-  if ((isConnected.value && conn.type, connector.value?.type)) {
+  if (isConnected.value && conn.type === connector.value?.type) {
     login(props.admin);
   } else {
     connectorName.value = conn.name;
