@@ -1,24 +1,36 @@
 import { Application } from 'express';
-import { AirdropStatus, AuthorizationErrorCode, RouteErrorCode, SerializedStrategy } from '../config/values';
+import {
+  AirdropStatus,
+  AuthorizationErrorCode,
+  RouteErrorCode,
+  SerializedStrategy,
+} from '../config/values';
 import { NextFunction, Request, Response } from '../http';
 import { ResourceError } from '../lib/errors';
-import { generateEmailAirdropToken, readDropReservationToken } from '../lib/jwt';
+import {
+  generateEmailAirdropToken,
+  readDropReservationToken,
+} from '../lib/jwt';
 import { User } from '../models/user';
 import { SmtpSendTemplate } from '../lib/node-mailer';
 import { env } from '../config/env';
+import { parseUrl } from '../lib/claim';
 
 /**
  * Installs new route on the provided application.
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.post('/reserve-drop', (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
+  app.post(
+    '/reserve-drop',
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {
-  const { context, params, body } = req;
+  const { context, body } = req;
   //validate token
   const token = body.token;
   const jwtData = readDropReservationToken(token);
@@ -38,11 +50,15 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   const emailAirdropToken = generateEmailAirdropToken(user.email);
 
   try {
-    console.warn(`${env.APP_URL}/claim?token=${emailAirdropToken}`);
     //Send email
-    await SmtpSendTemplate([user.email], 'Claim your proof of attendance NFT', 'en-airdrop-claim', {
-      link: `${env.APP_URL}/claim?token=${emailAirdropToken}`,
-    });
+    await SmtpSendTemplate(
+      [user.email],
+      'Claim your proof of attendance NFT',
+      'en-airdrop-claim',
+      {
+        link: parseUrl(emailAirdropToken),
+      },
+    );
 
     user.airdrop_status = AirdropStatus.EMAIL_SENT;
     await user.update();

@@ -2,14 +2,23 @@
 import type { CreateConnectorFn, Connector } from '@wagmi/vue';
 import { useConnect, useAccount } from '@wagmi/vue';
 
-const { isConnecting } = useAccount();
+const props = defineProps({
+  admin: { type: Boolean, default: false },
+});
+
+const { isConnecting, isConnected, connector } = useAccount();
 const { connect, connectors } = useConnect();
+const { login } = useWalletConnect();
 
 const connectorName = ref('');
 
-function connectWallet(connector: Connector<CreateConnectorFn>) {
-  connectorName.value = connector.name;
-  connect({ connector });
+function connectWallet(conn: Connector<CreateConnectorFn>) {
+  if (isConnected.value && conn.type === connector.value?.type) {
+    login(props.admin);
+  } else {
+    connectorName.value = conn.name;
+    connect({ connector: conn });
+  }
 }
 </script>
 
@@ -23,7 +32,7 @@ function connectWallet(connector: Connector<CreateConnectorFn>) {
       Email them. Airdrop them. Share a link. <br />No gas fees. No fuss.
     </div>
 
-    <hr class="my-4 border-grey-transparent" />
+    <hr class="my-4 border-grey-transparent dark:border-bg-lighter" />
     <h6 class="my-4">Connect your wallet to get started:</h6>
 
     <n-space size="large" vertical>

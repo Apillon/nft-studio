@@ -24,6 +24,7 @@ import { inject as injectDropReservationToken } from './routes/drop-reservation-
 import { inject as injectReserveDrop } from './routes/reserve-drop';
 import { inject as injectSendClaimMail } from './routes/send-claim-mail';
 import { inject as injectClaimAdmin } from './routes/claim-admin';
+import { inject as injectDeleteUser } from './routes/delete-user';
 
 export interface Request extends express.Request {
   context: Context;
@@ -34,7 +35,7 @@ export interface Request extends express.Request {
  * ExpressJS response object interface which includes middlewares features.
  */
 export interface Response extends express.Response {
-  respond(status: number, data: Object, meta?: Object): void;
+  respond(status: number, data: object, meta?: object): void;
   throw(status: number, errors: any): void;
 }
 
@@ -92,6 +93,7 @@ export class HttpServer {
     injectReserveDrop(this.app);
     injectSendClaimMail(this.app);
     injectClaimAdmin(this.app);
+    injectDeleteUser(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);

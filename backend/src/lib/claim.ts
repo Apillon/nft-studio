@@ -1,29 +1,9 @@
-import { Identity, LogLevel, Nft } from '@apillon/sdk';
+import { LogLevel, Nft } from '@apillon/sdk';
 import { env } from '../config/env';
 import { User } from '../models/user';
 import { LogType, writeLog } from './logger';
 import { ResourceError } from './errors';
 import { AirdropStatus, RouteErrorCode } from '../config/values';
-
-export function validateEvmWallet(walletAddress?: string, signature?: string, timestamp?: number): Boolean {
-  if (!signature || !walletAddress) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
-
-  const identity = new Identity(null);
-  const { isValid } = identity.validateEvmWalletSignature({
-    walletAddress,
-    signature,
-    signatureValidityMinutes: 10,
-    message: `test\n${timestamp}`,
-    timestamp,
-  });
-
-  if (!isValid) {
-    throw new ResourceError(RouteErrorCode.SIGNATURE_NOT_PRESENT);
-  }
-  return isValid;
-}
 
 export async function claim(user: User): Promise<string> {
   const collection = new Nft({
@@ -46,9 +26,17 @@ export async function claim(user: User): Promise<string> {
     }
 
     response = await collection.mint(mintData);
-    user.airdrop_status = response.success ? AirdropStatus.AIRDROP_COMPLETED : AirdropStatus.AIRDROP_ERROR;
+    user.airdrop_status = response.success
+      ? AirdropStatus.AIRDROP_COMPLETED
+      : AirdropStatus.AIRDROP_ERROR;
   } catch (e) {
-    writeLog(LogType.ERROR, 'Error creating airdrop', 'claim-airdrop.ts', 'resolve', e);
+    writeLog(
+      LogType.ERROR,
+      'Error creating airdrop',
+      'claim-airdrop.ts',
+      'resolve',
+      e,
+    );
     user.airdrop_status = AirdropStatus.AIRDROP_ERROR;
     throw new Error(e);
   }
@@ -62,7 +50,29 @@ export async function claim(user: User): Promise<string> {
 }
 
 export function validateAirdropStatus(airdropStatus: AirdropStatus) {
-  if (airdropStatus >= AirdropStatus.TRANSACTION_CREATED) {
+  if (
+    airdropStatus == AirdropStatus.TRANSACTION_CREATED ||
+    AirdropStatus.AIRDROP_COMPLETED
+  ) {
     throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
   }
+
+  if (airdropStatus == AirdropStatus.AIRDROP_CLAIM_EXPIRED) {
+    throw new ResourceError(RouteErrorCode.AIRDROP_CLAIM_EXPIRED);
+  }
+
+  if (airdropStatus == AirdropStatus.IN_WAITING_LINE) {
+    throw new ResourceError(RouteErrorCode.AIRDROP_IN_WAITING_LINE);
+  }
+
+  if (airdropStatus == AirdropStatus.AIRDROP_ERROR) {
+    throw new ResourceError(RouteErrorCode.AIRDROP_ERROR);
+  }
+}
+
+export function parseUrl(token: string) {
+  const appUrl = new URL(env.APP_URL);
+  appUrl.searchParams.set('nftToken', token);
+
+  return `${appUrl.origin}/claim?${appUrl.searchParams.toString()}`;
 }

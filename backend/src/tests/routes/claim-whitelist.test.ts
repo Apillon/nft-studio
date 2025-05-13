@@ -1,4 +1,8 @@
-import { createContextAndStartServer, Stage, stopServerAndCloseMySqlContext } from '../helpers/context';
+import {
+  createContextAndStartServer,
+  Stage,
+  stopServerAndCloseMySqlContext,
+} from '../helpers/context';
 import * as request from 'supertest';
 import { setupTestDatabase, clearTestDatabase } from '../helpers/migrations';
 import { User } from '../../models/user';
@@ -41,7 +45,9 @@ describe('claim airdrop', () => {
     const res = await request(stage.app).post('/users/claim').send(data);
 
     expect(res.status).toBe(200);
-    const fetchUser = await new User({}, stage.context).populateByEmail(user.email);
+    const fetchUser = await new User({}, stage.context).populateByEmail(
+      user.email,
+    );
     expect(fetchUser.airdrop_status).toEqual(AirdropStatus.AIRDROP_COMPLETED);
     expect(fetchUser.wallet).toEqual(wallet.address);
   });

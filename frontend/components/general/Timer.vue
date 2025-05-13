@@ -1,22 +1,22 @@
 <template>
-  <div class="flex flex-row my-4">
-    <div class="flex flex-col items-center p-2 rounded-2xl bg-bg-light w-20">
-      <span class="font-bold" style="font-size: xx-large">{{ days }}</span>
+  <div class="flex flex-row items-center my-4">
+    <div class="card-white flex flex-col items-center py-4 w-20">
+      <strong class="text-3xl">{{ days }}</strong>
       <p style="font-size: x-small">days</p>
     </div>
     <span class="m-3 font-bold text-3xl">:</span>
-    <div class="flex flex-col items-center p-2 rounded-2xl bg-bg-light w-20">
-      <span class="font-bold" style="font-size: xx-large">{{ hours }}</span>
+    <div class="card-white flex flex-col items-center py-4 w-20">
+      <strong class="text-3xl">{{ hours }}</strong>
       <p style="font-size: x-small">hours</p>
     </div>
     <span class="m-3 font-bold text-3xl">:</span>
-    <div class="flex flex-col items-center p-2 rounded-2xl bg-bg-light w-20">
-      <span class="font-bold" style="font-size: xx-large">{{ minutes }}</span>
+    <div class="card-white flex flex-col items-center py-4 w-20">
+      <strong class="text-3xl">{{ minutes }}</strong>
       <p style="font-size: x-small">minutes</p>
     </div>
     <span class="m-3 font-bold text-3xl">:</span>
-    <div class="flex flex-col items-center p-2 rounded-2xl bg-bg-light w-20">
-      <span class="font-bold" style="font-size: xx-large">{{ seconds }}</span>
+    <div class="card-white flex flex-col items-center py-4 w-20">
+      <strong class="text-3xl">{{ seconds }}</strong>
       <p style="font-size: x-small">seconds</p>
     </div>
   </div>
@@ -26,7 +26,7 @@
 import dayjs from 'dayjs';
 
 const props = defineProps({
-  dateTimeTo: { type: [Date, String], required: true },
+  dateTimeTo: { type: [Date, String, Number], required: true },
 });
 
 let refreshTimeInterval: any = null as any;

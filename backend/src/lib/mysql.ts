@@ -24,75 +24,76 @@ export class MySql {
   /**
    * Starts database client.
    */
-  public async connect() {
-    if (!this.db) {
-      try {
-        this.db = mysql.createPool({
-          host:
-            this.env.APP_ENV === 'testing'
-              ? this.env.MYSQL_HOST_TEST
-              : this.env.MYSQL_HOST,
-          port:
-            this.env.APP_ENV === 'testing'
-              ? this.env.MYSQL_PORT_TEST
-              : this.env.MYSQL_PORT,
-          user:
-            this.env.APP_ENV === 'testing'
-              ? this.env.MYSQL_USER_TEST
-              : this.env.MYSQL_USER,
-          password:
-            this.env.APP_ENV === 'testing'
-              ? this.env.MYSQL_PASSWORD_TEST
-              : this.env.MYSQL_PASSWORD,
-          database:
-            this.env.APP_ENV === 'testing'
-              ? this.env.MYSQL_DATABASE_TEST
-              : this.env.MYSQL_DATABASE,
-          waitForConnections: true,
-          decimalNumbers: true,
+  public connect() {
+    if (this.db) {
+      writeLog(LogType.INFO, `Already connected to DB!`, 'mysql.ts', 'connect');
+      return this;
+    }
 
-          connectionLimit:
-            (this.env.APP_ENV === 'testing'
-              ? this.env.MYSQL_POOL_TEST
-              : this.env.MYSQL_POOL) || 100,
-
-          queueLimit: 100,
-          // ssl: env.USE_DB_SSL ? {
-          //   ca: fs.readFileSync(`${__dirname}/keys/ca-cert.pem`).toString(),
-          //   key: fs.readFileSync(`${__dirname}/keys/client-key.pem`).toString(),
-          //   cert: fs.readFileSync(`${__dirname}/keys/client-cert.pem`).toString()
-          // } : undefined
-        });
-        const host =
+    try {
+      this.db = mysql.createPool({
+        host:
           this.env.APP_ENV === 'testing'
             ? this.env.MYSQL_HOST_TEST
-            : this.env.MYSQL_HOST;
-        const port =
+            : this.env.MYSQL_HOST,
+        port:
           this.env.APP_ENV === 'testing'
             ? this.env.MYSQL_PORT_TEST
-            : this.env.MYSQL_PORT;
-        const database =
+            : this.env.MYSQL_PORT,
+        user:
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_USER_TEST
+            : this.env.MYSQL_USER,
+        password:
+          this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_PASSWORD_TEST
+            : this.env.MYSQL_PASSWORD,
+        database:
           this.env.APP_ENV === 'testing'
             ? this.env.MYSQL_DATABASE_TEST
-            : this.env.MYSQL_DATABASE;
+            : this.env.MYSQL_DATABASE,
+        waitForConnections: true,
+        decimalNumbers: true,
 
-        writeLog(
-          LogType.INFO,
-          `Connected to DB: ${host}:${port} | ${database}`,
-          'mysql.ts',
-          'connect',
-        );
-      } catch (err) {
-        writeLog(
-          LogType.ERROR,
-          'Database connection failed.',
-          'mysql.ts',
-          'connect',
-          err,
-        );
-      }
-    } else {
-      writeLog(LogType.INFO, `Already connected to DB!`, 'mysql.ts', 'connect');
+        connectionLimit:
+          (this.env.APP_ENV === 'testing'
+            ? this.env.MYSQL_POOL_TEST
+            : this.env.MYSQL_POOL) || 100,
+
+        queueLimit: 100,
+        // ssl: env.USE_DB_SSL ? {
+        //   ca: fs.readFileSync(`${__dirname}/keys/ca-cert.pem`).toString(),
+        //   key: fs.readFileSync(`${__dirname}/keys/client-key.pem`).toString(),
+        //   cert: fs.readFileSync(`${__dirname}/keys/client-cert.pem`).toString()
+        // } : undefined
+      });
+      const host =
+        this.env.APP_ENV === 'testing'
+          ? this.env.MYSQL_HOST_TEST
+          : this.env.MYSQL_HOST;
+      const port =
+        this.env.APP_ENV === 'testing'
+          ? this.env.MYSQL_PORT_TEST
+          : this.env.MYSQL_PORT;
+      const database =
+        this.env.APP_ENV === 'testing'
+          ? this.env.MYSQL_DATABASE_TEST
+          : this.env.MYSQL_DATABASE;
+
+      writeLog(
+        LogType.INFO,
+        `Connected to DB: ${host}:${port} | ${database}`,
+        'mysql.ts',
+        'connect',
+      );
+    } catch (err) {
+      writeLog(
+        LogType.ERROR,
+        'Database connection failed.',
+        'mysql.ts',
+        'connect',
+        err,
+      );
     }
     return this;
   }
@@ -120,11 +121,11 @@ export class MySql {
 
       if (!conn || (conn as any).connection.stream.readyState !== 'open') {
         this.db = undefined;
-        await this.connect();
+        this.connect();
       }
     } catch (err) {
       this.db = undefined;
-      await this.connect();
+      this.connect();
     }
   }
 
@@ -136,8 +137,8 @@ export class MySql {
    * @param [options={multiSet: boolean}] additional options
    */
   public async callSingle(
-    procedure: String,
-    data: Object,
+    procedure: string,
+    data: object,
     options: { multiSet?: boolean } = {},
   ) {
     // console.time('Call Single');
@@ -162,8 +163,8 @@ export class MySql {
    * @returns array of results from database
    */
   public async call(
-    procedure: String,
-    data: Object,
+    procedure: string,
+    data: object,
     connection?: PoolConnection,
     options: { multiSet?: boolean } = {},
   ) {
@@ -195,11 +196,7 @@ export class MySql {
         );
       }
     }
-    if (!options.multiSet) {
-      return result[0][0];
-    } else {
-      return result[0];
-    }
+    return options.multiSet ? result[0] : result[0][0];
   }
 
   public async start() {
@@ -232,7 +229,7 @@ export class MySql {
    * @param [logOutput=false] For logging purpose we should mask the password values
    * @returns Array of values
    */
-  public mapValues(data: Object, logOutput = false) {
+  public mapValues(data: object, logOutput = false) {
     const protectedFields = ['password'];
     const values = [];
     for (const i in data) {
@@ -245,7 +242,7 @@ export class MySql {
     return values;
   }
 
-  public async paramQuery(query: string, values?: Object) {
+  public async paramQuery(query: string, values?: object) {
     // console.time('Param Query');
 
     if (values) {
@@ -283,7 +280,7 @@ export class MySql {
    */
   public async paramExecute(
     query: string,
-    values?: Object,
+    values?: object,
     connection?: PoolConnection,
   ) {
     // const queryId = Math.round(Math.random() * 10000);
@@ -358,7 +355,7 @@ export class MySql {
    */
   public async paramExecuteBatch(
     query: string,
-    values?: Object[],
+    values?: object[],
     connection?: PoolConnection,
   ) {
     // const queryId = Math.round(Math.random() * 10000);

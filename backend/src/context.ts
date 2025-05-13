@@ -25,9 +25,9 @@ export class Context {
    * Authenticates a profile from authentication token.
    * @param req ExpressJS request object.
    */
-  public async authenticateAdmin(token: string) {
+  public authenticateAdmin(token: string) {
     const data = readAdminAuthToken(token);
-    if (data && data.wallet) {
+    if (data?.wallet) {
       this.isAdmin = true;
       return this;
     }

@@ -98,6 +98,21 @@ export default function useUser() {
     }
   }
 
+  async function sendEmails(): Promise<boolean> {
+    try {
+      const { data } = await $api.post<SuccessResponse>('/send-claim-mail');
+      if (data.success) {
+        message.success(
+          'Emails have been sent successfully to all recipients! They will receive a link to claim their NFTs.'
+        );
+      }
+      return !!data.success;
+    } catch (e) {
+      handleError(e);
+    }
+    return false;
+  }
+
   /** Recipients polling */
   function checkUnfinishedRecipients() {
     const unfinishedRecipient = userStore.users.find(item => item.airdrop_status === AirdropStatus.PENDING);
@@ -117,7 +132,11 @@ export default function useUser() {
 
   return {
     saveRecipients,
+    fetchBalance,
+    fetchStatistics,
+    getBalance,
     getUsers,
     getStatistics,
+    sendEmails,
   };
 }

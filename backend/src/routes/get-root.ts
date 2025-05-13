@@ -20,7 +20,7 @@ export function inject(app: Application) {
  * @param req ExpressJS request object.
  * @param res ExpressJS response object.
  */
-// @ts-ignore
+// eslint-disable-next-line @typescript-eslint/require-await
 export async function resolve(req: Request, res: Response): Promise<void> {
   // writeLog(LogType.ERROR, "Test ERROR!");
   // writeLog(LogType.INFO, "Test INFO!");

@@ -1,7 +1,7 @@
 import { useAccount, useWallet } from '@apillon/wallet-vue';
 import { useConnectorClient } from '@wagmi/vue';
 import type { Address } from 'viem';
-import { createPublicClient, getContract, http } from 'viem';
+import { createPublicClient, getContract, http, maxUint32, maxUint64 } from 'viem';
 import { abi } from '~/lib/config/abi';
 
 const contract = ref();
@@ -9,6 +9,8 @@ const contract = ref();
 export default function useClaim() {
   const message = useMessage();
   const config = useRuntimeConfig();
+  const contractStore = useContractStore();
+
   const { wallet } = useWallet();
   const { parseLink } = useIpns();
   const { network, walletAddress, ensureCorrectNetwork } = useWalletConnect();
@@ -35,20 +37,47 @@ export default function useClaim() {
     });
   }
 
-  async function getBalance() {
-    await initContract();
-    return (await contract.value.read.balanceOf([walletAddress.value])) as bigint;
+  async function getBalance(): Promise<bigint> {
+    if (!contractStore.balance) {
+      await initContract();
+      contractStore.balance = await contract.value.read.balanceOf([walletAddress.value]);
+    }
+    return contractStore.balance;
+  }
+
+  async function getMaxSupply(): Promise<number> {
+    if (!contractStore.maxSupply) {
+      await initContract();
+      const max = await contract.value.read.maxSupply([]);
+      contractStore.maxSupply = max >= maxUint32 ? Number.MAX_SAFE_INTEGER : Number(max);
+    }
+    return contractStore.maxSupply;
+  }
+  async function getName(): Promise<string> {
+    if (!contractStore.name) {
+      await initContract();
+      contractStore.name = await contract.value.read.name([]);
+    }
+    return contractStore.name;
   }
 
   async function getTokenOfOwner(index: number) {
     await initContract();
-    return (await contract.value.read.tokenOfOwnerByIndex([walletAddress.value, index])) as number;
+    return await contract.value.read.tokenOfOwnerByIndex([walletAddress.value, index]);
   }
 
-  async function getTokenUri(id: number) {
+  async function getTokenUri(id: number): Promise<string> {
     await initContract();
-    const uri = (await contract.value.read.tokenURI([id])) as string;
+    const uri = await contract.value.read.tokenURI([id]);
     return await parseLink(uri);
+  }
+
+  async function isAutoIncrement(): Promise<boolean> {
+    if (contractStore.autoIncrement === null) {
+      await initContract();
+      contractStore.autoIncrement = await contract.value.read.isAutoIncrement([]);
+    }
+    return contractStore.autoIncrement || true;
   }
 
   /** Actions */
@@ -75,8 +104,7 @@ export default function useClaim() {
     await ensureCorrectNetwork();
     let success: any = false;
     const image = await parseLink(metadata?.image || '');
-    console.log(info);
-    console.log(image);
+
     try {
       if (wallet.value && info.activeWallet?.address) {
         success = wallet.value?.events.emit('addTokenNft', {
@@ -160,6 +188,9 @@ export default function useClaim() {
     contract,
     addNftId,
     contractError,
+    getMaxSupply,
+    getName,
+    isAutoIncrement,
     loadNft,
   };
 }

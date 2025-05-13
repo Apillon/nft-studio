@@ -6,7 +6,7 @@ defineProps({ title: { type: String, default: '' }, innerClass: { type: String, 
 <template>
   <n-modal
     v-bind="$attrs"
-    class="min-w-full max-w-full border border-solid border-tq bg-bg xs:min-w-[400px] sm:min-w-[487px]"
+    class="min-w-full max-w-full border border-solid border-tq bg-bg dark:bg-bg-darker xs:min-w-[400px] sm:min-w-[487px]"
   >
     <div class="relative" :class="innerClass || 'px-3 py-6 sm:p-10'">
       <!-- Close Button -->

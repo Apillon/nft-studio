@@ -55,7 +55,7 @@
 
 /** Container */
 .container {
-  @apply md:px-20;
+  @apply md:px-14;
 }
 
 /** Data table */
@@ -64,7 +64,7 @@
     @apply hidden;
   }
   .n-data-table-expand-trigger {
-    @apply text-black;
+    @apply text-black dark:text-white;
   }
 }
 
@@ -110,6 +110,9 @@
     }
     .n-drawer-footer {
       @apply bg-bg-light px-10 py-3;
+    }
+    .n-drawer-content--native-scrollbar {
+      @apply overflow-x-hidden;
     }
   }
 }
@@ -211,8 +214,6 @@
 
 /** Layout */
 .n-layout {
-  background-color: transparent;
-
   &.has-scrollbar {
     @apply -mr-3;
     width: calc(100% + 0.75rem);

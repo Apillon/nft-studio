@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { WebStorageKeys } from '~/lib/values/general.values';
+import { AirdropStatus, WebStorageKeys } from '~/lib/values/general.values';
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -18,6 +18,9 @@ export const useUserStore = defineStore('user', {
     },
     hasUsers(state) {
       return !!state.users && state.users.length > 0;
+    },
+    hasPending(state) {
+      return state.users.some(u => u.airdrop_status === AirdropStatus.PENDING);
     },
   },
 

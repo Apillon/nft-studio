@@ -1,4 +1,8 @@
-import { createContextAndStartServer, Stage, stopServerAndCloseMySqlContext } from '../helpers/context';
+import {
+  createContextAndStartServer,
+  Stage,
+  stopServerAndCloseMySqlContext,
+} from '../helpers/context';
 import * as request from 'supertest';
 import { setupTestDatabase, clearTestDatabase } from '../helpers/migrations';
 import { User } from '../../models/user';
@@ -44,7 +48,9 @@ describe('get statistics', () => {
   });
 
   test('gets statistics', async () => {
-    const res = await request(stage.app).get('/users/statistics').set('Authorization', `Bearer ${token}`);
+    const res = await request(stage.app)
+      .get('/users/statistics')
+      .set('Authorization', `Bearer ${token}`);
     expect(res.status).toBe(200);
     expect(res.body.data).toEqual({
       total: 4,

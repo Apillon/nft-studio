@@ -5,6 +5,7 @@
     :data="Object.values(data)"
     :default-expanded-row-keys="[1]"
     :indent="0"
+    :loading="userStore.loading"
     :row-key="row => row.batch || Number(`${row.airdrop_status}${row.id}`)"
     :pagination="{ pageSize: PaginationValues.PAGE_DEFAULT_LIMIT }"
   />
@@ -12,6 +13,7 @@
 
 <script lang="ts" setup>
 import type { DataTableColumns } from 'naive-ui';
+import { createPublicClient, http } from 'viem';
 import { AirdropStatus, PaginationValues } from '~/lib/values/general.values';
 
 type Batch = {
@@ -26,9 +28,20 @@ const props = defineProps({
   users: { type: Array<UserInterface>, required: true },
   wallet: { type: Boolean, default: false },
 });
+const message = useMessage();
+const txWait = useTxWait();
+const userStore = useUserStore();
+const {fetchStatistics} = useUser();
+const { handleError } = useErrors();
+const { network } = useWalletConnect();
+const publicClient = createPublicClient({ chain: network.value, transport: http() });
+
+const loading = ref<number>(-1);
+
+const updateUserStatus = (id: number, status: number) =>
+  ((userStore.users.find(u => u.id === id) || ({} as UserInterface)).airdrop_status = status);
 
 const data = computed(() => {
-  // TODO: group data by createTime, so all users with the same createTime are grouped together as children
   return props.users.reduce(
     (acc, user) => {
       const date = dateTimeToDateAndTime(user?.createTime || '');
@@ -123,7 +136,17 @@ const createColumns = (): DataTableColumns<UserInterface> => {
       title: 'Actions',
       render(row: UserInterface) {
         if (row.airdrop_status === AirdropStatus.PENDING) {
-          return h('button', { class: 'icon-delete text-xl', onClick: () => {} }, '');
+          return h('button', { class: 'icon-delete text-xl', onClick: () => handleDeleteUser(row.id) }, '');
+        } else if (row.id && row.airdrop_status < AirdropStatus.TRANSACTION_CREATED && row.wallet) {
+          return h(
+            resolveComponent('Btn'),
+            {
+              size: 'small',
+              loading: loading.value === row.id,
+              onClick: () => mint(Number(row.id)),
+            },
+            'Mint'
+          );
         }
         return '';
       },
@@ -131,4 +154,58 @@ const createColumns = (): DataTableColumns<UserInterface> => {
   ];
 };
 const columns = createColumns();
+
+async function mint(userId: number) {
+  loading.value = userId;
+
+  try {
+    const { data } = await $api.post<ClaimResponse>('/claim-admin', {
+      userId,
+    });
+    if (data.success) {
+      txWait.hash.value = data.transactionHash;
+      message.info('Your NFT Mint has started');
+      updateUserStatus(userId, AirdropStatus.TRANSACTION_CREATED);
+
+      const receipt = await txWait.wait();
+      const receipt1 = await publicClient.waitForTransactionReceipt({ hash: data.transactionHash });
+      const logs = receipt1?.logs || receipt.data?.logs;
+
+      if (logs && logs[0].topics[3]) {
+        message.success('You successfully minted NFT');
+        updateUserStatus(userId, AirdropStatus.AIRDROP_COMPLETED);
+      } else {
+        message.error('Mint failed, missing NFT ID!');
+        updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
+      }
+    } else {
+      message.error('Failed to claim NFT, please try again later.');
+      updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
+    }
+    loading.value = -1;
+  } catch (e) {
+    handleError(e);
+    updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
+    loading.value = -1;
+  }
+}
+
+async function handleDeleteUser(id: number) {
+  loading.value = id;
+
+  try {
+    await $api.delete('/users/' + id);
+
+    // Remove the user from the table
+    userStore.users = userStore.users.filter(user => user.id !== id);
+
+    await fetchStatistics();
+    message.success('User successfully deleted.');
+  } catch (e) {
+    handleError(e);
+    message.error('Failed to delete user, please try again later.');
+  } finally {
+    loading.value = -1;
+  }
+}
 </script>

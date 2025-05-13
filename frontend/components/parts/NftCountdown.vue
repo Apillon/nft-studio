@@ -3,6 +3,7 @@ import { Countdown } from 'vue3-flip-countdown';
 import AirdropSVG from '~/assets/images/airdrop.svg';
 import { colors } from '~/tailwind.config';
 
+defineEmits(['proceed']);
 defineProps({ deadline: { type: String, default: '' } });
 </script>
 
@@ -12,10 +13,13 @@ defineProps({ deadline: { type: String, default: '' } });
 
     <div class="my-8 text-center">
       <h3 class="mb-6">Nino’s soldiers NFT</h3>
-      <n-tag class="mb-6" type="info" size="small" :bordered="false" round> Only 100 available </n-tag>
+      <n-tag class="mb-6" type="info" size="small" :bordered="false" round>
+        Only 100 available
+      </n-tag>
       <p>
-        Connect your wallet to claim Nino's Soldiers NFTs, a unique collection of digital soldier characters that blend
-        artistic creativity with the cutting-edge world of blockchain collectibles.
+        Connect your wallet to claim Nino's Soldiers NFTs, a unique collection of digital soldier
+        characters that blend artistic creativity with the cutting-edge world of blockchain
+        collectibles.
       </p>
     </div>
 
@@ -23,7 +27,11 @@ defineProps({ deadline: { type: String, default: '' } });
       <div class="text-center mb-4">
         <strong>Time left to claim</strong>
       </div>
-      <Countdown :flip-animation="false" :label-color="colors.grey.transparent" :main-color="colors.white" />
+      <Countdown
+        :flip-animation="false"
+        :label-color="colors.grey.transparent"
+        :main-color="colors.white"
+      />
 
       <Btn class="mt-8" size="large" @click="$emit('proceed')">Proceed</Btn>
     </div>

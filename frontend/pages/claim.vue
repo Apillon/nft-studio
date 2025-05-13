@@ -1,27 +1,15 @@
 <script lang="ts" setup>
+import { isErc6492Signature } from 'viem';
 import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
-
-const config = useRuntimeConfig();
-const router = useRouter();
-const message = useMessage();
-const { addNftId } = useClaim();
-
-const type = ClaimType.WHITELIST;
-// const type = config.public.CLAIM_TYPE;
 
 definePageMeta({
   layout: 'claim',
 });
-useHead({
-  title:
-    type === ClaimType.POAP
-      ? 'Apillon POAP prebuilt solution'
-      : type === ClaimType.FREE_MINT
-        ? 'Apillon Gasless mint prebuilt solution'
-        : 'Apillon email airdrop prebuilt solution',
-});
 
+const config = useRuntimeConfig();
+const router = useRouter();
+const message = useMessage();
 const { query } = useRoute();
 const { handleError } = useErrors();
 const { contractError, loadNft } = useClaim();
@@ -32,21 +20,16 @@ const metadata = ref<Metadata | null>(null);
 const timestamp = ref<number>(new Date().getTime());
 const walletSignature = ref<string | undefined>();
 
+const type = config.public.CLAIM_TYPE;
 const timeToStart = computed(() => Number(config.public.CLAIM_START) - timestamp.value);
-const isWhitelist = computed(() => Number(type) === ClaimType.WHITELIST);
-const isAirdrop = computed(
-  () => Number(type) === ClaimType.AIRDROP || Number(type) === ClaimType.POAP
-);
+const isWhitelist = computed(() => Number(type) === ClaimType.AIRDROP && !query?.nftToken);
+const isPoap = computed(() => Number(type) === ClaimType.POAP);
 
 watch(
   () => walletAddress.value,
   async _ => {
     if (walletAddress.value) {
       metadata.value = await loadNft();
-      if (metadata.value) {
-        console.log(metadata.value);
-        // addNftId(1, metadata.value);
-      }
     } else {
       metadata.value = null;
     }
@@ -65,10 +48,11 @@ async function validateWallet() {
   }
 
   try {
-    const { data } = await $api.post<SuccessResponse>('/claim/validate', {
+    const { data } = await $api.post<SuccessResponse>('/claim-validate', {
       signature,
       address: walletAddress.value,
       timestamp: timestamp.value,
+      isSmart: isErc6492Signature(signature as `0x${string}`),
     });
     if (data) {
       message.success('You have successfully validated your wallet and can now claim your NFT.');
@@ -88,11 +72,10 @@ function onClaim(metadata: Metadata, txHash?: string) {
 </script>
 
 <template>
-  <div v-if="!query.token && isAirdrop" class="my-8 text-center max-w-sm mx-auto">
+  <div v-if="!query.nftToken && isPoap" class="my-8 text-center max-w-sm mx-auto">
     <h3 class="mb-6">Claim not available</h3>
     <p>
-      To claim your NFT, you need to provide a valid token. Please check the link you received in
-      email and try again.
+      To claim your NFT, you need to provide a valid token. Please check the link you received in email and try again.
     </p>
   </div>
   <FormShare v-else-if="metadata" :metadata="metadata" />
@@ -102,8 +85,8 @@ function onClaim(metadata: Metadata, txHash?: string) {
     <div class="my-8 text-center">
       <h3 class="mb-6">Great Success!</h3>
       <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is
-        crucial for securely receiving and managing the airdropped NFTs.
+        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is crucial for securely
+        receiving and managing the airdropped NFTs.
       </p>
     </div>
 
@@ -118,7 +101,7 @@ function onClaim(metadata: Metadata, txHash?: string) {
     :signature="walletSignature"
     :timestamp="timestamp"
     :type="type"
-    :token="queryParam(query.token)"
+    :token="queryParam(query.nftToken)"
     @claim="onClaim"
   />
 </template>

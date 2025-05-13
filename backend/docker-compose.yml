@@ -33,6 +33,8 @@ services:
     depends_on:
       nft_studio_db:
         condition: service_healthy
+      nft_studio_mail:
+        condition: service_started
     ports:
       - '80:3000'
     expose:
@@ -74,6 +76,12 @@ services:
       SIGNATURE_PRIVATE_KEY: ${SIGNATURE_PRIVATE_KEY}
       SIGNATURE_CONTRACT_ADDRESS: ${SIGNATURE_CONTRACT_ADDRESS}
       CLAIM_START: ${CLAIM_START}
+  nft_studio_mail:
+    image: bytemark/smtp
+    container_name: nft_studio_mail
+    restart: always
+    networks:
+      - nft-studio-network
 networks:
   app-network:
     driver: bridge
