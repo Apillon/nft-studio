@@ -18,7 +18,6 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     const { params, context } = req;
     const userId = params.userId;
 
-    // Assuming you have a User model to handle user deletion
     const user = await new User({}, context).populateById(+userId);
 
     if(!user.exists()){
