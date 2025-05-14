@@ -29,7 +29,11 @@ export function ClaimGuard(req: Request, _res: Response, next: NextFunction) {
       }
     default:
       next(
-        new UnauthorizedError(AuthorizationErrorCode.UNSUPPORTED_CLAIM_TYPE, context, 'claim-middleware/validateRoute')
+        new UnauthorizedError(
+          AuthorizationErrorCode.UNSUPPORTED_CLAIM_TYPE,
+          context,
+          'claim-middleware/validateRoute',
+        ),
       );
   }
 }

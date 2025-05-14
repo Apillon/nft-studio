@@ -67,7 +67,12 @@ export const env: IEnv = {
    */
   APP_ENV: process.env['APP_ENV'] || 'production',
   APP_SECRET: process.env['APP_SECRET'] || 'notasecret',
-  APP_URL: process.env['APP_URL'] || 'http://localhost:8000',
+  APP_URL: (() => {
+    const url = process.env['APP_URL'] || 'http://localhost:8000';
+    return url.startsWith('http://') || url.startsWith('https://')
+      ? url
+      : `http://${url}`;
+  })(),
 
   /**
    * Log writing destination.
