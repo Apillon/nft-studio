@@ -82,7 +82,7 @@ services:
     container_name: nft_studio_mail
     restart: always
     networks:
-      - nft-studio-network
+      - app-network
 networks:
   app-network:
     driver: bridge
