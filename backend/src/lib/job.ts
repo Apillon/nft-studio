@@ -28,7 +28,7 @@ export const processJob = async (job: JobType, mysql: MySql) => {
       {
         status: SqlModelStatus.COMPLETED,
         id: job.id,
-      }
+      },
     );
   } catch (e) {
     await mysql.paramExecute(
@@ -37,7 +37,7 @@ export const processJob = async (job: JobType, mysql: MySql) => {
         status: SqlModelStatus.DELETED,
         error: e.message,
         id: job.id,
-      }
+      },
     );
   }
 };
@@ -58,7 +58,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
               AND status = @status
             ;
            `,
-      { status: SqlModelStatus.ACTIVE }
+      { status: SqlModelStatus.ACTIVE },
     );
     const numOfReservations = res[0].total;
     availableNftLeft = env.MAX_SUPPLY - numOfReservations;
@@ -80,7 +80,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
         status: SqlModelStatus.ACTIVE,
         date: job.createTime,
       },
-      conn
+      conn,
     )) as User[];
 
     if (users.length === 0) {
@@ -95,7 +95,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
         if (!env.MAX_SUPPLY || i < availableNftLeft) {
           if (currentUser.email) {
             const token = generateEmailAirdropToken(currentUser.email);
-            await SmtpSendTemplate(
+            const res = await SmtpSendTemplate(
               [currentUser.email],
               'Claim your NFT',
               'en-signup-email-airdrop-claim',
@@ -104,40 +104,42 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
                 link: parseUrl(token),
                 claimExpiresIn: env.CLAIM_EXPIRES_IN,
               },
-              'Apillon'
+              'Apillon',
+            );
+
+            updates.push(
+              `(${currentUser.id}, '${currentUser.email}', ${res ? AirdropStatus.EMAIL_SENT : AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(new Date())}')`,
             );
           }
-
-          updates.push(
-            `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.EMAIL_SENT}, '${dateToSqlString(new Date())}')`
-          );
         } else {
           //Currently, waiting line for airdrop is full.Send info email and set appropriate status
           if (currentUser.email) {
-            await SmtpSendTemplate(
+            const res = await SmtpSendTemplate(
               [currentUser.email],
               'You have been placed on a waitlist for NFT Airdrop token',
               'en-airdrop-waiting-line',
               {
                 appUrl: env.APP_URL,
               },
-              'Apillon'
+              'Apillon',
+            );
+
+            updates.push(
+              `(${currentUser.id}, '${currentUser.email}', ${
+                res ? AirdropStatus.IN_WAITING_LINE : AirdropStatus.EMAIL_ERROR
+              }, '${dateToSqlString(new Date())}')`,
             );
           }
-
-          updates.push(
-            `(${currentUser.id}, '${currentUser.email}', ${
-              AirdropStatus.IN_WAITING_LINE
-            }, '${dateToSqlString(new Date())}')`
-          );
         }
       } catch (e) {
         writeLog(LogType.ERROR, e, 'cron.ts', 'sendClaimEmails');
         updates.push(
-          `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(new Date())}')`
+          `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(new Date())}')`,
         );
       }
     }
+
+    writeLog(LogType.ERROR, updates);
 
     if (updates.length > 0) {
       const sql = `
@@ -154,5 +156,6 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
   } catch (e) {
     writeLog(LogType.ERROR, e, 'cron.ts', 'sendClaimEmails');
     await mysql.rollback(conn);
+    throw e;
   }
 };

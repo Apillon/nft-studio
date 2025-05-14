@@ -50,8 +50,23 @@ export async function claim(user: User): Promise<string> {
 }
 
 export function validateAirdropStatus(airdropStatus: AirdropStatus) {
-  if (airdropStatus >= AirdropStatus.TRANSACTION_CREATED) {
+  if (
+    airdropStatus == AirdropStatus.TRANSACTION_CREATED ||
+    AirdropStatus.AIRDROP_COMPLETED
+  ) {
     throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
+  }
+
+  if (airdropStatus == AirdropStatus.AIRDROP_CLAIM_EXPIRED) {
+    throw new ResourceError(RouteErrorCode.AIRDROP_CLAIM_EXPIRED);
+  }
+
+  if (airdropStatus == AirdropStatus.IN_WAITING_LINE) {
+    throw new ResourceError(RouteErrorCode.AIRDROP_IN_WAITING_LINE);
+  }
+
+  if (airdropStatus == AirdropStatus.AIRDROP_ERROR) {
+    throw new ResourceError(RouteErrorCode.AIRDROP_ERROR);
   }
 }
 

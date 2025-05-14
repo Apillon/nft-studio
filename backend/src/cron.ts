@@ -19,7 +19,7 @@ export class Cron {
 
     if (env.MAX_SUPPLY > 0) {
       this.cronJobs.push(
-        new CronJob('* * * * *', this.processExpiredClaims, null, false)
+        new CronJob('* * * * *', this.processExpiredClaims, null, false),
       );
     }
   }
@@ -55,9 +55,9 @@ export class Cron {
             airdrop_status: AirdropStatus.EMAIL_SENT,
             status: SqlModelStatus.ACTIVE,
           },
-          conn
+          conn,
         )
-      ).map(x => x.id);
+      ).map((x) => x.id);
 
       if (usersWithExpiredClaim.length) {
         //Update those users to claim expired
@@ -68,11 +68,11 @@ export class Cron {
         ;
        `,
           { airdrop_status: AirdropStatus.AIRDROP_CLAIM_EXPIRED },
-          conn
+          conn,
         );
         console.info(
           usersWithExpiredClaim.length +
-            ' users updated to AIRDROP_CLAIM_EXPIRED'
+            ' users updated to AIRDROP_CLAIM_EXPIRED',
         );
 
         //Get users in waiting line and set their airdrop status to PENDING, so that they will recieve email for claim
@@ -89,11 +89,11 @@ export class Cron {
             airdrop_status: AirdropStatus.IN_WAITING_LINE,
             status: SqlModelStatus.ACTIVE,
           },
-          conn
+          conn,
         );
 
         console.info(
-          `Num of users in waiting line: ${usersInWaitingLine.length}`
+          `Num of users in waiting line: ${usersInWaitingLine.length}`,
         );
 
         if (usersInWaitingLine.length) {
@@ -102,14 +102,14 @@ export class Cron {
                 SET
                 airdrop_status = @airdrop_status,
                 email_sent_time = NOW()
-                WHERE id IN (${usersInWaitingLine.map(x => x.id).join(',')})
+                WHERE id IN (${usersInWaitingLine.map((x) => x.id).join(',')})
               ;
             `,
             { airdrop_status: AirdropStatus.EMAIL_SENT },
-            conn
+            conn,
           );
           console.info(
-            `${usersInWaitingLine.map(x => x.id).join(',')} should me moved from waiting line. Sending emails....`
+            `${usersInWaitingLine.map((x) => x.id).join(',')} should me moved from waiting line. Sending emails....`,
           );
 
           for (const user of usersInWaitingLine) {
@@ -124,7 +124,7 @@ export class Cron {
                   link: parseUrl(token),
                   claimExpiresIn: env.CLAIM_EXPIRES_IN,
                 },
-                'Apillon'
+                'Apillon',
               );
             } catch (err) {
               console.error(err);
@@ -135,7 +135,7 @@ export class Cron {
               ;
             `,
                 { airdrop_status: AirdropStatus.EMAIL_ERROR, user_id: user.id },
-                conn
+                conn,
               );
             }
           }
@@ -158,7 +158,7 @@ export class Cron {
         ORDER BY createTime ASC`,
       {
         status: SqlModelStatus.DRAFT,
-      }
+      },
     )) as Job[];
 
     for (const job of jobsToExecute) {

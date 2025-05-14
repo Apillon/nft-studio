@@ -27,7 +27,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     body.address,
     body.signature,
     body.timestamp,
-    body.isSmart
+    body.isSmart,
   );
 
   if (isValid) {
