@@ -13,6 +13,6 @@ export const useContractStore = defineStore('contract', {
   actions: {},
   persist: {
     key: WebStorageKeys.CONTRACT,
-    storage: persistedState.localStorage,
+    storage: piniaPluginPersistedstate.localStorage(),
   },
 });

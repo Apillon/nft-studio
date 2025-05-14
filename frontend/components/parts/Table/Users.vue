@@ -25,8 +25,8 @@ type Batch = {
 
 const props = defineProps({
   autoIncrement: { type: Boolean, default: true },
+  search: { type: String, default: null },
   users: { type: Array<UserInterface>, required: true },
-  wallet: { type: Boolean, default: false },
 });
 const message = useMessage();
 const txWait = useTxWait();
@@ -41,6 +41,9 @@ const updateUserStatus = (id: number, status: number) =>
   ((userStore.users.find(u => u.id === id) || ({} as UserInterface)).airdrop_status = status);
 
 const data = computed(() => {
+  if (props.search) {
+    return props.users;
+  }
   return props.users.reduce(
     (acc, user) => {
       const date = dateTimeToDateAndTime(user?.createTime || '');
@@ -104,7 +107,7 @@ const createColumns = (): DataTableColumns<UserInterface> => {
             key: 'amount',
             title: 'NFT amount',
             render(row: UserInterface) {
-              return row?.amount || '1';
+              return 'batch' in row ? null : row?.amount || '1';
             },
           },
         ]),

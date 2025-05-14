@@ -40,12 +40,12 @@ export default defineNuxtConfig({
   imports: { dirs: ['composables/', 'stores/', 'lib/utils/**'] },
 
   modules: [
-    ['@nuxtjs/tailwindcss', { cssPath: '~/assets/styles/index.css' }],
+    '@nuxtjs/google-fonts',
+    '@nuxtjs/tailwindcss',
     '@pinia/nuxt',
-    '@pinia-plugin-persistedstate/nuxt',
     '@vueuse/nuxt',
     'nuxt-icons',
-    '@nuxtjs/google-fonts',
+    'pinia-plugin-persistedstate/nuxt',
   ],
 
   vite: {
@@ -112,6 +112,8 @@ export default defineNuxtConfig({
     download: false,
     families: { Inter: { wght: [400, 600] } },
   },
+
+  tailwindcss: { cssPath: '~/assets/styles/index.css' },
 
   compatibilityDate: '2025-04-11',
 });
