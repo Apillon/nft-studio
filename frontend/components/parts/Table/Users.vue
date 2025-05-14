@@ -31,6 +31,7 @@ const props = defineProps({
 const message = useMessage();
 const txWait = useTxWait();
 const userStore = useUserStore();
+const {fetchStatistics} = useUser();
 const { handleError } = useErrors();
 const { network } = useWalletConnect();
 const publicClient = createPublicClient({ chain: network.value, transport: http() });
@@ -138,7 +139,7 @@ const createColumns = (): DataTableColumns<UserInterface> => {
       title: 'Actions',
       render(row: UserInterface) {
         if (row.airdrop_status === AirdropStatus.PENDING) {
-          return h('button', { class: 'icon-delete text-xl', onClick: () => {} }, '');
+          return h('button', { class: 'icon-delete text-xl', onClick: () => handleDeleteUser(row.id) }, '');
         } else if (row.id && row.airdrop_status < AirdropStatus.TRANSACTION_CREATED && row.wallet) {
           return h(
             resolveComponent('Btn'),
@@ -188,6 +189,25 @@ async function mint(userId: number) {
   } catch (e) {
     handleError(e);
     updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
+    loading.value = -1;
+  }
+}
+
+async function handleDeleteUser(id: number) {
+  loading.value = id;
+
+  try {
+    await $api.delete('/users/' + id);
+
+    // Remove the user from the table
+    userStore.users = userStore.users.filter(user => user.id !== id);
+
+    await fetchStatistics();
+    message.success('User successfully deleted.');
+  } catch (e) {
+    handleError(e);
+    message.error('Failed to delete user, please try again later.');
+  } finally {
     loading.value = -1;
   }
 }

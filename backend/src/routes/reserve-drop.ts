@@ -25,7 +25,7 @@ export function inject(app: Application) {
     '/reserve-drop',
     (req: Request, res: Response, next: NextFunction) => {
       resolve(req, res).catch(next);
-    }
+    },
   );
 }
 
@@ -57,7 +57,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
       'en-airdrop-claim',
       {
         link: parseUrl(emailAirdropToken),
-      }
+      },
     );
 
     user.airdrop_status = AirdropStatus.EMAIL_SENT;

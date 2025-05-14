@@ -30,6 +30,7 @@ To publish a new version of the Docker image to the registry:
 ```sh
 ./publish.sh
 ```
+
 **IMPORTANT:** The `nft_studio_app` service defined in [docker-compose.yml](./docker-compose.yml) uses an
 image from the public Docker registry (apillon/nft-studio:latest) therefore any changes to the backend
 code require building and publishing a new Docker image.
@@ -96,7 +97,7 @@ The `package.json` file includes several scripts that can be used to manage and 
 - `SMTP_EMAIL_FROM`: Email address used as the "From" field in sent emails
 - `SMTP_NAME_FROM`: Name used as the "From" field in sent emails
 
-- `ADMIN_WALLET`: Wallet address of the admin
+- `ADMIN_WALLET`: Wallet addresses of the admins separated by a comma (,) or a semi-column (;)
 
 - `MYSQL_HOST_TEST`: Host of the MySQL database used for end-to-end tests
 - `MYSQL_PORT_TEST`: Port of the MySQL database used for end-to-end tests
