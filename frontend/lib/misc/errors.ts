@@ -69,6 +69,8 @@ export const ErrorCodes = {
   400011: 'Wallet is not eligible. Please try using another wallet.',
   400012: 'You have already created a reservation. Please check your email for details.',
   400013: 'Reservation does not exist. Please create a new reservation.',
+  400014: 'Airdrop claim has expired.',
+  400015: 'Airdrop is already in waiting line.',
   403001: 'Authentication token is missing. Please log in to continue.',
   403002: 'Unknown user. Please verify your credentials.',
   403003: 'Unauthorized access. You do not have permission to perform this action.',
