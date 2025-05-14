@@ -37,7 +37,7 @@
         <Card
           icon="icon/airdrop"
           title="Email Mint"
-          content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT—no wallet required."
+          content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT - no wallet required."
           :tags="['Gasless for users', 'Email user base', 'Rewards', 'Easy claim']"
         >
           <template #additional>
@@ -50,7 +50,7 @@
         <Card
           icon="icon/wallet"
           title="Wallet Mint"
-          content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT—no wallet required."
+          content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT."
           :tags="['Whitelisting', 'Rewards', 'Gasless for users']"
         >
           <template #additional>

@@ -39,7 +39,11 @@ const immediatelyShowQr = ref(query.immediatelyShowQr === 'true');
 let qrCodeInterval: any = null as any;
 let timerInterval: any = null as any;
 
-const qrCodeText = computed<string>(() => `${window.location.origin}/poap/reserve-nft?nftToken=${token.value}`);
+const qrCodeText = computed<string>(() => {
+  const link = `${window.location.origin}/poap/reserve-nft?nftToken=${token.value}`;
+  console.log(link);
+  return link;
+});
 
 onMounted(async () => {
   if (authStore.loggedIn) {

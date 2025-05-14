@@ -41,13 +41,11 @@ The `package.json` file includes several scripts that can be used to manage and 
 - **`npm start`**: This command starts the backend service in development mode. It uses `ts-node` to run the TypeScript files directly, allowing for easier debugging and development.
 - **`npm run build`**: This command compiles the TypeScript files into JavaScript using the TypeScript compiler (`tsc`). It's used to prepare the code for production deployment.
 - **`npm run test`**: This command runs the test suite using Jest. It includes options to force exit after tests complete, detect open handles, and run tests in a single process.
-- **`npm run db-upgrade`**: This command upgrades the database schema to the latest version using a custom script.
+- **`npm run db-upgrade`**: This command upgrades the database schema to the latest version using a custom script. You should run this before the first time you start up your project
 - **`npm run db-downgrade`**: This command downgrades the database schema to a previous version.
 - **`npm run db-rebuild`**: This command rebuilds the database schema from scratch.
 - **`npm run db-drop`**: This command drops the entire database schema.
 - **`npm run dev:deploy-collection`**: This command deploys an NFT collection in a development environment using a custom script.
-
-
 
 ### Endpoints
 
@@ -112,6 +110,6 @@ The `package.json` file includes several scripts that can be used to manage and 
 
 - `COLLECTION_UUID`: UUID of the NFT collection from Apillon NFT Service
 - `MAX_SUPPLY`: Maximum supply of the NFT collection
-- `CLAIM_TYPE`: Type of claim for the NFT collections
+- `CLAIM_TYPE`: Type of claim for the NFT collections - 1 = AIRDROP, 2 = FREE_MINT, 3 = POAP
 
 - `CLAIM_EXPIRES_IN`: Number of hours users have to claim NFT, before they are removed from line and become ineligible to claim
