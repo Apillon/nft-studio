@@ -11,11 +11,7 @@
           <td class="relative">
             <strong class="text-black dark:text-white">{{ item.value }}</strong>
 
-            <Btn
-              class="float-right text-white-primary no-underline"
-              type="link"
-              @click="$emit('back')"
-            >
+            <Btn class="float-right text-white-primary no-underline" type="link" @click="$emit('back')">
               <span class="icon-edit align-sub text-xl" />
             </Btn>
           </td>
@@ -49,7 +45,10 @@ const data = ref<Record<string, string | boolean>[]>([
   { label: 'Total NFTs to distribute this round', value: props.numOfNfts + ' NFTs' },
   {
     label: 'Remaining NFTs in the collection',
-    value: props.maxSupply - userStore.users.length - props.numOfNfts + ' NFTs',
+    value:
+      props.maxSupply === Number.MAX_SAFE_INTEGER
+        ? '&#8734;'
+        : props.maxSupply - userStore.users.length - props.numOfNfts + ' NFTs',
   },
   { label: 'Price per NFT', value: mintPrice() + ' credits' },
 ]);

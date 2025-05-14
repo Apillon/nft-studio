@@ -75,7 +75,7 @@ export const ErrorCodes = {
   403004: 'Account not activated. Please activate your account to proceed.',
   422001: 'Email is missing. Please provide a valid email address.',
   422002: 'Invalid email address. Please check and try again.',
-  422003: 'You have already signed up. Please log in to your account.',
+  422003: 'User with this e-mail is already signed up. Please add different recipient.',
   422004: 'User does not exist. Please log in with a different wallet.',
   422005: 'Captcha is not configured. Please contact support.',
   422006: 'Captcha verification is required. Please solve the captcha.',

@@ -1,7 +1,7 @@
 import { useAccount, useWallet } from '@apillon/wallet-vue';
 import { useConnectorClient } from '@wagmi/vue';
 import type { Address } from 'viem';
-import { createPublicClient, getContract, http } from 'viem';
+import { createPublicClient, getContract, http, maxUint32, maxUint64 } from 'viem';
 import { abi } from '~/lib/config/abi';
 
 const contract = ref();
@@ -48,7 +48,8 @@ export default function useClaim() {
   async function getMaxSupply(): Promise<number> {
     if (!contractStore.maxSupply) {
       await initContract();
-      contractStore.maxSupply = await contract.value.read.maxSupply([]);
+      const max = await contract.value.read.maxSupply([]);
+      contractStore.maxSupply = max >= maxUint32 ? Number.MAX_SAFE_INTEGER : Number(max);
     }
     return contractStore.maxSupply;
   }
@@ -142,13 +143,7 @@ export default function useClaim() {
     console.error('Use contracts error', e.code, e);
 
     // ignore user declined
-    const errorData =
-      e?.reason ||
-      e?.data?.message ||
-      e?.error?.data?.message ||
-      e?.error?.message ||
-      e?.message ||
-      '';
+    const errorData = e?.reason || e?.data?.message || e?.error?.data?.message || e?.error?.message || e?.message || '';
     let msg = '';
 
     if (errorData.includes('insufficient funds')) {
@@ -173,12 +168,8 @@ export default function useClaim() {
       // Problem with embedded signature
       msg = 'Problem with embedded wallet';
     } else if (errorData.includes('Suggested NFT is not owned by the selected account ')) {
-      msg =
-        'Suggested NFT is not owned by the selected account, please try again with other wallet.';
-    } else if (
-      errorData.includes('user rejected transaction') ||
-      errorData.includes('User rejected the request')
-    ) {
+      msg = 'Suggested NFT is not owned by the selected account, please try again with other wallet.';
+    } else if (errorData.includes('user rejected transaction') || errorData.includes('User rejected the request')) {
       // User rejected the transaction
       msg = 'Transaction was rejected.';
     } else {
