@@ -5,9 +5,8 @@
         <h6 class="mb-2 text-xs">NFT Brand Booster</h6>
         <h1 class="mb-4">Dashboard</h1>
         <div>
-          Reach your audience through email or their wallet address.All NFTs are sent from your
-          Apillon-hosted collection. You’ll need enough NFTs in your collection to complete the
-          drop.
+          Reach your audience through email or their wallet address.All NFTs are sent from your Apillon-hosted
+          collection. You’ll need enough NFTs in your collection to complete the drop.
         </div>
       </div>
       <Statistics :loading="userStore.loading" :statistics="userStore.statistics" />
@@ -21,6 +20,7 @@
           <FormFieldSearch v-model:value="search" />
         </div>
         <n-space size="large">
+          <Btn v-if="userStore.hasPending" type="secondary" :loading="loading" @click="send"> Send emails </Btn>
           <Btn @click="openAirdrop(0)">
             <span class="inline-flex items-center gap-1">
               <NuxtIcon name="action/add" class="text-lg" />
@@ -43,9 +43,7 @@
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
               <Btn class="flex-1" type="secondary">Details</Btn>
-              <Btn class="flex-1" type="primary" @click="openAirdrop(AirdropMethod.EMAIL)"
-                >Proceed</Btn
-              >
+              <Btn class="flex-1" type="primary" @click="openAirdrop(AirdropMethod.EMAIL)">Proceed</Btn>
             </div>
           </template>
         </Card>
@@ -58,9 +56,7 @@
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
               <Btn class="flex-1" type="secondary">Details</Btn>
-              <Btn class="flex-1" type="primary" @click="openAirdrop(AirdropMethod.WALLET)">
-                Proceed
-              </Btn>
+              <Btn class="flex-1" type="primary" @click="openAirdrop(AirdropMethod.WALLET)"> Proceed </Btn>
             </div>
           </template>
         </Card>
@@ -81,18 +77,17 @@
 import { AirdropMethod } from '~/lib/values/general.values';
 
 const userStore = useUserStore();
-const { getBalance } = useUser();
+const { getBalance, sendEmails } = useUser();
 const { isAutoIncrement } = useClaim();
 
 const search = ref<string>('');
 const airdropType = ref<number>(0);
+const loading = ref<boolean>(false);
 const autoIncrement = ref<boolean>(true);
 const modalUploadCsvVisible = ref<boolean>(false);
 
 const users = computed(() =>
-  !search
-    ? userStore.users
-    : userStore.users.filter(user => `${user.email} ${user.wallet}`.includes(search.value))
+  !search ? userStore.users : userStore.users.filter(user => `${user.email} ${user.wallet}`.includes(search.value))
 );
 
 onMounted(async () => {
@@ -103,5 +98,12 @@ onMounted(async () => {
 function openAirdrop(type: number) {
   airdropType.value = type;
   modalUploadCsvVisible.value = true;
+}
+
+/** Send emails, so users will be able to claim NFTs */
+async function send() {
+  loading.value = true;
+  await sendEmails();
+  loading.value = false;
 }
 </script>

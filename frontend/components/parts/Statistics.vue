@@ -21,7 +21,7 @@
           <span class="">claimed NFTs</span>
         </div>
         <div>
-          <h3 class="mt-2 mb-1">{{ allNfts }}</h3>
+          <h3 class="mt-2 mb-1">{{ allNfts === Number.MAX_SAFE_INTEGER ? '&#8734;' : allNfts }}</h3>
           <span class="">total supply </span>
         </div>
       </div>

@@ -89,7 +89,7 @@
       display: none;
     }
     &:hover {
-      @apply bg-white text-bg;
+      @apply bg-white text-black;
     }
   }
 }
