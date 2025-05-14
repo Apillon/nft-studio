@@ -32,14 +32,6 @@ export async function clearDatabase() {
   await dbMigration.reset();
 }
 
-export async function rebuildDatabase() {
-  if (!dbMigration) {
-    await initMigrations();
-  }
-
-  await dbMigration.reset();
-}
-
 export async function dropDatabase() {
   if (!dbMigration) {
     await initMigrations();

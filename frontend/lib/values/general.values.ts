@@ -6,6 +6,7 @@ export const Environments = {
 
 export const WebStorageKeys = {
   AUTH: 'nft_studio_auth',
+  CONTRACT: 'nft_studio_contract',
   IPNS: 'nft_studio_ipns',
   USER: 'nft_studio_user',
   APP_VERSION: 'nft_studio_version',
@@ -13,9 +14,12 @@ export const WebStorageKeys = {
 
 export enum ClaimType {
   AIRDROP = 1,
-  WHITELIST = 2,
-  FREE_MINT = 3,
-  POAP = 4,
+  FREE_MINT = 2,
+  POAP = 3,
+}
+export enum AirdropMethod {
+  EMAIL = 1,
+  WALLET = 2,
 }
 
 /** NFT Chains */

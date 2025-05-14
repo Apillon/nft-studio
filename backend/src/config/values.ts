@@ -28,9 +28,8 @@ export enum DefaultUserRoles {
 
 export enum ClaimType {
   AIRDROP = 1,
-  WHITELIST = 2,
-  FREE_MINT = 3,
-  POAP = 4,
+  FREE_MINT = 2,
+  POAP = 3,
 }
 
 /**
@@ -77,6 +76,7 @@ export enum AuthorizationErrorCode {
   NOT_ACTIVATED = 403004,
   INVALID_TOKEN = 403005,
   TOKEN_EXPIRED = 403006,
+  UNSUPPORTED_CLAIM_TYPE = 403007,
 }
 
 /**
@@ -119,6 +119,8 @@ export enum RouteErrorCode {
   WALLET_NOT_VALID = 400011,
   DROP_ALREADY_RESERVED = 400012,
   DROP_RESERVATION_DOES_NOT_EXISTS = 400013,
+  AIRDROP_CLAIM_EXPIRED = 400014,
+  AIRDROP_IN_WAITING_LINE = 400015,
 }
 
 export enum AirdropStatus {

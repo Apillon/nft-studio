@@ -35,6 +35,8 @@ services:
     depends_on:
       nft_studio_db:
         condition: service_healthy
+      nft_studio_mail:
+        condition: service_started
     ports:
       - '80:3000'
     expose:
@@ -74,14 +76,13 @@ services:
       CAPTCHA_SECRET: ${CAPTCHA_SECRET}
       CLAIM_EXPIRES_IN: ${CLAIM_EXPIRES_IN}
       CLAIM_START: ${CLAIM_START}
-
+      
   nft_studio_mail:
     image: bytemark/smtp
     container_name: nft_studio_mail
     restart: always
     networks:
-      - app-network
-
+      - nft-studio-network
 networks:
   app-network:
     driver: bridge

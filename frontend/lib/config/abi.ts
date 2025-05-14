@@ -6,12 +6,9 @@ export const abi = [
       { internalType: 'string', name: '_initBaseURI', type: 'string' },
       { internalType: 'string', name: '_baseExtension', type: 'string' },
       { internalType: 'bool[]', name: '_settings', type: 'bool[]' },
-      { internalType: 'uint256', name: '_pricePerMint', type: 'uint256' },
-      { internalType: 'uint256', name: '_dropStart', type: 'uint256' },
-      { internalType: 'uint256', name: '_maxSupply', type: 'uint256' },
-      { internalType: 'uint256', name: '_reserve', type: 'uint256' },
+      { internalType: 'uint256[]', name: '_numbers', type: 'uint256[]' },
       { internalType: 'address', name: '_royaltiesAddress', type: 'address' },
-      { internalType: 'uint256', name: '_royaltiesFees', type: 'uint256' },
+      { internalType: 'address', name: '_admin', type: 'address' },
     ],
     stateMutability: 'nonpayable',
     type: 'constructor',
@@ -39,10 +36,31 @@ export const abi = [
   {
     anonymous: false,
     inputs: [
-      { indexed: true, internalType: 'address', name: 'previousOwner', type: 'address' },
-      { indexed: true, internalType: 'address', name: 'newOwner', type: 'address' },
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { indexed: true, internalType: 'bytes32', name: 'previousAdminRole', type: 'bytes32' },
+      { indexed: true, internalType: 'bytes32', name: 'newAdminRole', type: 'bytes32' },
     ],
-    name: 'OwnershipTransferred',
+    name: 'RoleAdminChanged',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { indexed: true, internalType: 'address', name: 'account', type: 'address' },
+      { indexed: true, internalType: 'address', name: 'sender', type: 'address' },
+    ],
+    name: 'RoleGranted',
+    type: 'event',
+  },
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { indexed: true, internalType: 'address', name: 'account', type: 'address' },
+      { indexed: true, internalType: 'address', name: 'sender', type: 'address' },
+    ],
+    name: 'RoleRevoked',
     type: 'event',
   },
   {
@@ -54,6 +72,20 @@ export const abi = [
     ],
     name: 'Transfer',
     type: 'event',
+  },
+  {
+    inputs: [],
+    name: 'CONTROLLER_ROLE',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [],
+    name: 'DEFAULT_ADMIN_ROLE',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     inputs: [],
@@ -108,6 +140,13 @@ export const abi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'bytes32', name: 'role', type: 'bytes32' }],
+    name: 'getRoleAdmin',
+    outputs: [{ internalType: 'bytes32', name: '', type: 'bytes32' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
     inputs: [],
     name: 'getRoyaltyPercentage',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
@@ -118,6 +157,26 @@ export const abi = [
     inputs: [],
     name: 'getRoyaltyRecipient',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
+    stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
+    ],
+    name: 'grantRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
+    ],
+    name: 'hasRole',
+    outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
     stateMutability: 'view',
     type: 'function',
   },
@@ -202,13 +261,6 @@ export const abi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'owner',
-    outputs: [{ internalType: 'address', name: '', type: 'address' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
     inputs: [
       { internalType: 'address', name: 'to', type: 'address' },
       { internalType: 'uint256', name: 'numToMint', type: 'uint256' },
@@ -230,6 +282,25 @@ export const abi = [
     type: 'function',
   },
   {
+    inputs: [
+      {
+        components: [
+          { internalType: 'address', name: 'to', type: 'address' },
+          { internalType: 'uint256', name: 'numToMint', type: 'uint256' },
+          { internalType: 'uint256[]', name: 'idsToMint', type: 'uint256[]' },
+          { internalType: 'string[]', name: 'URIs', type: 'string[]' },
+        ],
+        internalType: 'struct ApillonNFT.MintParameters[]',
+        name: 'mints',
+        type: 'tuple[]',
+      },
+    ],
+    name: 'ownerMintIdsWithUri',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'uint256', name: 'tokenId', type: 'uint256' }],
     name: 'ownerOf',
     outputs: [{ internalType: 'address', name: '', type: 'address' }],
@@ -244,8 +315,11 @@ export const abi = [
     type: 'function',
   },
   {
-    inputs: [],
-    name: 'renounceOwnership',
+    inputs: [
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
+    ],
+    name: 'renounceRole',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',
@@ -255,6 +329,16 @@ export const abi = [
     name: 'reserve',
     outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
     stateMutability: 'view',
+    type: 'function',
+  },
+  {
+    inputs: [
+      { internalType: 'bytes32', name: 'role', type: 'bytes32' },
+      { internalType: 'address', name: 'account', type: 'address' },
+    ],
+    name: 'revokeRole',
+    outputs: [],
+    stateMutability: 'nonpayable',
     type: 'function',
   },
   {
@@ -339,6 +423,16 @@ export const abi = [
     type: 'function',
   },
   {
+    inputs: [
+      { internalType: 'uint256', name: '_tokenId', type: 'uint256' },
+      { internalType: 'string', name: '_newTokenURI', type: 'string' },
+    ],
+    name: 'setTokenURI',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [{ internalType: 'bytes4', name: 'interfaceId', type: 'bytes4' }],
     name: 'supportsInterface',
     outputs: [{ internalType: 'bool', name: '', type: 'bool' }],
@@ -384,19 +478,19 @@ export const abi = [
     type: 'function',
   },
   {
+    inputs: [{ internalType: 'address', name: '_newAdmin', type: 'address' }],
+    name: 'transferAdmin',
+    outputs: [],
+    stateMutability: 'nonpayable',
+    type: 'function',
+  },
+  {
     inputs: [
       { internalType: 'address', name: 'from', type: 'address' },
       { internalType: 'address', name: 'to', type: 'address' },
       { internalType: 'uint256', name: 'tokenId', type: 'uint256' },
     ],
     name: 'transferFrom',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [{ internalType: 'address', name: 'newOwner', type: 'address' }],
-    name: 'transferOwnership',
     outputs: [],
     stateMutability: 'nonpayable',
     type: 'function',

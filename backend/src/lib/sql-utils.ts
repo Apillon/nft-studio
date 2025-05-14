@@ -32,7 +32,7 @@ export interface SqlQueryObject {
  * @returns Object with parameters for database listing search.
  */
 export function getQueryParams(
-  defaultParameters: Object,
+  defaultParameters: object,
   tableAlias: string,
   fieldMap: any,
   urlQuery: any,
