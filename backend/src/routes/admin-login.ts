@@ -2,9 +2,8 @@ import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
 import { RouteErrorCode } from '../config/values';
 import { ResourceError } from '../lib/errors';
-import { Identity } from '@apillon/sdk';
 import { generateAdminAuthToken } from '../lib/jwt';
-import { validateEvmWallet } from '../lib/claim';
+import { validateEvmWallet } from '../lib/wallet-verify';
 
 /**
  * Installs new route on the provided application.
@@ -16,6 +15,7 @@ export function inject(app: Application) {
   });
 }
 
+// eslint-disable-next-line @typescript-eslint/require-await
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 
@@ -23,7 +23,12 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     throw new ResourceError(RouteErrorCode.INVALID_ADMIN, context);
   }
 
-  const isValid = validateEvmWallet(body.address, body.signature, body.timestamp);
+  const isValid = await validateEvmWallet(
+    body.address,
+    body.signature,
+    body.timestamp,
+    body.isSmart,
+  );
 
   if (isValid) {
     const jwt = generateAdminAuthToken(body.address);

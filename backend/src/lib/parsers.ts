@@ -39,8 +39,8 @@ export function utcDateParser() {
           parsedDate.getUTCHours(),
           parsedDate.getUTCMinutes(),
           parsedDate.getUTCSeconds(),
-          parsedDate.getUTCMilliseconds()
-        )
+          parsedDate.getUTCMilliseconds(),
+        ),
       );
     }
     return parsedDate;

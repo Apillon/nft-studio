@@ -1,18 +1,10 @@
 <template>
-  <div class="frame max-w-xl mx-auto h-[80vh] max-h-[calc(100vh-190px)]">
-    <div class="absolute bottom-full left-1/2 -translate-x-1/2 -translate-y-full lg:mb-2">
-      <div class="max-w-xl flex justify-between items-center gap-4 text-sm font-bold">
-        <n-ellipsis class="align-bottom leading-normal" :line-clamp="1">{{ website }}</n-ellipsis>
-        <button class="ml-2 -mt-1 -mb-3" @click="copyToClipboard(website.toString())">
-          <span class="icon-copy text-lg"></span>
-        </button>
-      </div>
-    </div>
-    <div class="frame-border h-full flex flex-col justify-evenly items-center gap-8 p-8 lg:pb-16 text-center">
-      <template v-if="poapStatus === PoapStatus.WAITING">
+  <div class="frame dark:bg-bg-darker w-full max-w-sm md:max-w-xl mx-auto">
+    <div class="frame-border h-full flex flex-col justify-evenly items-center gap-8 p-8 lg:py-[5vh] text-center">
+      <div v-if="poapStatus === PoapStatus.WAITING">
         <span>Time to event</span>
         <Timer :date-time-to="config.public.CLAIM_START"></Timer>
-      </template>
+      </div>
       <template v-if="poapStatus === PoapStatus.IN_PROGRESS || immediatelyShowQr == true">
         <NuxtIcon name="icon/cube" class="icon-auto text-6xl" filled />
         <h2 class="max-w-xs mx-auto">Scan the code and receive NFT</h2>
@@ -30,10 +22,15 @@
 <script lang="ts" setup>
 import { PoapStatus } from '~/lib/values/general.values';
 
+definePageMeta({
+  layout: 'poap',
+  middleware: ['authenticated', 'poap'],
+});
+const router = useRouter();
+const authStore = useAuthStore();
 const config = useRuntimeConfig();
 const { query } = useRoute();
 
-const website = window.location;
 const poapStatus = ref();
 const token = ref('');
 const timer = ref(5);
@@ -42,14 +39,22 @@ const immediatelyShowQr = ref(query.immediatelyShowQr === 'true');
 let qrCodeInterval: any = null as any;
 let timerInterval: any = null as any;
 
-const qrCodeText = computed<string>(() => `${window.location.origin}/poap/reserve-nft?token=${token.value}`);
+const qrCodeText = computed<string>(() => {
+  const link = `${window.location.origin}/poap/reserve-nft?nftToken=${token.value}`;
+  console.log(link);
+  return link;
+});
 
 onMounted(async () => {
-  await setQrCodeValue();
-
-  qrCodeInterval = setInterval(async () => {
+  if (authStore.loggedIn) {
     await setQrCodeValue();
-  }, 5000);
+
+    qrCodeInterval = setInterval(async () => {
+      await setQrCodeValue();
+    }, 5000);
+  } else {
+    router.push('/');
+  }
 });
 
 onBeforeUnmount(() => {
@@ -68,7 +73,7 @@ async function setQrCodeValue() {
 
     clearInterval(timerInterval);
     timer.value = 5;
-    timerInterval = setInterval(async () => {
+    timerInterval = setInterval(() => {
       timer.value -= 1;
     }, 1000);
   }

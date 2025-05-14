@@ -7,7 +7,7 @@ export class MailTemplates {
   /**
    * Cached compiled handlebars template collection
    */
-  public static templates: Object = {};
+  public static readonly templates: object = {};
 
   private static TEMPLATE_DIR = `${__dirname}/mail`;
 
@@ -17,7 +17,7 @@ export class MailTemplates {
    * @returns compiled mail template
    */
   public static getTemplate(templateName: string) {
-    if (!this.templates.hasOwnProperty(templateName)) {
+    if (!Object.prototype.hasOwnProperty.call(this.templates, templateName)) {
       try {
         const html = fs.readFileSync(
           `${this.TEMPLATE_DIR}/${templateName}.html`,

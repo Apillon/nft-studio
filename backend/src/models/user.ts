@@ -23,7 +23,11 @@ export class User extends BaseSqlModel {
   @prop({
     parser: { resolver: stringTrimParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     validators: [
       {
         resolver: uniqueFieldValue('user', 'email', undefined, true),
@@ -40,7 +44,11 @@ export class User extends BaseSqlModel {
   @prop({
     parser: { resolver: utcDateParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [PopulateStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    serializable: [
+      PopulateStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     validators: [],
     defaultValue: new Date(),
     fakeValue: new Date(),
@@ -64,7 +72,11 @@ export class User extends BaseSqlModel {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     fakeValue: null,
   })
   public nft_id: number | null;
@@ -75,7 +87,11 @@ export class User extends BaseSqlModel {
   @prop({
     parser: { resolver: stringParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     fakeValue: null,
   })
   public signature: string | null;
@@ -86,7 +102,11 @@ export class User extends BaseSqlModel {
   @prop({
     parser: { resolver: integerParser() },
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     validators: [],
     defaultValue: 1,
     fakeValue: 1,
@@ -109,7 +129,11 @@ export class User extends BaseSqlModel {
       },
     ],
     populatable: [PopulateStrategy.DB, PopulateStrategy.ADMIN],
-    serializable: [SerializedStrategy.DB, SerializedStrategy.PROFILE, SerializedStrategy.ADMIN],
+    serializable: [
+      SerializedStrategy.DB,
+      SerializedStrategy.PROFILE,
+      SerializedStrategy.ADMIN,
+    ],
     fakeValue: '0x375207c35e670bdF4d2bC45d182117F2f67618B1',
   })
   public wallet: string | null;
@@ -162,7 +186,12 @@ export class User extends BaseSqlModel {
       await this.db().commit(conn);
     } catch (err) {
       await this.db().rollback(conn);
-      throw new SqlError(err, this.getContext(), SystemErrorCode.DATABASE_ERROR, 'user/create');
+      throw new SqlError(
+        err,
+        this.getContext(),
+        SystemErrorCode.DATABASE_ERROR,
+        'user/create',
+      );
     } finally {
       conn.release();
     }
@@ -179,10 +208,12 @@ export class User extends BaseSqlModel {
       {
         email: this.email,
         wallet: this.wallet,
-      }
+      },
     );
     if (data && data.length) {
-      throw new ResourceError(ValidatorErrorCode.WALLET_BELONGS_TO_ANOTHER_USER);
+      throw new ResourceError(
+        ValidatorErrorCode.WALLET_BELONGS_TO_ANOTHER_USER,
+      );
     }
   }
 
@@ -192,14 +223,12 @@ export class User extends BaseSqlModel {
       SELECT * FROM ${this._tableName}
       WHERE wallet = @wallet
     `,
-      { wallet: wallet.toLowerCase() }
+      { wallet: wallet.toLowerCase() },
     );
 
-    if (data && data.length) {
-      return this.populate(data[0], PopulateStrategy.DB);
-    } else {
-      return this.reset();
-    }
+    return data?.length
+      ? this.populate(data[0], PopulateStrategy.DB)
+      : this.reset();
   }
 
   public async populateByEmail(email: string) {
@@ -208,7 +237,7 @@ export class User extends BaseSqlModel {
       SELECT * FROM ${this._tableName}
       WHERE email = @email
     `,
-      { email }
+      { email },
     );
 
     if (data && data.length) {
@@ -224,7 +253,7 @@ export class User extends BaseSqlModel {
   public async getStatistics() {
     const data = await this.db().paramQuery(
       `
-      SELECT 
+      SELECT
       count(*) as total,
         SUM(IF(airdrop_status = 1, 1, 0)) as pending,
         SUM(IF(airdrop_status in (2,4,5,6,7), 1, 0)) as emailSent,
@@ -232,13 +261,12 @@ export class User extends BaseSqlModel {
         SUM(IF(airdrop_status = 6, 1, 0)) as airdropped,
         SUM(IF(airdrop_status in (3, 7), 1, 0)) as threwError
     FROM user;
-    `
+    `,
     );
     if (data && data.length) {
       return data[0];
-    } else {
-      throw new Error();
     }
+    throw new Error();
   }
 
   /**
@@ -261,7 +289,12 @@ export class User extends BaseSqlModel {
       status: 'u.status',
       wallet: 'u.wallet',
     };
-    const { params, filters } = getQueryParams(defaultParams, 'u', fieldMap, urlQuery);
+    const { params, filters } = getQueryParams(
+      defaultParams,
+      'u',
+      fieldMap,
+      urlQuery,
+    );
     if (filters.limit === -1) {
       filters.limit = null;
     }
@@ -289,21 +322,27 @@ export class User extends BaseSqlModel {
       `,
     };
 
-    const { items, total } = await selectAndCountQuery(this.db(), sqlQuery, params, 'u.id');
+    const { items, total } = await selectAndCountQuery(
+      this.db(),
+      sqlQuery,
+      params,
+      'u.id',
+    );
     const conn = await this.db().db.getConnection();
     try {
       const populatedItems = await Promise.all(
-        items.map(async item => {
-          const u = new User({}, this.getContext()).populate(item, PopulateStrategy.DB);
+        items.map((item) => {
+          const u = new User({}, this.getContext()).populate(
+            item,
+            PopulateStrategy.DB,
+          );
           return u.serialize(SerializedStrategy.ADMIN);
-        })
+        }),
       );
-      await conn.release();
+      conn.release();
       return { items: populatedItems, total };
-    } catch (e) {
-      throw e;
     } finally {
-      await conn.release();
+      conn.release();
     }
   }
 }

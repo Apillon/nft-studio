@@ -10,12 +10,20 @@ import { User } from '../models/user';
  * @param app ExpressJS application.
  */
 export function inject(app: Application) {
-  app.get('/users', AuthenticateAdmin, (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
-  app.get('/users/:userId', AuthenticateAdmin, (req: Request, res: Response, next: NextFunction) => {
-    resolve(req, res).catch(next);
-  });
+  app.get(
+    '/users',
+    AuthenticateAdmin,
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
+  app.get(
+    '/users/:userId',
+    AuthenticateAdmin,
+    (req: Request, res: Response, next: NextFunction) => {
+      resolve(req, res).catch(next);
+    },
+  );
 }
 
 export async function resolve(req: Request, res: Response): Promise<void> {
@@ -24,9 +32,15 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   if (!params || !params.userId) {
     return res.respond(200, await new User({}, context).getList(query));
   } else if (parseInt(params.articleId)) {
-    const user = await new User({}, context).populateById(parseInt(params.userId));
+    const user = await new User({}, context).populateById(
+      parseInt(params.userId),
+    );
     return res.respond(200, user.serialize(SerializedStrategy.ADMIN));
   } else {
-    throw new ResourceError(RouteErrorCode.INVALID_REQUEST, context, 'get-users');
+    throw new ResourceError(
+      RouteErrorCode.INVALID_REQUEST,
+      context,
+      'get-users',
+    );
   }
 }

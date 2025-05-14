@@ -8,6 +8,7 @@ import { MySql } from './lib/mysql';
 import { AirdropStatus, SqlModelStatus } from './config/values';
 import { Job } from './models/job';
 import { processJob } from './lib/job';
+import { parseUrl } from './lib/claim';
 
 export class Cron {
   private cronJobs: CronJob[] = [];
@@ -17,11 +18,13 @@ export class Cron {
     this.cronJobs.push(new CronJob('* * * * *', this.handleJobs, null, false));
 
     if (env.MAX_SUPPLY > 0) {
-      this.cronJobs.push(new CronJob('* * * * *', this.processExpiredClaims, null, false));
+      this.cronJobs.push(
+        new CronJob('* * * * *', this.processExpiredClaims, null, false),
+      );
     }
   }
 
-  async start() {
+  start() {
     for (const cronJob of this.cronJobs) {
       cronJob.start();
     }
@@ -52,22 +55,25 @@ export class Cron {
             airdrop_status: AirdropStatus.EMAIL_SENT,
             status: SqlModelStatus.ACTIVE,
           },
-          conn
+          conn,
         )
-      ).map(x => x.id);
+      ).map((x) => x.id);
 
       if (usersWithExpiredClaim.length) {
         //Update those users to claim expired
         await mysql.paramExecute(
-          `UPDATE user 
+          `UPDATE user
           SET airdrop_status = @airdrop_status
           WHERE id IN (${usersWithExpiredClaim.join(',')})
         ;
        `,
           { airdrop_status: AirdropStatus.AIRDROP_CLAIM_EXPIRED },
-          conn
+          conn,
         );
-        console.info(usersWithExpiredClaim.length + ' users updated to AIRDROP_CLAIM_EXPIRED');
+        console.info(
+          usersWithExpiredClaim.length +
+            ' users updated to AIRDROP_CLAIM_EXPIRED',
+        );
 
         //Get users in waiting line and set their airdrop status to PENDING, so that they will recieve email for claim
         const usersInWaitingLine = await mysql.paramExecute(
@@ -83,50 +89,53 @@ export class Cron {
             airdrop_status: AirdropStatus.IN_WAITING_LINE,
             status: SqlModelStatus.ACTIVE,
           },
-          conn
+          conn,
         );
 
-        console.info('Num of users in waiting line: ' + usersInWaitingLine.length);
+        console.info(
+          `Num of users in waiting line: ${usersInWaitingLine.length}`,
+        );
 
         if (usersInWaitingLine.length) {
           await mysql.paramExecute(
-            `UPDATE user 
-                SET 
+            `UPDATE user
+                SET
                 airdrop_status = @airdrop_status,
                 email_sent_time = NOW()
-                WHERE id IN (${usersInWaitingLine.map(x => x.id).join(',')})
+                WHERE id IN (${usersInWaitingLine.map((x) => x.id).join(',')})
               ;
             `,
             { airdrop_status: AirdropStatus.EMAIL_SENT },
-            conn
+            conn,
           );
           console.info(
-            usersInWaitingLine.map(x => x.id).join(',') + ' should me moved from waiting line. Sending emails....'
+            `${usersInWaitingLine.map((x) => x.id).join(',')} should me moved from waiting line. Sending emails....`,
           );
 
           for (const user of usersInWaitingLine) {
             try {
-              const token = await generateEmailAirdropToken(user.email);
+              const token = generateEmailAirdropToken(user.email);
               await SmtpSendTemplate(
                 [user.email],
                 'Claim your NFT',
                 'en-airdrop-claim',
                 {
                   appUrl: env.APP_URL,
-                  link: `${env.APP_URL}/claim?token=${token}`,
+                  link: parseUrl(token),
                   claimExpiresIn: env.CLAIM_EXPIRES_IN,
                 },
-                'Apillon'
+                'Apillon',
               );
             } catch (err) {
+              console.error(err);
               await mysql.paramExecute(
-                `UPDATE user 
+                `UPDATE user
                   SET airdrop_status = @airdrop_status,
                   WHERE id = @user_id)
               ;
             `,
                 { airdrop_status: AirdropStatus.EMAIL_ERROR, user_id: user.id },
-                conn
+                conn,
               );
             }
           }
@@ -144,12 +153,12 @@ export class Cron {
     const mysql = await MysqlConnectionManager.getInstance();
 
     const jobsToExecute = (await mysql.paramExecute(
-      `SELECT * FROM job WHERE 
+      `SELECT * FROM job WHERE
         status = @status
         ORDER BY createTime ASC`,
       {
         status: SqlModelStatus.DRAFT,
-      }
+      },
     )) as Job[];
 
     for (const job of jobsToExecute) {

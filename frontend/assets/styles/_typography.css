@@ -1,7 +1,7 @@
 /* Headline 1 */
 h1,
 .h1 {
-  @apply text-black font-newSpirit font-bold;
+  @apply text-black dark:text-white font-newSpirit font-bold;
   font-size: 1.75rem;
   line-height: 1.43;
 }
@@ -9,7 +9,7 @@ h1,
 /* Headline 2 */
 h2,
 .h2 {
-  @apply text-black font-newSpirit font-bold;
+  @apply text-black dark:text-white font-newSpirit font-bold;
   font-size: 1.5rem;
   line-height: 1.5;
 
@@ -31,7 +31,7 @@ h3,
 /* Headline 4 */
 h4,
 .h4 {
-  @apply font-inter font-bold;
+  @apply font-inter font-semibold;
   font-size: 1.125rem;
   line-height: 1.55;
 
@@ -44,6 +44,7 @@ h4,
 /* Headline 5 */
 h5,
 .h5 {
+  @apply font-inter font-semibold;
   font-size: 1rem;
   line-height: 1.6;
 }

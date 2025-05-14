@@ -1,14 +1,32 @@
 <template>
-  <div v-if="connected && (!admin || authStore.loggedIn)" class="flex justify-end gap-2 items-center">
+  <div
+    v-if="connected && (!admin || authStore.loggedIn)"
+    v-bind="$attrs"
+    class="flex justify-end gap-2 items-center"
+  >
     <strong v-if="walletAddress"> ({{ shortHash(walletAddress) }}) </strong>
-    <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()"> Disconnect </Btn>
+    <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()">
+      Disconnect
+    </Btn>
   </div>
-  <Btn v-else-if="connected" :size="size" :loading="loading" @click="login(admin)"> Login </Btn>
-  <Btn v-else :size="size" :loading="loading" round @click="modalWalletVisible = true"> Connect wallet </Btn>
+  <Btn v-else-if="connected" v-bind="$attrs" :size="size" :loading="loading" @click="login(admin)">
+    Login
+  </Btn>
+  <Btn
+    v-else
+    :size="size"
+    v-bind="$attrs"
+    :loading="loading"
+    round
+    @click="modalWalletVisible = true"
+  >
+    Connect wallet
+  </Btn>
 
   <EmbeddedWallet
+    v-if="!!config.public.EMBEDDED_WALLET_CLIENT && !!network"
     :client-id="config.public.EMBEDDED_WALLET_CLIENT"
-    passkey-auth-mode="tab_form"
+    passkey-auth-mode="popup"
     :default-network-id="network.id"
     :networks="[
       {
@@ -17,6 +35,7 @@
         rpcUrl: network.rpcUrls.default.http[0],
         explorerUrl: network.blockExplorers.default.url,
       },
+      moonbeam,
     ]"
   />
 
@@ -25,8 +44,13 @@
     @close="() => (modalWalletVisible = false)"
     @update:show="modalWalletVisible = false"
   >
-    <FormWallet>
-      <Btn type="secondary" size="large" @click="openWallet">
+    <FormWallet :admin="admin">
+      <Btn
+        v-if="!!config.public.EMBEDDED_WALLET_CLIENT"
+        type="secondary"
+        size="large"
+        @click="openWallet"
+      >
         <span class="mr-1">▶◀</span> Apillon Embedded Wallet
       </Btn>
     </FormWallet>
@@ -35,6 +59,7 @@
 
 <script lang="ts" setup>
 import type { Size } from 'naive-ui/es/button/src/interface';
+import { moonbeam } from 'viem/chains';
 import { useAccountEffect } from '@wagmi/vue';
 import { EmbeddedWallet, useWallet } from '@apillon/wallet-vue';
 
@@ -46,8 +71,16 @@ const props = defineProps({
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
 const { wallet } = useWallet();
-const { loading, modalWalletVisible, network, connected, walletAddress, disconnectWallet, initEmbeddedWallet, login } =
-  useWalletConnect();
+const {
+  loading,
+  modalWalletVisible,
+  network,
+  connected,
+  walletAddress,
+  disconnectWallet,
+  initEmbeddedWallet,
+  login,
+} = useWalletConnect();
 
 useAccountEffect({ onConnect: () => loginDelay() });
 
@@ -58,6 +91,7 @@ onMounted(() => {
 function openWallet() {
   if (wallet.value) {
     wallet.value.events.emit('open', true);
+    modalWalletVisible.value = false;
   }
 }
 

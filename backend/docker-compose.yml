@@ -28,6 +28,8 @@ services:
       interval: 2s
 
   nft_studio_app:
+    # TODO: revert
+    # image: apillon/nft-studio:latest
     image: tadej/nft-studio:latest
     container_name: nft_studio_app
     depends_on:
@@ -73,8 +75,6 @@ services:
       SMTP_EMAIL_FROM_HELLO: ${SMTP_EMAIL_FROM_HELLO}
       CAPTCHA_SECRET: ${CAPTCHA_SECRET}
       CLAIM_EXPIRES_IN: ${CLAIM_EXPIRES_IN}
-      SIGNATURE_PRIVATE_KEY: ${SIGNATURE_PRIVATE_KEY}
-      SIGNATURE_CONTRACT_ADDRESS: ${SIGNATURE_CONTRACT_ADDRESS}
       CLAIM_START: ${CLAIM_START}
       
   nft_studio_mail:

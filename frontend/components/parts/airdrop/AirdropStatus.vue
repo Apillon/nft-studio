@@ -1,6 +1,8 @@
 <template>
   <Tag :type="getAirdropStatus(status)">
-    <span class="first-letter:uppercase">{{ AirdropStatus[status].replaceAll('_', ' ').toLocaleLowerCase() }}</span>
+    <span class="first-letter:uppercase leading-normal">
+      {{ AirdropStatus[status].replaceAll('_', ' ').toLocaleLowerCase() }}
+    </span>
   </Tag>
 </template>
 

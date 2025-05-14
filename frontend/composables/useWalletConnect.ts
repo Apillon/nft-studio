@@ -1,8 +1,10 @@
 import type { Events } from '@apillon/wallet-sdk';
 import type { Config } from '@wagmi/vue';
-import { useAccount, useChainId, useChains, useDisconnect, useSwitchChain } from '@wagmi/vue';
-import { useAccount as useAccountEW, useWallet } from '@apillon/wallet-vue';
+import type { Address } from 'viem';
 import { signMessage } from '@wagmi/vue/actions';
+import { isErc6492Signature } from 'viem';
+import { useAccount as useAccountEW, useWallet } from '@apillon/wallet-vue';
+import { useAccount, useChainId, useChains, useDisconnect, useSwitchChain } from '@wagmi/vue';
 
 export default function useWalletConnect() {
   const config = useRuntimeConfig();
@@ -26,11 +28,15 @@ export default function useWalletConnect() {
 
   const network = computed(() => chains.value.find(c => c.id === config.public.CHAIN_ID));
   const connected = computed(() => isConnected.value || !!info.activeWallet?.address);
-  const walletAddress = computed(() => (isConnected.value ? address.value : info.activeWallet?.address));
+  const walletAddress = computed<Address>(() =>
+    isConnected.value ? (address.value as Address) : (info.activeWallet?.address as Address)
+  );
   const isLoggedIn = computed(() => connected.value && authStore.loggedIn);
 
   const sign = async (message: string) => {
-    return isConnected.value ? await signMessage($wagmiConfig as Config, { message }) : await signEW(message);
+    return isConnected.value
+      ? await signMessage($wagmiConfig as Config, { message })
+      : await signEW(message);
   };
 
   async function ensureCorrectNetwork() {
@@ -46,20 +52,20 @@ export default function useWalletConnect() {
     loading.value = true;
     try {
       const timestamp = new Date().getTime();
-      const message = `test\n${timestamp}`;
-
-      const signature = await sign(message);
+      const signature = await sign(`test\n${timestamp}`);
 
       const { data } = await $api.post<LoginResponse>('/login', {
         signature,
         timestamp,
         address: walletAddress.value,
+        isSmart: isErc6492Signature(signature as `0x${string}`),
       });
       authStore.login(data);
 
       modalWalletVisible.value = false;
     } catch (e) {
       handleError(e);
+      disconnectWallet();
     }
     loading.value = false;
   }
@@ -76,7 +82,7 @@ export default function useWalletConnect() {
   async function initEmbeddedWallet(admin: boolean = false) {
     await sleep(1000);
 
-    if (wallet.value) {
+    if (wallet.value && config.public.EMBEDDED_WALLET_CLIENT) {
       wallet.value?.events.on('connect', () => {
         login(admin);
       });

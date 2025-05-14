@@ -1,18 +1,21 @@
 <script lang="ts" setup>
-import { lightTheme } from 'naive-ui';
-import { NaiveTheme } from '~/lib/config/naive';
+import { ClaimType } from '~/lib/values/general.values';
+
+const config = useRuntimeConfig();
+const title =
+  config.public.type === ClaimType.FREE_MINT
+    ? 'NFT Wild West'
+    : config.public.type === ClaimType.POAP
+      ? 'NFT Event Edition'
+      : 'NFT Brand Booster';
+
+useHead({ title });
 </script>
 
 <template>
   <div class="h-full">
-    <n-config-provider :theme="lightTheme" :theme-overrides="NaiveTheme" class="flex h-full flex-col">
-      <n-message-provider placement="bottom-right" :keep-alive-on-hover="true" :duration="3000" closable>
-        <NuxtLayout>
-          <NuxtPage />
-        </NuxtLayout>
-      </n-message-provider>
-
-      <n-global-style />
-    </n-config-provider>
+    <NuxtLayout>
+      <NuxtPage />
+    </NuxtLayout>
   </div>
 </template>

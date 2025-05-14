@@ -15,7 +15,7 @@ export function inject(app: Application): void {
  */
 export function createRespond(): RequestHandler {
   return (req: Request, res: Response, next: NextFunction) => {
-    res.respond = (status: number, data: Object, meta?: Object) => {
+    res.respond = (status: number, data: object, meta?: object) => {
       res.status(status).json({
         data: data,
         id: req.context.id,
