@@ -10,6 +10,8 @@ services:
     container_name: nft_studio_db
     ports:
       - '3306:3306'
+    expose:
+      - '3306'
     restart: always
     networks:
       - app-network
