@@ -163,14 +163,12 @@ async function deploy() {
     </div>
     <div v-else-if="uploadStep === Step.UPLOAD" class="max-w-lg w-full mx-auto">
       <div class="mb-4">
-        <h4 v-if="isMethodWallet">Upload your CSV file with recipients’ wallet addresses</h4>
-        <h4 v-else>Upload your CSV file with recipients’ emails</h4>
+        <h4 v-if="isMethodWallet">Upload your wallet list</h4>
+        <h4 v-else>Upload your email list</h4>
         <div v-if="isMethodWallet" class="mt-2 mb-4">
-          Select and upload the CSV file containing wallet addresses to which you wish to distribute NFTs.
+          Drop in your CSV file with the wallet addresses you want to send NFTs to.
         </div>
-        <div v-else class="mt-2 mb-4">
-          Select and upload the CSV file containing emails to which you wish to distribute NFTs.
-        </div>
+        <div v-else class="mt-2 mb-4">Drop in your CSV file with the email addresses you want to send NFTs to.</div>
         <span class="text-xs">
           Need help structuring your CSV file?
           <a :href="`/files/${exampleFile}`" target="_blank"> Download CSV sample </a>
@@ -224,7 +222,7 @@ async function deploy() {
         </p>
         <span v-else></span>
         <div class="flex items-center gap-2">
-          <Btn v-if="uploadStep === Step.UPLOAD" class="min-w-40" type="secondary" @click="uploadStep -= 1"> Back </Btn>
+          <Btn v-if="uploadStep > Step.TYPE" class="min-w-40" type="secondary" @click="uploadStep -= 1"> Back </Btn>
           <Btn class="min-w-40" :disabled="isButtonDisabled" @click="uploadStep += 1">
             <span v-if="uploadStep === Step.UPLOAD && items.length === 0"> Skip </span>
             <span v-else> Continue </span>

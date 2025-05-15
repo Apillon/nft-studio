@@ -134,6 +134,7 @@ export default function useUser() {
     saveRecipients,
     fetchBalance,
     fetchStatistics,
+    fetchUsers,
     getBalance,
     getUsers,
     getStatistics,

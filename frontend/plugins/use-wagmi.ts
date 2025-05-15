@@ -1,7 +1,7 @@
 import { http, createConfig, WagmiPlugin, createStorage } from '@wagmi/vue';
 import { mainnet, moonbeam, moonbaseAlpha } from '@wagmi/vue/chains';
 import { type Chain } from '@wagmi/vue/chains';
-import { VueQueryPlugin } from '@tanstack/vue-query';
+import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
 import { metaMask, coinbaseWallet, walletConnect } from '@wagmi/vue/connectors';
 
 export default defineNuxtPlugin(nuxtApp => {
@@ -33,7 +33,9 @@ export default defineNuxtPlugin(nuxtApp => {
       [moonbeam.id]: http(),
     },
   });
+  const queryClient = new QueryClient();
+
   nuxtApp.provide('wagmiConfig', wagmiConfig);
   nuxtApp.vueApp.use(WagmiPlugin, { config: wagmiConfig });
-  nuxtApp.vueApp.use(VueQueryPlugin);
+  nuxtApp.vueApp.use(VueQueryPlugin, { queryClient });
 });

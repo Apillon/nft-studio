@@ -28,7 +28,7 @@ export const useUserStore = defineStore('user', {
 
   persist: {
     key: WebStorageKeys.USER,
-    storage: persistedState.sessionStorage,
+    storage: piniaPluginPersistedstate.sessionStorage(),
     pick: ['balance', 'users', 'statistics'],
   },
 });

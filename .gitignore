@@ -72,7 +72,6 @@ dist/*
 conventions/.vuepress/dist
 docs/.vuepress/dist
 
-*.orig
 tmp
 bin/deploy/env.staging.yml
 .serverless/*
