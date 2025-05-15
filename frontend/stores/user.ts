@@ -7,6 +7,10 @@ export const useUserStore = defineStore('user', {
     loading: false,
     statistics: {} as StatisticsInterface,
     users: [] as UserInterface[],
+    promises: {
+      users: null as Promise<any> | null,
+      statistics: null as Promise<any> | null,
+    },
   }),
 
   getters: {

@@ -31,9 +31,9 @@ const props = defineProps({
 const message = useMessage();
 const txWait = useTxWait();
 const userStore = useUserStore();
-const {fetchStatistics} = useUser();
+const { fetchStatistics } = useUser();
 const { handleError } = useErrors();
-const { network } = useWalletConnect();
+const { network, ensureCorrectNetwork } = useWalletConnect();
 const publicClient = createPublicClient({ chain: network.value, transport: http() });
 
 const loading = ref<number>(-1);
@@ -166,14 +166,18 @@ async function mint(userId: number) {
       userId,
     });
     if (data.success) {
+      await ensureCorrectNetwork();
       txWait.hash.value = data.transactionHash;
-      message.info('Your NFT Mint has started');
+      message.info('NFT minting has started');
       updateUserStatus(userId, AirdropStatus.TRANSACTION_CREATED);
 
-      const receipt = await txWait.wait();
-      const receipt1 = await publicClient.waitForTransactionReceipt({ hash: data.transactionHash });
-      const logs = receipt1?.logs || receipt.data?.logs;
+      const receipt = await Promise.race([
+        txWait.wait(),
+        publicClient.waitForTransactionReceipt({ hash: data.transactionHash }),
+      ]);
+      message.success('You successfully claimed NFT');
 
+      const logs = receipt?.logs || receipt.data?.logs;
       if (logs && logs[0].topics[3]) {
         message.success('You successfully minted NFT');
         updateUserStatus(userId, AirdropStatus.AIRDROP_COMPLETED);
