@@ -80,6 +80,8 @@ services:
   nft_studio_mail:
     image: bytemark/smtp
     container_name: nft_studio_mail
+    ports:
+      - '2255:25'
     restart: always
     networks:
       - app-network
