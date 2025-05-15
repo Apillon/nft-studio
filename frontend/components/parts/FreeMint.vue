@@ -5,9 +5,8 @@
         <h6 class="mb-2 text-xs">NFT Event Experience</h6>
         <h1 class="mb-4">Dashboard</h1>
         <div>
-          Create PoAP-style drops in just a click. Let users mint on the spot or email-reserve their NFTs for later. All
-          NFTs are sent from your Apillon-hosted collection. You’ll need enough NFTs in your collection to complete the
-          drop.
+          Allow anybody to mint an NFT from your collection through the claim page below. Users can connect their
+          existing Web3 wallet, generate a new one through Apillon's Embedded Wallets or reserve an NFT via email.
         </div>
         <div class="mt-6">
           <h6 class="inline-block text-xs">Claim page</h6>
