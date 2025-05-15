@@ -52,7 +52,7 @@ export async function claim(user: User): Promise<string> {
 export function validateAirdropStatus(airdropStatus: AirdropStatus) {
   if (
     airdropStatus == AirdropStatus.TRANSACTION_CREATED ||
-    AirdropStatus.AIRDROP_COMPLETED
+    airdropStatus == AirdropStatus.AIRDROP_COMPLETED
   ) {
     throw new ResourceError(RouteErrorCode.AIRDROP_ALREADY_CLAIMED);
   }
