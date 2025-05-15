@@ -17,11 +17,13 @@
       <span v-else>NFT Collection</span>
       <div class="flex gap-2 justify-between w-full">
         <div>
-          <h3 class="mt-2 mb-1">{{ statistics.airdropped || 0 }}/{{ statistics.total }}</h3>
+          <h3 class="mt-2 mb-1">{{ statistics.airdropped || 0 }}/{{ statistics.total || 0 }}</h3>
           <span class="">claimed NFTs</span>
         </div>
         <div>
-          <h3 class="mt-2 mb-1">{{ allNfts === Number.MAX_SAFE_INTEGER ? '&#8734;' : allNfts }}</h3>
+          <h3 class="mt-2 mb-1">
+            {{ allNfts === Number.MAX_SAFE_INTEGER ? '&#8734;' : allNfts }}
+          </h3>
           <span class="">total supply </span>
         </div>
       </div>

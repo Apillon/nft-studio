@@ -16,7 +16,7 @@ const message = useMessage();
 const txWait = useTxWait();
 const { handleError } = useErrors();
 const { contractError, loadNft, addNftId } = useClaim();
-const { network, walletAddress, sign } = useWalletConnect();
+const { network, walletAddress, ensureCorrectNetwork, sign } = useWalletConnect();
 const publicClient = createPublicClient({ chain: network.value, transport: http() });
 
 const loading = ref<boolean>(false);
@@ -46,15 +46,17 @@ async function claim() {
       isSmart: isErc6492Signature(signature as `0x${string}`),
     });
     if (data.success) {
+      await ensureCorrectNetwork();
       txWait.hash.value = data.transactionHash;
-      message.info('Your NFT Mint has started');
+      message.info('NFT minting has started');
 
-      const receipt = await txWait.wait();
-      const receipt1 = await publicClient.waitForTransactionReceipt({ hash: data.transactionHash });
+      const receipt = await Promise.race([
+        txWait.wait(),
+        publicClient.waitForTransactionReceipt({ hash: data.transactionHash }),
+      ]);
       message.success('You successfully claimed NFT');
 
-      const logs = receipt1?.logs || receipt.data?.logs;
-
+      const logs = receipt?.logs || receipt.data?.logs;
       if (logs && logs[0].topics[3]) {
         const nftId = Number(logs[0].topics[3]);
         const metadata = await loadNft(nftId);

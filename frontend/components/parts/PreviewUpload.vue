@@ -27,7 +27,7 @@
           <p class="mt-2 text-xs">Your balance: {{ userStore.balance }} credits</p>
         </div>
       </div>
-      <Btn size="large" type="primary" @click="$emit('deploy')"> Send minting invites </Btn>
+      <Btn size="large" type="primary" @click="$emit('deploy')"> Add new recipients </Btn>
     </div>
   </div>
 </template>
@@ -47,8 +47,8 @@ const data = ref<Record<string, string | boolean>[]>([
     label: 'Remaining NFTs in the collection',
     value:
       props.maxSupply === Number.MAX_SAFE_INTEGER
-        ? '&#8734;'
-        : props.maxSupply - userStore.users.length - props.numOfNfts + ' NFTs',
+        ? `∞`
+        : `${props.maxSupply - userStore.users.length - props.numOfNfts} NFTs`,
   },
   { label: 'Price per NFT', value: mintPrice() + ' credits' },
 ]);

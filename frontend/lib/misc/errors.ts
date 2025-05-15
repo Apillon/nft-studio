@@ -85,6 +85,7 @@ export const ErrorCodes = {
   422008: 'User has already minted. Duplicate minting is not allowed.',
   422009: 'Wallet belongs to another user. Please log in with a different wallet.',
   422013: 'Wallet address is not valid.',
+  422014: 'Email or wallet address is required. Please provide one of them.',
 
   // SystemErrorCode
   500000: 'DEFAULT_SYSTEM_ERROR',
