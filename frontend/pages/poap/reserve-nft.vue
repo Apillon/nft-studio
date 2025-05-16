@@ -1,8 +1,6 @@
 <template>
   <div class="frame flex dark:bg-bg-darker md:min-w-[30rem] w-full max-w-sm mx-auto">
-    <div
-      class="frame-border self-stretch min-h-[40rem] flex flex-col justify-evenly gap-5 p-6 lg:py-[5vh] text-center"
-    >
+    <div class="frame-border self-stretch min-h-[40rem] flex flex-col justify-evenly gap-5 p-6 lg:py-[5vh] text-center">
       <div v-if="!isTokenValid">
         <p>Token is invalid or has expired...</p>
       </div>
@@ -17,17 +15,8 @@
       />
       <template v-else>
         <h2 class="text-3xl mt-2">Enter your email to reserve NFT</h2>
-        <p>
-          Once you have entered your e-mail address, you will receive instructions on how to claim
-          NFT.
-        </p>
-        <n-form
-          ref="formRef"
-          :model="formData"
-          class="text-left mt-2"
-          :rules="rules"
-          @submit.prevent="handleSubmit"
-        >
+        <p>Once you have entered your e-mail address, you will receive instructions on how to claim NFT.</p>
+        <n-form ref="formRef" :model="formData" class="text-left mt-2" :rules="rules" @submit.prevent="handleSubmit">
           <!--  Project Quota value -->
           <n-form-item path="email" :show-label="false">
             <n-input v-model:value="formData.email" placeholder="Enter your email" clearable />
@@ -36,9 +25,7 @@
           <!--  Form submit -->
           <n-form-item :show-label="false" :show-feedback="false">
             <input type="submit" class="hidden" />
-            <Btn size="large" type="secondary" :loading="loading" @click="handleSubmit">
-              Proceed
-            </Btn>
+            <Btn size="large" type="secondary" :loading="loading" @click="handleSubmit"> Proceed </Btn>
           </n-form-item>
         </n-form>
 
@@ -127,9 +114,7 @@ function handleSubmit(e: Event | MouseEvent) {
   e.preventDefault();
   formRef.value?.validate((errors: Array<FormValidationError> | undefined) => {
     if (errors) {
-      errors.map(fieldErrors =>
-        fieldErrors.map(error => message.warning(error.message || 'Error'))
-      );
+      errors.map(fieldErrors => fieldErrors.map(error => message.warning(error.message || 'Error')));
     } else {
       reserveMint();
     }

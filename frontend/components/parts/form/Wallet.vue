@@ -9,10 +9,14 @@ const props = defineProps({
 const { isConnecting, isConnected, connector } = useAccount();
 const { connect, connectors } = useConnect();
 const { login } = useWalletConnect();
+const userStore = useUserStore();
 
 const connectorName = ref('');
 
 function connectWallet(conn: Connector<CreateConnectorFn>) {
+  if (props.admin) {
+    userStore.$reset();
+  }
   if (isConnected.value && conn.type === connector.value?.type) {
     login(props.admin);
   } else {

@@ -54,7 +54,7 @@ const isButtonDisabled = computed(() => {
     case Step.TYPE:
       return !selectedMethod.value;
     case Step.DATA:
-      return items.value.length === 0 || availableNFTs.value < 0;
+      return items.value.length === 0 || availableNFTs.value < 0 || hasEmptyRow() || editingRow.value > -1;
     default:
       return false;
   }
@@ -66,6 +66,7 @@ const exampleFile = computed(() => {
   return `example${isWallet}${isAutoIncrement}.csv`;
 });
 
+const isStep = (step: number) => uploadStep.value === step;
 const rowKey = (row: UserInterface) =>
   items.value.findIndex(item => item.email === row?.email || item.wallet === row?.wallet);
 
@@ -75,7 +76,7 @@ const areKeysUnique = () => new Set(keys()).size === keys().length;
 
 const addNewUser = () => {
   if (hasEmptyRow()) {
-    editingRow.value = keys().indexOf(null) || keys().indexOf('');
+    editingRow.value = keys().findIndex(item => item === '' || item === null);
   } else {
     items.value.push(createEmptyUser());
     editingRow.value = items.value.length - 1;
@@ -150,7 +151,7 @@ async function deploy() {
     title="NFT email airdrop"
     @close="emit('close')"
   >
-    <div v-if="uploadStep === Step.TYPE" class="max-w-lg w-full mx-auto">
+    <div v-if="isStep(Step.TYPE)" class="max-w-lg w-full mx-auto">
       <h4>Select distribution methods</h4>
       <div class="mt-2 mb-4">How do you want to distribute your NFTs? Choose an option below.</div>
       <CardSelect
@@ -161,16 +162,14 @@ async function deploy() {
         @click="selectedMethod = method.value"
       />
     </div>
-    <div v-else-if="uploadStep === Step.UPLOAD" class="max-w-lg w-full mx-auto">
+    <div v-else-if="isStep(Step.UPLOAD)" class="max-w-lg w-full mx-auto">
       <div class="mb-4">
-        <h4 v-if="isMethodWallet">Upload your CSV file with recipients’ wallet addresses</h4>
-        <h4 v-else>Upload your CSV file with recipients’ emails</h4>
+        <h4 v-if="isMethodWallet">Upload your wallet list</h4>
+        <h4 v-else>Upload your email list</h4>
         <div v-if="isMethodWallet" class="mt-2 mb-4">
-          Select and upload the CSV file containing wallet addresses to which you wish to distribute NFTs.
+          Drop in your CSV file with the wallet addresses you want to send NFTs to.
         </div>
-        <div v-else class="mt-2 mb-4">
-          Select and upload the CSV file containing emails to which you wish to distribute NFTs.
-        </div>
+        <div v-else class="mt-2 mb-4">Drop in your CSV file with the email addresses you want to send NFTs to.</div>
         <span class="text-xs">
           Need help structuring your CSV file?
           <a :href="`/files/${exampleFile}`" target="_blank"> Download CSV sample </a>
@@ -178,7 +177,7 @@ async function deploy() {
       </div>
       <FormUpload :auto-increment="autoIncrement" :wallet="isMethodWallet" @proceed="onFileUploaded" />
     </div>
-    <div v-else-if="uploadStep === Step.DATA">
+    <div v-else-if="isStep(Step.DATA)">
       <div class="flex justify-between items-center mb-6">
         <div v-if="isMethodWallet">
           <h3 class="mb-2">List of NFT wallet airdrop</h3>
@@ -207,26 +206,26 @@ async function deploy() {
       </div>
     </div>
     <PreviewUpload
-      v-else-if="uploadStep === Step.REVIEW"
+      v-else-if="isStep(Step.REVIEW)"
       :num-of-nfts="items.length"
       :max-supply="maxSupply"
       @back="uploadStep = Step.DATA"
       @deploy="deploy"
     />
-    <AnimationDeploy v-else-if="uploadStep === Step.DEPLOYING" class="min-h-full" />
-    <AirdropDeployed v-else-if="uploadStep === Step.DEPLOYED" class="min-h-full" @close="$emit('close')" />
+    <AnimationDeploy v-else-if="isStep(Step.DEPLOYING)" class="min-h-full" />
+    <AirdropDeployed v-else-if="isStep(Step.DEPLOYED)" class="min-h-full" @close="$emit('close')" />
 
     <template v-if="uploadStep < Step.REVIEW" #footer>
       <div class="flex w-full items-center justify-between gap-4 px-10 py-3">
-        <p v-if="uploadStep === Step.DATA">
+        <p v-if="isStep(Step.DATA)">
           <strong>Total credits: </strong>
           <span>{{ userStore.balance }} credits</span>
         </p>
         <span v-else></span>
         <div class="flex items-center gap-2">
-          <Btn v-if="uploadStep === Step.UPLOAD" class="min-w-40" type="secondary" @click="uploadStep -= 1"> Back </Btn>
+          <Btn v-if="uploadStep > Step.TYPE" class="min-w-40" type="secondary" @click="uploadStep -= 1"> Back </Btn>
           <Btn class="min-w-40" :disabled="isButtonDisabled" @click="uploadStep += 1">
-            <span v-if="uploadStep === Step.UPLOAD && items.length === 0"> Skip </span>
+            <span v-if="isStep(Step.UPLOAD) && items.length === 0"> Skip </span>
             <span v-else> Continue </span>
           </Btn>
         </div>

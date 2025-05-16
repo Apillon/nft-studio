@@ -18,7 +18,7 @@ export const useIpnsStore = defineStore('ipns', {
 
   persist: {
     key: WebStorageKeys.IPNS,
-    storage: persistedState.localStorage,
+    storage: piniaPluginPersistedstate.localStorage(),
     pick: ['links'],
   },
 });

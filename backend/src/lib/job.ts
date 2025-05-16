@@ -98,7 +98,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
             const res = await SmtpSendTemplate(
               [currentUser.email],
               'Claim your NFT',
-              'en-signup-email-airdrop-claim',
+              'en-airdrop-claim',
               {
                 appUrl: env.APP_URL,
                 link: parseUrl(token),

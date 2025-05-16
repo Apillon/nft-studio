@@ -25,15 +25,15 @@ type Batch = {
 
 const props = defineProps({
   autoIncrement: { type: Boolean, default: true },
+  search: { type: String, default: null },
   users: { type: Array<UserInterface>, required: true },
-  wallet: { type: Boolean, default: false },
 });
 const message = useMessage();
 const txWait = useTxWait();
 const userStore = useUserStore();
-const {fetchStatistics} = useUser();
+const { fetchStatistics } = useUser();
 const { handleError } = useErrors();
-const { network } = useWalletConnect();
+const { network, ensureCorrectNetwork } = useWalletConnect();
 const publicClient = createPublicClient({ chain: network.value, transport: http() });
 
 const loading = ref<number>(-1);
@@ -42,6 +42,9 @@ const updateUserStatus = (id: number, status: number) =>
   ((userStore.users.find(u => u.id === id) || ({} as UserInterface)).airdrop_status = status);
 
 const data = computed(() => {
+  if (props.search) {
+    return props.users;
+  }
   return props.users.reduce(
     (acc, user) => {
       const date = dateTimeToDateAndTime(user?.createTime || '');
@@ -105,7 +108,7 @@ const createColumns = (): DataTableColumns<UserInterface> => {
             key: 'amount',
             title: 'NFT amount',
             render(row: UserInterface) {
-              return row?.amount || '1';
+              return 'batch' in row ? null : row?.amount || '1';
             },
           },
         ]),
@@ -163,14 +166,18 @@ async function mint(userId: number) {
       userId,
     });
     if (data.success) {
+      await ensureCorrectNetwork();
       txWait.hash.value = data.transactionHash;
-      message.info('Your NFT Mint has started');
+      message.info('NFT minting has started');
       updateUserStatus(userId, AirdropStatus.TRANSACTION_CREATED);
 
-      const receipt = await txWait.wait();
-      const receipt1 = await publicClient.waitForTransactionReceipt({ hash: data.transactionHash });
-      const logs = receipt1?.logs || receipt.data?.logs;
+      const receipt = await Promise.race([
+        txWait.wait(),
+        publicClient.waitForTransactionReceipt({ hash: data.transactionHash }),
+      ]);
+      message.success('You successfully claimed NFT');
 
+      const logs = receipt?.logs || receipt.data?.logs;
       if (logs && logs[0].topics[3]) {
         message.success('You successfully minted NFT');
         updateUserStatus(userId, AirdropStatus.AIRDROP_COMPLETED);

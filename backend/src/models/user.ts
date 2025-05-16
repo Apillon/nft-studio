@@ -33,6 +33,12 @@ export class User extends BaseSqlModel {
         resolver: uniqueFieldValue('user', 'email', undefined, true),
         code: ValidatorErrorCode.PROFILE_EMAIL_ALREADY_TAKEN,
       },
+      {
+        resolver: async function () {
+          return this.email != null || this.wallet != null;
+        },
+        code: ValidatorErrorCode.EMAIL_OR_WALLET_REQUIRED,
+      },
     ],
     fakeValue: 'test@email.com',
   })

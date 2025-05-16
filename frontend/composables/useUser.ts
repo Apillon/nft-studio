@@ -16,8 +16,8 @@ export default function useUser() {
     () => isLoggedIn.value,
     _ => {
       if (isLoggedIn.value) {
-        fetchUsers();
-        fetchStatistics();
+        getUsers();
+        getStatistics();
       }
     },
     { immediate: true }
@@ -31,23 +31,28 @@ export default function useUser() {
     return userStore.balance;
   }
   async function getStatistics() {
-    if (!userStore.hasStatistics) {
+    if (userStore.promises.statistics) {
+      await userStore.promises.statistics;
+    } else if (!userStore.hasStatistics) {
       await fetchStatistics();
     }
     return userStore.statistics;
   }
   async function getUsers() {
-    if (!userStore.hasUsers) {
+    if (userStore.promises.users) {
+      await userStore.promises.users;
+    } else if (!userStore.hasUsers) {
       await fetchUsers();
     }
-    return userStore.statistics;
+    return userStore.users;
   }
 
   /** FETCH */
   async function fetchUsers() {
     userStore.loading = true;
     try {
-      const { data } = await $api.get<UsersResponse>('/users', { itemsPerPage: 10000 });
+      userStore.promises.users = $api.get<UsersResponse>('/users', { itemsPerPage: 10000 });
+      const { data } = await userStore.promises.users;
       userStore.users = data.items;
 
       /** Users pooling */
@@ -68,7 +73,8 @@ export default function useUser() {
   }
   async function fetchStatistics() {
     try {
-      const { data } = await $api.get<StatisticsResponse>('/statistics');
+      userStore.promises.statistics = $api.get<StatisticsResponse>('/statistics');
+      const { data } = await userStore.promises.statistics;
       userStore.statistics = data;
     } catch (error) {
       handleError(error);
@@ -134,6 +140,7 @@ export default function useUser() {
     saveRecipients,
     fetchBalance,
     fetchStatistics,
+    fetchUsers,
     getBalance,
     getUsers,
     getStatistics,

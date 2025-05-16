@@ -3,7 +3,7 @@
     <n-message-provider placement="bottom-right" :keep-alive-on-hover="true" :duration="3000" closable>
       <n-layout class="relative h-screen" :native-scrollbar="false">
         <div ref="headerRef">
-          <Header logo-center hide-login />
+          <Header logo-center />
         </div>
         <div class="container max-w-6xl py-8 flex flex-col justify-center box-border" :style="containerStyle">
           <slot />
