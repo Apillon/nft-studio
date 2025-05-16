@@ -20,6 +20,7 @@
           <FormFieldSearch v-model:value="search" />
         </div>
         <n-space size="large">
+          <Btn type="secondary" :loading="userStore.loading" @click="fetchUsers()">Refresh </Btn>
           <Btn v-if="userStore.hasPending" type="secondary" :loading="loading" @click="send"> Send emails </Btn>
           <Btn @click="openAirdrop(0)">
             <span class="inline-flex items-center gap-1">
@@ -29,7 +30,7 @@
           </Btn>
         </n-space>
       </n-space>
-      <TableUsers :users="users" />
+      <TableUsers :auto-increment="autoIncrement" :search="search" :users="users" />
     </template>
     <div v-else>
       <h6 class="mt-8 mb-2">Distribution methods</h6>
@@ -42,7 +43,7 @@
         >
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
-              <Btn class="flex-1" type="secondary">Details</Btn>
+              <!-- <Btn class="flex-1" type="secondary">Details</Btn> -->
               <Btn class="flex-1" type="primary" @click="openAirdrop(AirdropMethod.EMAIL)">Proceed</Btn>
             </div>
           </template>
@@ -55,7 +56,7 @@
         >
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
-              <Btn class="flex-1" type="secondary">Details</Btn>
+              <!-- <Btn class="flex-1" type="secondary">Details</Btn> -->
               <Btn class="flex-1" type="primary" @click="openAirdrop(AirdropMethod.WALLET)"> Proceed </Btn>
             </div>
           </template>
@@ -77,7 +78,7 @@
 import { AirdropMethod } from '~/lib/values/general.values';
 
 const userStore = useUserStore();
-const { getBalance, sendEmails } = useUser();
+const { fetchUsers, getBalance, sendEmails } = useUser();
 const { isAutoIncrement } = useClaim();
 
 const search = ref<string>('');

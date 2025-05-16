@@ -7,6 +7,10 @@ export const useUserStore = defineStore('user', {
     loading: false,
     statistics: {} as StatisticsInterface,
     users: [] as UserInterface[],
+    promises: {
+      users: null as Promise<any> | null,
+      statistics: null as Promise<any> | null,
+    },
   }),
 
   getters: {
@@ -28,7 +32,7 @@ export const useUserStore = defineStore('user', {
 
   persist: {
     key: WebStorageKeys.USER,
-    storage: persistedState.sessionStorage,
+    storage: piniaPluginPersistedstate.sessionStorage(),
     pick: ['balance', 'users', 'statistics'],
   },
 });
