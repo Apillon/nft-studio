@@ -122,10 +122,10 @@ export const env: IEnv = {
     : 500,
 
   /** SMTP */
-  SMTP_HOST: process.env['SMTP_HOST'] || 'localhost',
+  SMTP_HOST: process.env['SMTP_HOST'] || 'nft_studio_mail',
   SMTP_PORT: process.env['SMTP_PORT']
     ? parseInt(`${process.env['SMTP_PORT']}`)
-    : 587,
+    : 25,
   SMTP_USERNAME: process.env['SMTP_USERNAME'] || '',
   SMTP_PASSWORD: process.env['SMTP_PASSWORD'] || '',
   SMTP_NAME_FROM: process.env['SMTP_NAME_FROM'] || 'System',
