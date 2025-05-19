@@ -1,3 +1,23 @@
+import {
+  arbitrum,
+  arbitrumSepolia,
+  astar,
+  avalanche,
+  avalancheFuji,
+  base,
+  baseSepolia,
+  celo,
+  celoAlfajores,
+  mainnet,
+  moonbaseAlpha,
+  moonbeam,
+  optimism,
+  optimismSepolia,
+  polygon,
+  polygonAmoy,
+  sepolia,
+} from 'viem/chains';
+
 export const Environments = {
   dev: 'development',
   stg: 'staging',
@@ -24,10 +44,23 @@ export enum AirdropMethod {
 
 /** NFT Chains */
 export enum Chains {
-  MOONBEAM = 1284,
-  MOONBASE = 1287,
-  ASTAR_SHIBUYA = 81, // testnet
-  ASTAR = 592,
+  ETHEREUM = mainnet.id,
+  SEPOLIA = sepolia.id,
+  ARBITRUM_ONE = arbitrum.id,
+  ARBITRUM_ONE_SEPOLIA = arbitrumSepolia.id,
+  ASTAR = astar.id,
+  AVALANCHE = avalanche.id,
+  AVALANCHE_FUJI = avalancheFuji.id,
+  BASE = base.id,
+  BASE_SEPOLIA = baseSepolia.id,
+  CELO = celo.id,
+  ALFAJORES = celoAlfajores.id,
+  MOONBEAM = moonbeam.id,
+  MOONBASE = moonbaseAlpha.id,
+  POLYGON = polygon.id,
+  POLYGON_AMOY = polygonAmoy.id,
+  OPTIMISM = optimism.id,
+  OPTIMISM_SEPOLIA = optimismSepolia.id,
 }
 
 /**
