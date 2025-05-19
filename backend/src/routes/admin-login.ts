@@ -15,7 +15,6 @@ export function inject(app: Application) {
   });
 }
 
-// eslint-disable-next-line @typescript-eslint/require-await
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 

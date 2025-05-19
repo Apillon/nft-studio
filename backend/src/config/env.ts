@@ -166,5 +166,7 @@ export const env: IEnv = {
   CLAIM_START: process.env['CLAIM_START']
     ? parseInt(`${process.env['CLAIM_START']}`)
     : undefined,
-  CLAIM_TYPE: ClaimType.AIRDROP,
+  CLAIM_TYPE: process.env['CLAIM_TYPE']
+    ? parseInt(process.env['CLAIM_TYPE'])
+    : ClaimType.AIRDROP,
 };
