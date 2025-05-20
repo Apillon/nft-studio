@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { ClaimType } from './values';
+import { ClaimType, defaultSmtpHost } from './values';
 /**
  * Environment object interface.
  */
@@ -122,7 +122,7 @@ export const env: IEnv = {
     : 500,
 
   /** SMTP */
-  SMTP_HOST: process.env['SMTP_HOST'] || 'nft_studio_mail',
+  SMTP_HOST: process.env['SMTP_HOST'] || defaultSmtpHost,
   SMTP_PORT: process.env['SMTP_PORT']
     ? parseInt(`${process.env['SMTP_PORT']}`)
     : 25,

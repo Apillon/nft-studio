@@ -5,6 +5,7 @@ import { MailTemplates } from '../templates/mail-templates';
 import { writeLog, LogType } from './logger';
 import { Attachment } from 'nodemailer/lib/mailer';
 import * as path from 'path';
+import { defaultSmtpHost } from '../config/values';
 
 /**
  * Send email via SMTP server
@@ -263,4 +264,8 @@ export async function SMTPverify(): Promise<boolean> {
   }
 
   return true;
+}
+
+export async function isCustomSmtp(): Promise<boolean> {
+  return env.SMTP_HOST && env.SMTP_HOST != defaultSmtpHost;
 }

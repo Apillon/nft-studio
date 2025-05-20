@@ -147,3 +147,5 @@ export enum SqlModelStatus {
 export enum JobName {
   SEND_CLAIM_EMAIL = 'sendClaimEmail',
 }
+
+export const defaultSmtpHost = 'nft_studio_mail';
