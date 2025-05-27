@@ -22,6 +22,7 @@ onMounted(() => {
 });
 
 const metadata = ref<Metadata>({
+  id: Number(queryParam(query?.id)),
   name: queryParam(query?.name),
   description: queryParam(query?.description),
   image: queryParam(query?.image),
@@ -33,5 +34,5 @@ const txHash = ref<string | undefined>(queryParam(query?.txHash));
   <div v-if="loading" class="flex-cc min-h-[70vh]">
     <Spinner :size="48" />
   </div>
-  <FormShare v-else :metadata="metadata" :txHash="txHash" />
+  <FormShare v-else :metadata="metadata" :tx-hash="txHash" />
 </template>

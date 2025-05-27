@@ -13,6 +13,8 @@
     </div>
     <hr class="border-grey-transparent dark:border-bg-lighter my-8" />
 
+    <Smtp />
+
     <template v-if="userStore.hasUsers || userStore.loading">
       <n-space class="w-full my-8" size="large" align="center" justify="space-between">
         <div>

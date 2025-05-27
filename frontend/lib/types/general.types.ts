@@ -78,5 +78,5 @@ declare global {
 
   type StatisticsResponse = GeneralResponse<StatisticsInterface>;
 
-  type Metadata = { name?: string | null; description?: string | null; image?: string | null };
+  type Metadata = { id: number; name?: string | null; description?: string | null; image?: string | null };
 }

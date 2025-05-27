@@ -1,25 +1,10 @@
 <template>
-  <div
-    v-if="connected && (!admin || authStore.loggedIn)"
-    v-bind="$attrs"
-    class="flex justify-end gap-2 items-center"
-  >
+  <div v-if="connected && (!admin || authStore.loggedIn)" v-bind="$attrs" class="flex justify-end gap-2 items-center">
     <strong v-if="walletAddress"> ({{ shortHash(walletAddress) }}) </strong>
-    <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()">
-      Disconnect
-    </Btn>
+    <Btn :size="size" type="secondary" :loading="loading" @click="disconnectWallet()"> Disconnect </Btn>
   </div>
-  <Btn v-else-if="connected" v-bind="$attrs" :size="size" :loading="loading" @click="login(admin)">
-    Login
-  </Btn>
-  <Btn
-    v-else
-    :size="size"
-    v-bind="$attrs"
-    :loading="loading"
-    round
-    @click="modalWalletVisible = true"
-  >
+  <Btn v-else-if="connected" v-bind="$attrs" :size="size" :loading="loading" @click="login(admin)"> Login </Btn>
+  <Btn v-else :size="size" v-bind="$attrs" :loading="loading" round @click="modalWalletVisible = true">
     Connect wallet
   </Btn>
 
@@ -45,12 +30,7 @@
     @update:show="modalWalletVisible = false"
   >
     <FormWallet :admin="admin">
-      <Btn
-        v-if="!!config.public.EMBEDDED_WALLET_CLIENT"
-        type="secondary"
-        size="large"
-        @click="openWallet"
-      >
+      <Btn v-if="!!config.public.EMBEDDED_WALLET_CLIENT" type="secondary" size="large" @click="openWallet">
         <span class="mr-1">▶◀</span> Apillon Embedded Wallet
       </Btn>
     </FormWallet>
@@ -71,16 +51,8 @@ const props = defineProps({
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
 const { wallet } = useWallet();
-const {
-  loading,
-  modalWalletVisible,
-  network,
-  connected,
-  walletAddress,
-  disconnectWallet,
-  initEmbeddedWallet,
-  login,
-} = useWalletConnect();
+const { loading, modalWalletVisible, network, connected, walletAddress, disconnectWallet, initEmbeddedWallet, login } =
+  useWalletConnect();
 
 useAccountEffect({ onConnect: () => loginDelay() });
 

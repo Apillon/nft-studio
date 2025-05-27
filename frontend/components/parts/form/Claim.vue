@@ -60,7 +60,7 @@ async function claim() {
       if (logs && logs[0].topics[3]) {
         const nftId = Number(logs[0].topics[3]);
         const metadata = await loadNft(nftId);
-        setTimeout(() => addNftId(nftId, metadata), 1000);
+        setTimeout(() => addNftId(metadata), 1000);
 
         emits('claim', metadata, data.transactionHash);
       } else {
