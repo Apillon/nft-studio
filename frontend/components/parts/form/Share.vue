@@ -3,7 +3,9 @@ const props = defineProps({
   metadata: { type: Object as PropType<Metadata>, default: null },
   txHash: { type: String, default: null },
 });
+const config = useRuntimeConfig();
 const { parseLink } = useIpns();
+const { nftImported } = useClaim();
 
 const loading = ref(true);
 const imageLink = ref(props.metadata.image);
@@ -36,6 +38,15 @@ onMounted(async () => {
         <a v-if="txHash" :href="transactionLink(txHash)" class="hover:underline" target="_blank">
           Transaction: {{ shortHash(txHash) }}
         </a>
+      </div>
+      <div v-if="nftImported === false">
+        <p class="mt-4 text-center">
+          <span class="text-red">NFT not imported</span>
+          <br />
+          <span class="text-grey">Please import your NFT to see it in your wallet.</span> <br />
+          Contract address: <span class="text-blue">{{ config.public.CONTRACT_ADDRESS }}</span> <br />
+          NFT ID: <span class="text-blue">{{ metadata.id }}</span>
+        </p>
       </div>
     </div>
 

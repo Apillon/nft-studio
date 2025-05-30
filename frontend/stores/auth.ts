@@ -2,7 +2,12 @@ import { defineStore } from 'pinia';
 import { WebStorageKeys } from '~/lib/values/general.values';
 
 export const useAuthStore = defineStore('auth', {
-  state: () => ({ jwt: '', userId: 0, username: '' }),
+  state: () => ({
+    jwt: '',
+    userId: 0,
+    username: '',
+    smtpConfigured: null as boolean | null,
+  }),
 
   getters: {
     loggedIn(state) {
@@ -20,6 +25,23 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       $api.clearToken();
       this.$reset();
+    },
+
+    async getConfig() {
+      if (this.smtpConfigured === null) {
+        await this.fetchConfig();
+      }
+      return this.smtpConfigured;
+    },
+
+    async fetchConfig() {
+      try {
+        const { data } = await $api.get<ConfigResponse>('/config');
+        this.smtpConfigured = data.isCustomSmtp;
+      } catch (error) {
+        console.error(error);
+      }
+      return this.smtpConfigured;
     },
   },
   persist: {

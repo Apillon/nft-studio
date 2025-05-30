@@ -61,6 +61,8 @@
 
     <h6 class="mt-8 mb-2">Recent activity</h6>
     <TablePoapReservation />
+
+    <Smtp />
   </div>
 </template>
 

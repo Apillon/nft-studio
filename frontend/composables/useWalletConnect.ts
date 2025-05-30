@@ -34,9 +34,7 @@ export default function useWalletConnect() {
   const isLoggedIn = computed(() => connected.value && authStore.loggedIn);
 
   const sign = async (message: string) => {
-    return isConnected.value
-      ? await signMessage($wagmiConfig as Config, { message })
-      : await signEW(message);
+    return isConnected.value ? await signMessage($wagmiConfig as Config, { message }) : await signEW(message);
   };
 
   async function ensureCorrectNetwork() {
@@ -79,7 +77,7 @@ export default function useWalletConnect() {
     }
   }
 
-  async function initEmbeddedWallet(admin: boolean = false) {
+  async function initEmbeddedWallet(admin = false) {
     await sleep(1000);
 
     if (wallet.value && config.public.EMBEDDED_WALLET_CLIENT) {
@@ -91,7 +89,7 @@ export default function useWalletConnect() {
           login(admin);
         }
       });
-      wallet.value?.events.on('dataUpdated', ({ name, newValue }) => {
+      wallet.value?.events.on('dataUpdated', ({ name }) => {
         if (name === 'wallets') {
           login(admin);
         }

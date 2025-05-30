@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import type { Events } from '@apillon/wallet-sdk';
+import { useWallet } from '@apillon/wallet-vue';
 import { isErc6492Signature } from 'viem';
 import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
@@ -11,8 +13,9 @@ const config = useRuntimeConfig();
 const router = useRouter();
 const message = useMessage();
 const { query } = useRoute();
+const { wallet } = useWallet();
 const { handleError } = useErrors();
-const { contractError, loadNft } = useClaim();
+const { nftImported, contractError, loadNft } = useClaim();
 const { connected, walletAddress, disconnectWallet, sign } = useWalletConnect();
 
 const loading = ref<boolean>(false);
@@ -24,6 +27,17 @@ const type = config.public.CLAIM_TYPE;
 const timeToStart = computed(() => Number(config.public.CLAIM_START) - timestamp.value);
 const isWhitelist = computed(() => Number(type) === ClaimType.AIRDROP && !query?.nftToken);
 const isPoap = computed(() => Number(type) === ClaimType.POAP);
+
+onMounted(() => {
+  if (wallet.value) {
+    wallet.value.events.on('addTokenStatus', ({ success }: Events['addTokenStatus']) => {
+      nftImported.value = success;
+      success
+        ? message.success('NFT successfully imported into the wallet!')
+        : message.info('If you want to import NFT to wallet, paste contract address and token ID into your wallet.');
+    });
+  }
+});
 
 watch(
   () => walletAddress.value,

@@ -1,10 +1,11 @@
 import { useAccount, useWallet } from '@apillon/wallet-vue';
 import { useConnectorClient } from '@wagmi/vue';
 import type { Address } from 'viem';
-import { createPublicClient, getContract, http, maxUint32, maxUint64 } from 'viem';
+import { createPublicClient, getContract, http, maxUint32 } from 'viem';
 import { abi } from '~/lib/config/abi';
 
 const contract = ref();
+const nftImported = ref<boolean | null>(null);
 
 export default function useClaim() {
   const message = useMessage();
@@ -91,16 +92,17 @@ export default function useClaim() {
       const url = await getTokenUri(Number(id));
       const parsedUrl = await parseLink(url);
 
-      return await fetch(parsedUrl).then(response => {
+      const metadata = await fetch(parsedUrl).then(response => {
         return response.json();
       });
+      return { id, ...metadata };
     } catch (e) {
       console.error('Error loading NFT:', e);
     }
     return null;
   }
 
-  async function addNftId(nftId: string | number, metadata: Metadata) {
+  async function addNftId(metadata: Metadata): Promise<boolean> {
     await ensureCorrectNetwork();
     let success: any = false;
     const image = await parseLink(metadata?.image || '');
@@ -109,7 +111,7 @@ export default function useClaim() {
       if (wallet.value && info.activeWallet?.address) {
         success = wallet.value?.events.emit('addTokenNft', {
           address: contractAddress,
-          tokenId: Number(nftId),
+          tokenId: Number(metadata.id),
           imageUrl: image,
           name: metadata.name || '',
         });
@@ -125,18 +127,19 @@ export default function useClaim() {
             type: 'ERC721',
             options: {
               address: contractAddress,
-              tokenId: nftId.toString(),
+              tokenId: metadata.id.toString(),
               image,
             },
           },
         });
       }
+      nftImported.value = !!success;
     } catch (e) {
       console.error('Error importing NFT:', e);
+      message.info('If you want to import NFT to wallet, paste contract address and token ID into your wallet.');
     }
-    success
-      ? message.success('NFT successfully imported into the wallet!')
-      : message.error('Failed to import NFT into the wallet.');
+
+    return success;
   }
 
   function contractError(e: any, showError = true) {
@@ -185,6 +188,7 @@ export default function useClaim() {
   }
 
   return {
+    nftImported,
     contract,
     addNftId,
     contractError,

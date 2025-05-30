@@ -8,19 +8,22 @@
           Allow anybody to mint an NFT from your collection through the claim page below. Users can connect their
           existing Web3 wallet, generate a new one through Apillon's Embedded Wallets or reserve an NFT via email.
         </div>
-        <div class="mt-6">
-          <h6 class="inline-block text-xs">Claim page</h6>
-          <IconInfo
-            tooltip="Share this link with your users. They will be able to claim the NFTs from this page."
-            size="sm"
-          />
-          <BtnLink :link="`${domain}/claim`" />
-        </div>
       </div>
       <Statistics :loading="userStore.loading" :statistics="userStore.statistics" />
     </div>
 
     <hr class="border-grey-transparent dark:border-bg-lighter my-8" />
+
+    <div class="my-8 bg-bg-light border border-black p-6 rounded-lg">
+      <h4 class="mb-3">Public webpage for “first-come-first-served” NFT minting</h4>
+      <h6 class="inline-block text-xs">Website</h6>
+      <IconInfo
+        tooltip="Share this link with your users. They will be able to claim the NFTs from this page."
+        size="sm"
+      />
+      <BtnLink class="max-w-xl" :link="`${domain}/claim`" />
+    </div>
+
     <TablePoapReservation />
   </div>
 </template>

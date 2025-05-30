@@ -1,4 +1,23 @@
-import { astar, moonbaseAlpha, moonbeam } from 'viem/chains';
+import {
+  arbitrum,
+  arbitrumSepolia,
+  astar,
+  avalanche,
+  avalancheFuji,
+  base,
+  baseSepolia,
+  celo,
+  celoAlfajores,
+  mainnet,
+  moonbaseAlpha,
+  moonbeam,
+  optimism,
+  optimismSepolia,
+  polygon,
+  polygonAmoy,
+  sepolia,
+} from 'viem/chains';
+import { Chains } from '../values/general.values';
 
 export function contractLink(contractAddress?: string | null, chainId?: number): string {
   return contractAddress ? `${chainRpc(chainId)}address/${contractAddress}` : '';
@@ -9,14 +28,43 @@ export function transactionLink(transactionHash?: string | null, chainId?: numbe
 }
 export function chainRpc(chainId?: number): string {
   switch (chainId) {
-    case moonbeam.id:
-      return `https://moonbeam.moonscan.io/`;
+    // EVM Mainnet
+    case Chains.ETHEREUM:
+      return mainnet.blockExplorers.default.url;
+    case Chains.MOONBEAM:
+      return moonbeam.blockExplorers.default.url;
+    case Chains.ASTAR:
+      return astar.blockExplorers.default.url;
+    case Chains.CELO:
+      return celo.blockExplorers.default.url;
+    case Chains.BASE:
+      return base.blockExplorers.default.url;
+    case Chains.ARBITRUM_ONE:
+      return arbitrum.blockExplorers.default.url;
+    case Chains.AVALANCHE:
+      return avalanche.blockExplorers.default.url;
+    case Chains.OPTIMISM:
+      return optimism.blockExplorers.default.url;
+    case Chains.POLYGON:
+      return polygon.blockExplorers.default.url;
 
-    case moonbaseAlpha.id:
-      return `https://moonbase.moonscan.io/`;
-
-    case astar.id:
-      return `https://moonbase.moonscan.io/`;
+    // EVM Testnet
+    case Chains.SEPOLIA:
+      return sepolia.blockExplorers.default.url;
+    case Chains.MOONBASE:
+      return moonbaseAlpha.blockExplorers.default.url;
+    case Chains.ALFAJORES:
+      return celoAlfajores.blockExplorers.default.url;
+    case Chains.BASE_SEPOLIA:
+      return baseSepolia.blockExplorers.default.url;
+    case Chains.ARBITRUM_ONE_SEPOLIA:
+      return arbitrumSepolia.blockExplorers.default.url;
+    case Chains.AVALANCHE_FUJI:
+      return avalancheFuji.blockExplorers.default.url;
+    case Chains.OPTIMISM_SEPOLIA:
+      return optimismSepolia.blockExplorers.default.url;
+    case Chains.POLYGON_AMOY:
+      return polygonAmoy.blockExplorers.default.url;
 
     default:
       console.warn('Missing chainId');

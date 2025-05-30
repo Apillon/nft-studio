@@ -40,6 +40,7 @@
           title="Email Mint"
           content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT - no wallet required."
           :tags="['Gasless for users', 'Email user base', 'Rewards', 'Easy claim']"
+          :alert="authStore.smtpConfigured ? '' : 'Needs setup'"
         >
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
@@ -72,11 +73,14 @@
         @close="modalUploadCsvVisible = false"
       />
     </div>
+
+    <Smtp />
   </div>
 </template>
 <script lang="ts" setup>
 import { AirdropMethod } from '~/lib/values/general.values';
 
+const authStore = useAuthStore();
 const userStore = useUserStore();
 const { fetchUsers, getBalance, sendEmails } = useUser();
 const { isAutoIncrement } = useClaim();

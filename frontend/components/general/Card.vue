@@ -5,6 +5,9 @@
         <NuxtIcon v-if="icon" :name="icon" class="icon-auto text-2xl" />
         <img v-else-if="img" :src="img" alt="" />
       </div>
+      <Tag v-if="alert" type="error" class="absolute top-2 right-2">
+        {{ alert }}
+      </Tag>
       <slot name="title">
         <h5>{{ title }}</h5>
       </slot>
@@ -28,5 +31,6 @@ defineProps({
   title: { type: String, default: '' },
   content: { type: String, default: '' },
   tags: { type: Array<String>, default: [] },
+  alert: { type: String, default: '' },
 });
 </script>
