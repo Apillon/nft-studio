@@ -75,8 +75,12 @@ declare global {
     total: number;
     walletLinked: number;
   }
+  interface ConfigInterface {
+    isCustomSmtp: boolean;
+  }
 
   type StatisticsResponse = GeneralResponse<StatisticsInterface>;
+  type ConfigResponse = GeneralResponse<ConfigInterface>;
 
   type Metadata = { id: number; name?: string | null; description?: string | null; image?: string | null };
 }

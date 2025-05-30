@@ -17,6 +17,7 @@ const props = defineProps({
   type: { type: Number, default: 0 },
 });
 const message = useMessage();
+const authStore = useAuthStore();
 const userStore = useUserStore();
 const { saveRecipients } = useUser();
 const { getMaxSupply } = useClaim();
@@ -159,6 +160,7 @@ async function deploy() {
         :key="method.value"
         v-bind="method"
         :selected="selectedMethod === method.value"
+        :alert="!authStore.smtpConfigured && method.value === AirdropMethod.EMAIL ? 'Needs setup' : ''"
         @click="selectedMethod = method.value"
       />
     </div>
@@ -204,6 +206,7 @@ async function deploy() {
       <div v-if="availableNFTs > 0" class="lg:-mt-8">
         <Btn type="secondary" @click="addNewUser"> Add recipient </Btn>
       </div>
+      <Smtp v-if="selectedMethod === AirdropMethod.EMAIL" :bottom="100" />
     </div>
     <PreviewUpload
       v-else-if="isStep(Step.REVIEW)"

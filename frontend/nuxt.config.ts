@@ -31,7 +31,6 @@ export default defineNuxtConfig({
       CONTRACT_ADDRESS: '',
       EMBEDDED_WALLET_CLIENT: '',
       ENV: process.env.ENV || process.env.NODE_ENV || Environments.dev,
-      SMTP_HOST: '',
       WALLET_CONNECT_PROJECT: '',
     },
   },

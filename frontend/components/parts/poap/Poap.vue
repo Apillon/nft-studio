@@ -14,8 +14,6 @@
     </div>
     <hr class="border-grey-transparent dark:border-bg-lighter my-8" />
 
-    <Smtp />
-
     <div class="card-light relative">
       <div class="flex gap-4 items-center mb-4">
         <h5>Your PoAP</h5>
@@ -63,6 +61,8 @@
 
     <h6 class="mt-8 mb-2">Recent activity</h6>
     <TablePoapReservation />
+
+    <Smtp />
   </div>
 </template>
 

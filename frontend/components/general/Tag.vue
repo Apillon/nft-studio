@@ -4,8 +4,9 @@
     class="inline-flex-cc gap-1 whitespace-nowrap text-grey-dark font-semibold transition-all duration-300"
     :class="[tagClass, sizeClass]"
   >
+    <NuxtIcon v-if="type === 'error'" name="icon/alert" class="text-sm" filled />
     <NuxtIcon
-      v-if="animation"
+      v-else-if="animation"
       name="animation/status"
       class="animation-spinning inline-flex-cc"
       filled
