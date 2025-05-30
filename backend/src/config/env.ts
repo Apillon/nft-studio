@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv';
-import { ClaimType } from './values';
+import { ClaimType, defaultSmtpHost } from './values';
 /**
  * Environment object interface.
  */
@@ -122,10 +122,10 @@ export const env: IEnv = {
     : 500,
 
   /** SMTP */
-  SMTP_HOST: process.env['SMTP_HOST'] || 'localhost',
+  SMTP_HOST: process.env['SMTP_HOST'] || defaultSmtpHost,
   SMTP_PORT: process.env['SMTP_PORT']
     ? parseInt(`${process.env['SMTP_PORT']}`)
-    : 587,
+    : 25,
   SMTP_USERNAME: process.env['SMTP_USERNAME'] || '',
   SMTP_PASSWORD: process.env['SMTP_PASSWORD'] || '',
   SMTP_NAME_FROM: process.env['SMTP_NAME_FROM'] || 'System',
@@ -166,5 +166,7 @@ export const env: IEnv = {
   CLAIM_START: process.env['CLAIM_START']
     ? parseInt(`${process.env['CLAIM_START']}`)
     : undefined,
-  CLAIM_TYPE: ClaimType.AIRDROP,
+  CLAIM_TYPE: process.env['CLAIM_TYPE']
+    ? parseInt(process.env['CLAIM_TYPE'])
+    : ClaimType.AIRDROP,
 };

@@ -25,6 +25,7 @@ import { inject as injectReserveDrop } from './routes/reserve-drop';
 import { inject as injectSendClaimMail } from './routes/send-claim-mail';
 import { inject as injectClaimAdmin } from './routes/claim-admin';
 import { inject as injectDeleteUser } from './routes/delete-user';
+import { inject as injectGetConfig } from './routes/get-config';
 
 export interface Request extends express.Request {
   context: Context;
@@ -94,6 +95,7 @@ export class HttpServer {
     injectSendClaimMail(this.app);
     injectClaimAdmin(this.app);
     injectDeleteUser(this.app);
+    injectGetConfig(this.app);
 
     // ERROR HANDLER
     injectErrors(this.app);

@@ -10,6 +10,8 @@ services:
     container_name: nft_studio_db
     ports:
       - '3306:3306'
+    expose:
+      - '3306'
     restart: always
     networks:
       - app-network
@@ -70,6 +72,17 @@ services:
       CAPTCHA_SECRET: ${CAPTCHA_SECRET}
       CLAIM_EXPIRES_IN: ${CLAIM_EXPIRES_IN}
       CLAIM_START: ${CLAIM_START}
+
+  nft_studio_mail:
+    image: bytemark/smtp
+    container_name: nft_studio_mail
+    restart: always
+    # In order to connect to the SMTP server outside of the container, expose the port
+    #ports:
+      #- '25:25'
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
