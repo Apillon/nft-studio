@@ -29,7 +29,7 @@ services:
       interval: 2s
 
   nft_studio_app:
-    image: apillon/nft-studio:latest
+    image: apillonio/nft-studio:0.0.1
     container_name: nft_studio_app
     depends_on:
       nft_studio_db:
