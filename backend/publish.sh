@@ -1,4 +1,8 @@
+if [ -z "$1" ]; then
+    echo "Error: Version argument is required (e.g. 0.0.1)" >&2
+    exit 1
+fi
+
 ./build-image.sh
-# TODO: we should probably properly version docker images
-docker tag nft-studio:latest apillon/nft-studio:latest
-docker push apillon/nft-studio:latest
+docker tag nft-studio:latest apillonio/nft-studio:$1
+docker push apillonio/nft-studio:$1
