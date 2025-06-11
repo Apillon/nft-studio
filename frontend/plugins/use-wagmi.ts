@@ -1,12 +1,52 @@
 import { http, createConfig, WagmiPlugin, createStorage } from '@wagmi/vue';
-import { mainnet, moonbeam, moonbaseAlpha } from '@wagmi/vue/chains';
 import { type Chain } from '@wagmi/vue/chains';
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query';
 import { metaMask, coinbaseWallet, walletConnect } from '@wagmi/vue/connectors';
+import {
+  arbitrum,
+  arbitrumSepolia,
+  astar,
+  avalanche,
+  avalancheFuji,
+  base,
+  baseSepolia,
+  celo,
+  celoAlfajores,
+  mainnet,
+  moonbaseAlpha,
+  moonbeam,
+  optimism,
+  optimismSepolia,
+  polygon,
+  polygonAmoy,
+  sepolia,
+} from 'viem/chains';
 
 export default defineNuxtPlugin(nuxtApp => {
   const config = useRuntimeConfig();
-  const chains: readonly [Chain, ...Chain[]] = [mainnet, moonbeam, moonbaseAlpha];
+  const chains: readonly [Chain, ...Chain[]] = [
+    arbitrum,
+    arbitrumSepolia,
+    astar,
+    avalanche,
+    avalancheFuji,
+    base,
+    baseSepolia,
+    celo,
+    celoAlfajores,
+    mainnet,
+    moonbaseAlpha,
+    moonbeam,
+    optimism,
+    optimismSepolia,
+    polygon,
+    polygonAmoy,
+    sepolia,
+  ];
+  const transports = chains.reduce((acc: Transport, chain) => {
+    acc[chain.id] = http();
+    return acc;
+  }, {});
 
   const connectors = [
     metaMask({
@@ -27,11 +67,7 @@ export default defineNuxtPlugin(nuxtApp => {
     connectors,
     multiInjectedProviderDiscovery: false,
     storage: createStorage({ storage: window.sessionStorage }),
-    transports: {
-      [mainnet.id]: http(),
-      [moonbaseAlpha.id]: http(),
-      [moonbeam.id]: http(),
-    },
+    transports,
   });
   const queryClient = new QueryClient();
 
