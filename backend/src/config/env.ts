@@ -85,7 +85,7 @@ export const env: IEnv = {
   API_HOST: process.env['API_HOST'] || '127.0.0.1',
   API_PORT: process.env['API_PORT']
     ? parseInt(`${process.env['API_PORT']}`)
-    : 3000,
+    : 3001,
 
   /**
    * Admin
