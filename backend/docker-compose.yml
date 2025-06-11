@@ -28,13 +28,13 @@ services:
       interval: 2s
 
   nft_studio_app:
-    image: apillonio/nft-studio:0.0.1
+    image: apillonio/nft-studio:0.0.2
     container_name: nft_studio_app
     depends_on:
       nft_studio_db:
         condition: service_healthy
     ports:
-      - '80:3000'
+      - '80:3001'
     expose:
       - '80'
     restart: always
