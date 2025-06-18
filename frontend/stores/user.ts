@@ -24,7 +24,7 @@ export const useUserStore = defineStore('user', {
       return !!state.users && state.users.length > 0;
     },
     hasPending(state) {
-      return state.users.some(u => u.airdrop_status === AirdropStatus.PENDING);
+      return state.users.some(u => u.email && u.airdrop_status === AirdropStatus.PENDING);
     },
   },
 

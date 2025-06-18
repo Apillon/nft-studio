@@ -216,7 +216,12 @@ async function deploy() {
       @deploy="deploy"
     />
     <AnimationDeploy v-else-if="isStep(Step.DEPLOYING)" class="min-h-full" />
-    <AirdropDeployed v-else-if="isStep(Step.DEPLOYED)" class="min-h-full" @close="$emit('close')" />
+    <AirdropDeployed
+      v-else-if="isStep(Step.DEPLOYED)"
+      class="min-h-full"
+      :is-method-wallet="isMethodWallet"
+      @close="$emit('close')"
+    />
 
     <template v-if="uploadStep < Step.REVIEW" #footer>
       <div class="flex w-full items-center justify-between gap-4 px-10 py-3">

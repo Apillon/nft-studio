@@ -8,7 +8,9 @@
 
       <div class="my-8 flex gap-4">
         <Btn class="flex-1" size="large" type="secondary" @click="$emit('close')"> Close </Btn>
-        <Btn class="flex-1" size="large" type="primary" :loading="loading" @click="send"> Send emails </Btn>
+        <Btn v-if="!isMethodWallet" class="flex-1" size="large" type="primary" :loading="loading" @click="send">
+          Send emails
+        </Btn>
       </div>
     </div>
   </div>
@@ -18,6 +20,9 @@
 import SuccessSVG from '~/assets/images/success.svg';
 
 const emit = defineEmits(['close']);
+defineProps({
+  isMethodWallet: { type: Boolean, default: false },
+});
 const { sendEmails } = useUser();
 
 const loading = ref<boolean>(false);
