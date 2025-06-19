@@ -93,6 +93,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
 
     const collection = users.some((user) => user.wallet && !user.email)
       ? new Nft({
+          apiUrl: env.APILLON_API_URL,
           key: env.APILLON_KEY,
           secret: env.APILLON_SECRET,
           logLevel: LogLevel.VERBOSE,
