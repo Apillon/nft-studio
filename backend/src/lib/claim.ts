@@ -72,7 +72,9 @@ export function validateAirdropStatus(airdropStatus: AirdropStatus) {
 
 export function parseUrl(token: string) {
   const appUrl = new URL(env.APP_URL);
+  const basePath = appUrl.pathname.replace(/\/$/, ''); // Remove trailing slash if present
+  appUrl.pathname = `${basePath}/claim`; // Append '/claim' to the path
   appUrl.searchParams.set('nftToken', token);
 
-  return `${appUrl.origin}/claim?${appUrl.searchParams.toString()}`;
+  return appUrl.toString(); // Return the full URL as a string
 }
