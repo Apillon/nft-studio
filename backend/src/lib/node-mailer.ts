@@ -253,7 +253,13 @@ export async function SMTPverify(): Promise<boolean> {
   try {
     await transporter.verify();
   } catch (err) {
-    writeLog(LogType.ERROR, 'SMTP mailer error', 'lib/smtp-sender', 'SMTPverify', err);
+    writeLog(
+      LogType.ERROR,
+      'SMTP mailer error',
+      'lib/smtp-sender',
+      'SMTPverify',
+      err,
+    );
     return false;
   }
 

@@ -7,6 +7,7 @@ import { AirdropStatus, RouteErrorCode } from '../config/values';
 
 export async function claim(user: User): Promise<string> {
   const collection = new Nft({
+    apiUrl: env.APILLON_API_URL,
     key: env.APILLON_KEY,
     secret: env.APILLON_SECRET,
     logLevel: LogLevel.VERBOSE,

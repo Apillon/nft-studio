@@ -3,6 +3,7 @@ import { env } from '../../config/env';
 
 (async () => {
   const nft = new Nft({
+    apiUrl: env.APILLON_API_URL,
     key: env.APILLON_KEY,
     secret: env.APILLON_SECRET,
     logLevel: LogLevel.VERBOSE,

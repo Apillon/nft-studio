@@ -1,3 +1,4 @@
+import { INftActionResponse, LogLevel, Nft } from '@apillon/sdk';
 import { env } from '../config/env';
 import { AirdropStatus, JobName, SqlModelStatus } from '../config/values';
 import { Job } from '../models/job';
@@ -89,6 +90,18 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
 
     const updates = [];
     let currentUser: User;
+
+    const collection = users.some((user) => user.wallet && !user.email)
+      ? new Nft({
+          apiUrl: env.APILLON_API_URL,
+          key: env.APILLON_KEY,
+          secret: env.APILLON_SECRET,
+          logLevel: LogLevel.VERBOSE,
+        }).collection(env.COLLECTION_UUID)
+      : null;
+
+    let mintResponse: INftActionResponse;
+
     for (let i = 0; i < users.length; i++) {
       currentUser = users[i];
       try {
@@ -108,8 +121,37 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
             );
 
             updates.push(
-              `(${currentUser.id}, '${currentUser.email}', ${res ? AirdropStatus.EMAIL_SENT : AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(new Date())}')`,
+              `(${currentUser.id}, '${currentUser.email}', ${res ? AirdropStatus.EMAIL_SENT : AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(new Date())}', '${currentUser.wallet}')`,
             );
+          } else if (currentUser.wallet) {
+            try {
+              mintResponse = await collection.mint({
+                receivingAddress: currentUser.wallet,
+                quantity: currentUser.amount || 1,
+              });
+
+              if (mintResponse.success) {
+                updates.push(
+                  `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_COMPLETED}, null, '${currentUser.wallet}')`,
+                );
+              } else {
+                updates.push(
+                  `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_ERROR}, null, '${currentUser.wallet}')`,
+                );
+              }
+            } catch (e) {
+              writeLog(
+                LogType.ERROR,
+                'Error creating airdrop',
+                'claim-airdrop.ts',
+                'resolve',
+                e,
+              );
+
+              updates.push(
+                `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_ERROR}, null, '${currentUser.wallet}')`,
+              );
+            }
           }
         } else {
           //Currently, waiting line for airdrop is full.Send info email and set appropriate status
@@ -143,11 +185,12 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
 
     if (updates.length > 0) {
       const sql = `
-        INSERT INTO user (id, email, airdrop_status, email_sent_time)
+        INSERT INTO user (id, email, airdrop_status, email_sent_time, wallet)
         VALUES ${updates.join(',')}
         ON DUPLICATE KEY UPDATE
         airdrop_status = VALUES(airdrop_status),
-        email_sent_time = VALUES(email_sent_time)`;
+        email_sent_time = VALUES(email_sent_time),
+        wallet = VALUES(wallet);`;
 
       await mysql.paramExecute(sql, null, conn);
     }
