@@ -9,6 +9,7 @@ import { AirdropStatus, SqlModelStatus } from './config/values';
 import { Job } from './models/job';
 import { processJob } from './lib/job';
 import { parseUrl } from './lib/claim';
+import { INftActionResponse, LogLevel, Nft } from '@apillon/sdk';
 
 export class Cron {
   private cronJobs: CronJob[] = [];
@@ -112,31 +113,97 @@ export class Cron {
             `${usersInWaitingLine.map((x) => x.id).join(',')} should me moved from waiting line. Sending emails....`,
           );
 
+          const collection = usersInWaitingLine.some(
+            (user) => user.wallet && !user.email,
+          )
+            ? new Nft({
+                apiUrl: env.APILLON_API_URL,
+                key: env.APILLON_KEY,
+                secret: env.APILLON_SECRET,
+                logLevel: LogLevel.VERBOSE,
+              }).collection(env.COLLECTION_UUID)
+            : null;
+
+          let mintResponse: INftActionResponse;
+
           for (const user of usersInWaitingLine) {
-            try {
-              const token = generateEmailAirdropToken(user.email);
-              await SmtpSendTemplate(
-                [user.email],
-                'Claim your NFT',
-                'en-airdrop-claim',
-                {
-                  appUrl: env.APP_URL,
-                  link: parseUrl(token),
-                  claimExpiresIn: env.CLAIM_EXPIRES_IN,
-                },
-                'Apillon',
-              );
-            } catch (err) {
-              console.error(err);
-              await mysql.paramExecute(
-                `UPDATE user
-                  SET airdrop_status = @airdrop_status,
-                  WHERE id = @user_id)
-              ;
-            `,
-                { airdrop_status: AirdropStatus.EMAIL_ERROR, user_id: user.id },
-                conn,
-              );
+            if (user.email) {
+              try {
+                const token = generateEmailAirdropToken(user.email);
+                await SmtpSendTemplate(
+                  [user.email],
+                  'Claim your NFT',
+                  'en-airdrop-claim',
+                  {
+                    appUrl: env.APP_URL,
+                    link: parseUrl(token),
+                    claimExpiresIn: env.CLAIM_EXPIRES_IN,
+                  },
+                  'Apillon',
+                );
+              } catch (err) {
+                console.error(err);
+                await mysql.paramExecute(
+                  `UPDATE user
+                    SET airdrop_status = @airdrop_status,
+                    WHERE id = @user_id)
+                ;
+              `,
+                  {
+                    airdrop_status: AirdropStatus.EMAIL_ERROR,
+                    user_id: user.id,
+                  },
+                  conn,
+                );
+              }
+            } else if (user.wallet) {
+              try {
+                mintResponse = await collection.mint({
+                  receivingAddress: user.wallet,
+                  quantity: user.amount || 1,
+                });
+                if (mintResponse.success) {
+                  await mysql.paramExecute(
+                    `UPDATE user
+                      SET airdrop_status = @airdrop_status,
+                      WHERE id = @user_id)
+                    ;
+                  `,
+                    {
+                      airdrop_status: AirdropStatus.AIRDROP_COMPLETED,
+                      user_id: user.id,
+                    },
+                    conn,
+                  );
+                } else {
+                  await mysql.paramExecute(
+                    `UPDATE user
+                      SET airdrop_status = @airdrop_status,
+                      WHERE id = @user_id)
+                    ;
+                  `,
+                    {
+                      airdrop_status: AirdropStatus.AIRDROP_ERROR,
+                      user_id: user.id,
+                    },
+                    conn,
+                  );
+                }
+              } catch (err) {
+                console.error(err);
+                await mysql.paramExecute(
+                  `UPDATE user
+                    SET airdrop_status = @airdrop_status,
+                    WHERE id = @user_id)
+                ;
+              `,
+                  {
+                    airdrop_status: AirdropStatus.AIRDROP_ERROR,
+                    user_id: user.id,
+                  },
+                  conn,
+                );
+              }
             }
           }
         }
