@@ -22,21 +22,17 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   const mysql = await MysqlConnectionManager.getInstance();
 
   if (env.MAX_SUPPLY) {
-    const reservedCount = await mysql.paramExecute(
+    const mintedCount = await mysql.paramExecute(
       `SELECT COUNT(id) as total FROM user WHERE
               airdrop_status IN (
-                ${AirdropStatus.EMAIL_SENT},
-                ${AirdropStatus.WALLET_LINKED},
-                ${AirdropStatus.TRANSACTION_CREATED},
-                ${AirdropStatus.AIRDROP_COMPLETED},
-                ${AirdropStatus.IN_WAITING_LINE}
+                ${AirdropStatus.AIRDROP_COMPLETED},               
               )
               AND status = @status
             ;
            `,
       { status: SqlModelStatus.ACTIVE },
     );
-    const numOfReservations = reservedCount[0].total;
+    const numOfReservations = mintedCount[0].total;
     const availableNftLeft = env.MAX_SUPPLY - numOfReservations;
 
     if (availableNftLeft <= 0) {
