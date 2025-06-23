@@ -19,7 +19,7 @@ export function inject(app: Application) {
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context } = req;
 
-  const mysql = await MysqlConnectionManager.getInstance();
+  const mysql = MysqlConnectionManager.getInstance();
 
   if (env.MAX_SUPPLY) {
     const mintedCount = await mysql.paramExecute(

@@ -8,11 +8,11 @@ export class MysqlConnectionManager {
     this.mysql = mysql;
   }
 
-  static async getInstance(): Promise<MySql> {
+  static getInstance(): MySql {
     if (!this.mysql) {
       console.log('creating instance');
       this.mysql = new MySql(env);
-      await this.mysql.connect();
+      this.mysql.connect();
     }
 
     return this.mysql;

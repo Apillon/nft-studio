@@ -33,13 +33,13 @@ export class Cron {
 
   async stop() {
     for (const cronJob of this.cronJobs) {
-      cronJob.stop();
+      await cronJob.stop();
     }
     await MysqlConnectionManager.destroyInstance();
   }
 
   async processExpiredClaims() {
-    const mysql = await MysqlConnectionManager.getInstance();
+    const mysql = MysqlConnectionManager.getInstance();
     const conn = await mysql.start();
 
     try {
@@ -217,7 +217,7 @@ export class Cron {
   }
 
   async handleJobs() {
-    const mysql = await MysqlConnectionManager.getInstance();
+    const mysql = MysqlConnectionManager.getInstance();
 
     const jobsToExecute = (await mysql.paramExecute(
       `SELECT * FROM job WHERE

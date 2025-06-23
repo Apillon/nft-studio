@@ -1,36 +1,9 @@
-import { SqlModelStatus } from '../config/values';
 import { BaseSqlModel } from '../models/base-sql-model';
-import { stringLengthValidator } from '@rawmodel/validators';
 
 /**
  * Expose standard validators.
  */
 export * from '@rawmodel/validators';
-
-export function conditionalPresenceValidator(condition: boolean, value: any) {
-  if (condition) {
-    return !!value;
-  } else {
-    return true;
-  }
-}
-
-export function conditionalStringLengthValidator(
-  condition: boolean,
-  recipe: {
-    bytes?: boolean;
-    min?: number;
-    minOrEqual?: number;
-    max?: number;
-    maxOrEqual?: number;
-  },
-) {
-  if (condition) {
-    return stringLengthValidator(recipe);
-  } else {
-    return (_value?) => true;
-  }
-}
 
 /**
  * Validate if array is present.
@@ -39,38 +12,6 @@ export function conditionalStringLengthValidator(
 export function customPresenceValidator() {
   return function (value: any) {
     return !value;
-  };
-}
-
-/**
- * Validate if array is present.
- * @param value any
- */
-export function customArrayLengthValidator(options?: {
-  min?: number;
-  minOrEqual?: number;
-  max?: number;
-  maxOrEqual?: number;
-}) {
-  return function (value: any) {
-    if (Array.isArray(value)) {
-      return false;
-    }
-    const size = value.length;
-    const { min, minOrEqual, max, maxOrEqual } = options;
-    if (typeof min === 'number' && !(size > min)) {
-      return false;
-    }
-    if (typeof minOrEqual === 'number' && !(size >= minOrEqual)) {
-      return false;
-    }
-    if (typeof max === 'number' && !(size < max)) {
-      return false;
-    }
-    if (typeof maxOrEqual === 'number' && !(size <= maxOrEqual)) {
-      return false;
-    }
-    return true;
   };
 }
 
@@ -177,16 +118,6 @@ export function foreignKeyPresence(sqlTableName: string) {
 }
 
 /**
- * Validates existence of array property.
- */
-export function arrayPresenceValidator(propertyName: string) {
-  if (!this[propertyName]) {
-    return false;
-  }
-  return true;
-}
-
-/**
  *  Validates if value is inside enumerator
  */
 export function enumInclusionValidator(enumerator: any) {
@@ -201,22 +132,6 @@ export function enumInclusionValidator(enumerator: any) {
       }
     }
     return valid;
-  };
-}
-
-export function statusDependantPresenceValidator(
-  status: SqlModelStatus,
-  exclusion = false,
-) {
-  return function (this: BaseSqlModel, value: any) {
-    if (
-      (this.status == status && !exclusion) ||
-      (this.status != status && exclusion)
-    ) {
-      return !!value;
-    } else {
-      return true;
-    }
   };
 }
 

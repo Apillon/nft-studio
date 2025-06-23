@@ -34,7 +34,7 @@ export class User extends BaseSqlModel {
         code: ValidatorErrorCode.PROFILE_EMAIL_ALREADY_TAKEN,
       },
       {
-        resolver: async function () {
+        resolver: function () {
           return this.email != null || this.wallet != null;
         },
         code: ValidatorErrorCode.EMAIL_OR_WALLET_REQUIRED,

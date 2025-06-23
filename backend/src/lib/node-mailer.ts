@@ -34,11 +34,7 @@ export async function SmtpSend(mail: MailOptions): Promise<boolean> {
   try {
     const res = await transporter.sendMail(mail);
 
-    if (res.accepted && res.accepted.length) {
-      return true;
-    } else {
-      return false;
-    }
+    return res.accepted && !!res.accepted.length;
   } catch (err) {
     writeLog(
       LogType.ERROR,
@@ -140,11 +136,7 @@ export async function SmtpSendTemplate(
   try {
     const res = await transporter.sendMail(mail);
 
-    if (res.accepted && res.accepted.length) {
-      return true;
-    } else {
-      return false;
-    }
+    return res.accepted && !!res.accepted.length;
   } catch (err) {
     writeLog(
       LogType.ERROR,
@@ -182,7 +174,7 @@ export async function SmtpSendTemplateWithAttachments(
 
   attachments.push({
     filename: 'logo.png',
-    path: `${path.dirname(process.mainModule.filename)}/files/logo.png`,
+    path: `${path.dirname(require.main.filename)}/files/logo.png`,
     cid: 'logo.png',
   });
 
@@ -214,11 +206,7 @@ export async function SmtpSendTemplateWithAttachments(
   try {
     const res = await transporter.sendMail(mail);
 
-    if (res.accepted && res.accepted.length) {
-      return true;
-    } else {
-      return false;
-    }
+    return res.accepted && !!res.accepted.length;
   } catch (err) {
     writeLog(
       LogType.ERROR,

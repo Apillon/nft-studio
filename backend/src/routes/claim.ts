@@ -25,7 +25,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 
   const wallet = body.address;
-  validateEvmWallet(wallet, body.signature, body.timestamp, body.isSmart);
+  await validateEvmWallet(wallet, body.signature, body.timestamp, body.isSmart);
 
   const user = await new User({}, context).populateByWallet(wallet);
   if (user.exists()) {
