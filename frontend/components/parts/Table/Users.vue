@@ -138,20 +138,27 @@ const createColumns = (): DataTableColumns<UserInterface> => {
       key: 'action_remove',
       title: 'Actions',
       render(row: UserInterface) {
-        if (row.airdrop_status === AirdropStatus.PENDING) {
-          return h('button', { class: 'icon-delete text-xl', onClick: () => handleDeleteUser(row.id) }, '');
-        } else if (row.id && row.airdrop_status < AirdropStatus.TRANSACTION_CREATED && row.wallet) {
-          return h(
-            resolveComponent('Btn'),
-            {
-              size: 'small',
-              loading: loading.value === row.id,
-              onClick: () => mint(Number(row.id)),
-            },
-            'Mint'
+        const actions = [];
+        if (row.id && row.airdrop_status < AirdropStatus.TRANSACTION_CREATED && row.wallet) {
+          actions.push(
+            h(
+              resolveComponent('Btn'),
+              {
+                class: 'locked',
+                size: 'small',
+                loading: loading.value === row.id,
+                onClick: () => mint(Number(row.id)),
+              },
+              'Mint'
+            )
           );
         }
-        return '';
+        if (row.airdrop_status === AirdropStatus.PENDING) {
+          actions.push(
+            h('button', { class: 'icon-delete text-xl', onClick: () => handleDeleteUser(Number(row.id)) }, '')
+          );
+        }
+        return h('div', { class: 'flex gap-3 justify-end items-center' }, actions);
       },
     },
   ];

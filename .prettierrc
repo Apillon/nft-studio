@@ -1,8 +1,0 @@
-{
-  "arrowParens": "avoid",
-  "singleQuote": true,
-  "trailingComma": "es5",
-  "semi": true,
-  "twConfig": "./frontend/tailwind.config.ts",
-  "printWidth": 120
-}

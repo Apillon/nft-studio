@@ -8,7 +8,7 @@
       <template v-if="poapStatus === PoapStatus.IN_PROGRESS || immediatelyShowQr == true">
         <NuxtIcon name="icon/cube" class="icon-auto text-6xl" filled />
         <h2 class="max-w-xs mx-auto">Scan the code and receive NFT</h2>
-        <n-qr-code v-if="qrCodeText" :value="qrCodeText" class="box-content" :size="200" />
+        <n-qr-code v-if="qrCodeText" :value="qrCodeText" class="box-content" :size="320" />
         <div class="">
           <span class="text-sm">Next generated QR code in</span>
           <h4 class="text-yellow text-2xl">{{ timer }}s</h4>
