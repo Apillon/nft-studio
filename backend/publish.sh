@@ -16,3 +16,7 @@ fi
 ./build-image.sh
 docker tag nft-studio:latest apillonio/nft-studio:$1
 docker push apillonio/nft-studio:$1
+
+# Update version in docker-compose.yml
+sed -i "s|image: apillonio/nft-studio:[0-9]*\.[0-9]*\.[0-9]*|image: apillonio/nft-studio:$1|" docker-compose.yml
+echo "Updated version in docker-compose.yml to $1"
