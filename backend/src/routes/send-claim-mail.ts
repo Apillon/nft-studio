@@ -25,7 +25,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
     const mintedCount = await mysql.paramExecute(
       `SELECT COUNT(id) as total FROM user WHERE
               airdrop_status IN (
-                ${AirdropStatus.AIRDROP_COMPLETED},               
+                ${AirdropStatus.AIRDROP_COMPLETED}               
               )
               AND status = @status
             ;

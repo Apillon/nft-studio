@@ -121,7 +121,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
             );
 
             updates.push(
-              `(${currentUser.id}, '${currentUser.email}', ${res ? AirdropStatus.EMAIL_SENT : AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(new Date())}', '${currentUser.wallet}')`,
+              `(${currentUser.id}, '${currentUser.email}', ${res ? AirdropStatus.EMAIL_SENT : AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(new Date())}', ${currentUser.wallet ? `'${currentUser.wallet}'` : 'NULL'})`,
             );
           } else if (currentUser.wallet) {
             try {
@@ -132,11 +132,11 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
 
               if (mintResponse.success) {
                 updates.push(
-                  `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_COMPLETED}, null, '${currentUser.wallet}')`,
+                  `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_COMPLETED}, NULL, '${currentUser.wallet}')`,
                 );
               } else {
                 updates.push(
-                  `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_ERROR}, null, '${currentUser.wallet}')`,
+                  `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_ERROR}, NULL, '${currentUser.wallet}')`,
                 );
               }
             } catch (e) {
@@ -149,7 +149,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
               );
 
               updates.push(
-                `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_ERROR}, null, '${currentUser.wallet}')`,
+                `(${currentUser.id}, '${currentUser.email}', ${AirdropStatus.AIRDROP_ERROR}, NULL, '${currentUser.wallet}')`,
               );
             }
           }
