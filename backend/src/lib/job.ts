@@ -108,7 +108,17 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
         if (!env.MAX_SUPPLY || i < availableNftLeft) {
           if (currentUser.email) {
             const token = generateEmailAirdropToken(currentUser.email);
-            const res = true;
+            const res = await SmtpSendTemplate(
+              [currentUser.email],
+              'Claim your NFT',
+              'en-airdrop-claim',
+              {
+                appUrl: env.APP_URL,
+                link: parseUrl(token),
+                claimExpiresIn: env.CLAIM_EXPIRES_IN,
+              },
+              'Apillon',
+            );
 
             updates.push(
               `(${currentUser.id}, '${currentUser.email}', ${res ? AirdropStatus.EMAIL_SENT : AirdropStatus.EMAIL_ERROR}, '${dateToSqlString(new Date())}', ${currentUser.wallet ? `'${currentUser.wallet}'` : 'NULL'})`,
