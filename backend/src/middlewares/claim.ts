@@ -17,16 +17,19 @@ export function ClaimGuard(req: Request, _res: Response, next: NextFunction) {
         next();
         return;
       }
+      break;
     case ClaimType.FREE_MINT:
       if (url === '/claim') {
         next();
         return;
       }
+      break;
     case ClaimType.POAP:
       if (url === '/claim' || url === '/claim-airdrop') {
         next();
         return;
       }
+      break;
     default:
       next(
         new UnauthorizedError(
@@ -36,4 +39,12 @@ export function ClaimGuard(req: Request, _res: Response, next: NextFunction) {
         ),
       );
   }
+
+  next(
+    new UnauthorizedError(
+      AuthorizationErrorCode.UNSUPPORTED_CLAIM_TYPE,
+      context,
+      'claim-middleware/validateRoute',
+    ),
+  );
 }

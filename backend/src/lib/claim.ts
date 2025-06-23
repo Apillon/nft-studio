@@ -7,6 +7,7 @@ import { AirdropStatus, RouteErrorCode } from '../config/values';
 
 export async function claim(user: User): Promise<string> {
   const collection = new Nft({
+    apiUrl: env.APILLON_API_URL,
     key: env.APILLON_KEY,
     secret: env.APILLON_SECRET,
     logLevel: LogLevel.VERBOSE,
@@ -72,7 +73,9 @@ export function validateAirdropStatus(airdropStatus: AirdropStatus) {
 
 export function parseUrl(token: string) {
   const appUrl = new URL(env.APP_URL);
+  const basePath = appUrl.pathname.replace(/\/$/, ''); // Remove trailing slash if present
+  appUrl.pathname = `${basePath}/claim`; // Append '/claim' to the path
   appUrl.searchParams.set('nftToken', token);
 
-  return `${appUrl.origin}/claim?${appUrl.searchParams.toString()}`;
+  return appUrl.toString(); // Return the full URL as a string
 }

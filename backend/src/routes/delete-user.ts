@@ -26,7 +26,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   try {
     await user.removeFromDb();
     return res.respond(200, { success: 'User deleted successfully' });
-  } catch (err) {
+  } catch {
     throw new ValidationError(user, context, 'delete-user');
   }
 }

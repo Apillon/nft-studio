@@ -17,7 +17,9 @@ export function AuthenticateAdmin(
     req.header('authToken') ||
       req.header('authorization') ||
       req.header('Authorization') ||
-      req.query['nftToken'] ||
+      (typeof req.query['nftToken'] === 'string'
+        ? req.query['nftToken']
+        : '') ||
       ' ',
   )
     .toString()

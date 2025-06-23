@@ -63,7 +63,7 @@ export function readAdminAuthToken(token: string) {
     } else {
       return null;
     }
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -87,7 +87,7 @@ export function readEmailAirdropToken(token: string) {
     } else {
       return null;
     }
-  } catch (e) {
+  } catch {
     return null;
   }
 }
@@ -115,7 +115,7 @@ export function readDropReservationToken(token: string) {
     return jwt.verify(token, env.APP_SECRET, {
       subject,
     }) as any;
-  } catch (e) {
+  } catch {
     return null;
   }
 }

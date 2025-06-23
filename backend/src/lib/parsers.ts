@@ -7,7 +7,7 @@ export function stringTrimParser() {
   return (value: any) => {
     try {
       return value.toString().trim();
-    } catch (e) {
+    } catch {
       return null;
     }
   };
@@ -20,7 +20,7 @@ export function stringLowerCaseParser() {
   return (value: any) => {
     try {
       return value.toString().toLowerCase();
-    } catch (e) {
+    } catch {
       return null;
     }
   };
@@ -48,13 +48,13 @@ export function utcDateParser() {
 }
 
 export function JSONParser(): any {
-  return (value: string | any) => {
+  return (value: any) => {
     try {
       if (typeof value == 'string') {
         return JSON.parse(value);
       }
       return value;
-    } catch (e) {
+    } catch {
       return null;
     }
   };

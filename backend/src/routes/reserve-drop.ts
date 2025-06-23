@@ -13,7 +13,6 @@ import {
 } from '../lib/jwt';
 import { User } from '../models/user';
 import { SmtpSendTemplate } from '../lib/node-mailer';
-import { env } from '../config/env';
 import { parseUrl } from '../lib/claim';
 
 /**

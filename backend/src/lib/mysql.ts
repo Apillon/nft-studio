@@ -123,7 +123,7 @@ export class MySql {
         this.db = undefined;
         this.connect();
       }
-    } catch (err) {
+    } catch {
       this.db = undefined;
       this.connect();
     }
@@ -173,7 +173,6 @@ export class MySql {
       await this.ensureAlive(connection);
     }
 
-    let result;
     const query = `CALL ${procedure}(${
       Object.keys(data).length
         ? Array(Object.keys(data).length).fill('?').join(',')
@@ -184,7 +183,7 @@ export class MySql {
     writeLog(LogType.SQL, this.mapValues(data, true), 'lib/mysql.ts', 'call');
 
     // console.time('SQL procedure CALL');
-    result = await connection.query(query, this.mapValues(data));
+    const result = await connection.query(query, this.mapValues(data));
     // console.timeEnd( 'SQL procedure CALL');
 
     for (const resultSet of result[0] as mysql.RowDataPacket[][]) {
@@ -304,8 +303,9 @@ export class MySql {
 
           // regex
           const re = new RegExp(`@${key}\\b`, 'gi');
+          const match = re.exec(word);
 
-          if (word.match(re)) {
+          if (match) {
             sqlParamValues.push(values[key]);
           }
         }
@@ -381,7 +381,8 @@ export class MySql {
           // regex
           const re = new RegExp(`@${index}_${key}\\b`, 'gi');
 
-          if (word.match(re)) {
+          const match = re.exec(word);
+          if (match) {
             sqlParamValues.push(value[key]);
           }
         }

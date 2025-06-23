@@ -27,7 +27,7 @@ export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
 
   const wallet = body.address;
-  validateEvmWallet(wallet, body.signature, body.timestamp, body.isSmart);
+  await validateEvmWallet(wallet, body.signature, body.timestamp, body.isSmart);
 
   if (!body.jwt) {
     throw new ResourceError(RouteErrorCode.REQUEST_TOKEN_NOT_PRESENT);
