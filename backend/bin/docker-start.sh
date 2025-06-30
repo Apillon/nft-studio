@@ -1,6 +1,5 @@
 #!/bin/sh
 set -e
-printenv
 
 # migrate DB
 echo "Starting migration!"
