@@ -11,7 +11,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@apillon/wallet-vue": "~2.1.0",
+    "@apillon/wallet-vue": "~3.0.3",
     "@tanstack/vue-query": "^5.66.4",
     "@wagmi/vue": "^0.1.10",
     "buffer": "^6.0.3",

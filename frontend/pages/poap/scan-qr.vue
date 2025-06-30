@@ -8,7 +8,7 @@
       <template v-if="poapStatus === PoapStatus.IN_PROGRESS || immediatelyShowQr == true">
         <NuxtIcon name="icon/cube" class="icon-auto text-6xl" filled />
         <h2 class="max-w-xs mx-auto">Scan the code and receive NFT</h2>
-        <n-qr-code v-if="qrCodeText" :value="qrCodeText" class="box-content" :size="320" />
+        <n-qr-code v-if="qrCodeText" :value="qrCodeText" class="box-content" :size="360" />
         <div class="">
           <span class="text-sm">Next generated QR code in</span>
           <h4 class="text-yellow text-2xl">{{ timer }}s</h4>
@@ -39,7 +39,9 @@ const immediatelyShowQr = ref(query.immediatelyShowQr === 'true');
 let qrCodeInterval: any = null as any;
 let timerInterval: any = null as any;
 
-const qrCodeText = computed<string>(() => `${window.location.origin}/poap/reserve-nft?nftToken=${token.value}`);
+const qrCodeText = computed<string>(
+  () => `${window.location.origin}/poap/reserve-nft?nftToken=${token.value}&${stringifyQuery(query)}`
+);
 
 onMounted(async () => {
   if (authStore.loggedIn) {

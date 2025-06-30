@@ -8,7 +8,9 @@
       />
     </div>
     <n-checkbox v-model:checked="immediatelyShowQr" class="mt-2 mb-1"> Immediately show QR code </n-checkbox>
-    <BtnLink :link="`${domain}/poap/scan-qr?immediatelyShowQr=${immediatelyShowQr}`" />
+    <BtnLink
+      :link="`${domain}/poap/scan-qr?immediatelyShowQr=${immediatelyShowQr}&${stringifyQuery(currentRoute.query)}`"
+    />
 
     <div class="mt-6 mb-1">
       <h6 class="inline-block text-xs">NFT reservation website</h6>
@@ -24,11 +26,13 @@
 <script lang="ts" setup>
 const domain = window.location.origin;
 const immediatelyShowQr = ref(false);
+const { currentRoute } = useRouter();
 
 async function navigateToReserveDrop() {
   try {
     const { data } = await $api.get<TokenResponse>(`/drop-reservation-token`);
-    window.open(`/poap/reserve-nft?nftToken=${data.token}`, '_blank');
+    const query = stringifyQuery(currentRoute.value.query);
+    window.open(`/poap/reserve-nft?nftToken=${data.token}${query ? '&' + query : ''}`, '_blank');
   } catch (error) {
     console.error(error);
   }

@@ -20,11 +20,11 @@ import {
 import { Chains } from '../values/general.values';
 
 export function contractLink(contractAddress?: string | null, chainId?: number): string {
-  return contractAddress ? `${chainRpc(chainId)}address/${contractAddress}` : '';
+  return `${chainRpc(chainId)}/address/${contractAddress}`;
 }
 
 export function transactionLink(transactionHash?: string | null, chainId?: number): string {
-  return !transactionHash ? '' : `${chainRpc(chainId)}tx/${transactionHash}`;
+  return `${chainRpc(chainId)}/tx/${transactionHash}`;
 }
 export function chainRpc(chainId?: number): string {
   switch (chainId) {
