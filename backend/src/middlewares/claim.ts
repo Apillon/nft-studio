@@ -31,22 +31,19 @@ export function ClaimGuard(req: Request, _res: Response, next: NextFunction) {
       }
       break;
     default:
-      console.log("Unsupported claim type:", context.env.CLAIM_TYPE);
       next(
         new UnauthorizedError(
           AuthorizationErrorCode.UNSUPPORTED_CLAIM_TYPE,
           context,
-          'claim-middleware/validateRoute',
+          `claim-middleware/validateRoute/${context.env.CLAIM_TYPE}`,
         ),
       );
   }
-
-  console.log("Unsupported claim type:", context.env.CLAIM_TYPE);
   next(
     new UnauthorizedError(
       AuthorizationErrorCode.UNSUPPORTED_CLAIM_TYPE,
       context,
-      'claim-middleware/validateRoute',
-    ),
+      `claim-middleware/validateRoute/${context.env.CLAIM_TYPE}`,
+      ),
   );
 }
