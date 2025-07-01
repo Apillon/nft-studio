@@ -48,7 +48,7 @@ const methods = [
   },
 ];
 
-const availableNFTs = computed(() => maxSupply - userStore.users.length - items.value.length - 1000);
+const availableNFTs = computed(() => maxSupply - userStore.users.length - items.value.length);
 
 const isButtonDisabled = computed(() => {
   switch (uploadStep.value) {
@@ -150,7 +150,7 @@ async function deploy() {
   }
   userStore.balance = 0;
 
-  uploadStep.value = res ? Step.DEPLOYED : Step.REVIEW;
+  uploadStep.value = res ? Step.DEPLOYED : Step.DATA;
 }
 </script>
 

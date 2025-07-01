@@ -7,6 +7,7 @@ export const useContractStore = defineStore('contract', {
     balance: 0n,
     name: '',
     maxSupply: 0,
+    totalSupply: 0,
   }),
 
   getters: {},

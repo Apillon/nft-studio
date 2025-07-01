@@ -45,6 +45,7 @@ export default function useWalletConnect() {
   }
 
   async function login(admin = false) {
+    if (authStore.loggedIn && !admin) modalWalletVisible.value = false;
     if (loading.value || authStore.loggedIn || !admin) return;
 
     loading.value = true;

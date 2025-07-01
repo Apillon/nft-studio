@@ -72,6 +72,14 @@ export default function useClaim() {
     const uri = await contract.value.read.tokenURI([id]);
     return await parseLink(uri);
   }
+  async function getTotalSupply(): Promise<number> {
+    if (!contractStore.totalSupply) {
+      await initContract();
+      const max = await contract.value.read.totalSupply([]);
+      contractStore.totalSupply = max >= maxUint32 ? Number.MAX_SAFE_INTEGER : Number(max);
+    }
+    return contractStore.totalSupply;
+  }
 
   async function isAutoIncrement(): Promise<boolean> {
     if (contractStore.autoIncrement === null) {
@@ -87,7 +95,11 @@ export default function useClaim() {
       if (!nftId) {
         const balance = await getBalance();
         if (Number(balance) === 0) return null;
+      } else {
+        const totalSupply = await getTotalSupply();
+        if (Number(nftId) > totalSupply) return null;
       }
+
       const id = nftId || (await getTokenOfOwner(0));
       const url = await getTokenUri(Number(id));
       const parsedUrl = await parseLink(url);
@@ -106,6 +118,7 @@ export default function useClaim() {
     await ensureCorrectNetwork();
     let success: any = false;
     const image = await parseLink(metadata?.image || '');
+    contractStore.totalSupply += 1;
 
     try {
       if (wallet.value && info.activeWallet?.address) {
@@ -193,6 +206,7 @@ export default function useClaim() {
     addNftId,
     contractError,
     getMaxSupply,
+    getTotalSupply,
     getName,
     isAutoIncrement,
     loadNft,

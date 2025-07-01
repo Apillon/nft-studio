@@ -79,7 +79,7 @@ const router = useRouter();
 const message = useMessage();
 
 const { query } = useRoute();
-const { loadNft } = useClaim();
+const { getTotalSupply, loadNft } = useClaim();
 const { parseLink } = useIpns();
 const { handleError } = useErrors();
 const { connected } = useWalletConnect();
@@ -90,6 +90,7 @@ const tokenValidityInPercent = ref(100);
 const dropReserved = ref(false);
 const nfts = ref<Array<string>>([]);
 const token = query.nftToken?.toString();
+const totalSupply = await getTotalSupply();
 
 let calcRemainingTimeInterval: any = null as any;
 
@@ -132,7 +133,7 @@ onMounted(() => {
     }
 
     const tokenIssueDate = Number(dayjs(decoded.iat * 1000));
-    isTokenValid.value = Number(dayjs()) - tokenIssueDate < 7000;
+    isTokenValid.value = Number(dayjs()) - tokenIssueDate < 12000;
 
     calcRemainingTimeInterval = setInterval(() => {
       const currDate = dayjs();
@@ -173,6 +174,8 @@ function loadImages() {
   [1, 2, 3, 4, 5].forEach(i => loadImage(i));
 }
 async function loadImage(i: number) {
+  if (i > totalSupply) return;
+
   const metadata = await loadNft(i);
 
   const image = await parseLink(metadata?.image || '');

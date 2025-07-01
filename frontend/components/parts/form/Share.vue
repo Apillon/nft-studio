@@ -35,7 +35,12 @@ onMounted(async () => {
         <p class="mb-4">{{ metadata.description }}</p>
 
         <!-- Transaction -->
-        <a v-if="txHash" :href="transactionLink(txHash)" class="hover:underline" target="_blank">
+        <a
+          v-if="txHash"
+          :href="transactionLink(txHash, config.public.CHAIN_ID)"
+          class="hover:underline"
+          target="_blank"
+        >
           Transaction: {{ shortHash(txHash) }}
         </a>
       </div>

@@ -7,7 +7,9 @@
         size="sm"
       />
     </div>
-    <n-checkbox v-model:checked="immediatelyShowQr" class="mt-2 mb-1"> Immediately show QR code </n-checkbox>
+    <n-checkbox v-if="Number(config.public.CLAIM_START) > 0" v-model:checked="immediatelyShowQr" class="mt-2 mb-1">
+      Immediately show QR code (for testing purposes)
+    </n-checkbox>
     <BtnLink
       :link="`${domain}/poap/scan-qr?immediatelyShowQr=${immediatelyShowQr}${stringifyQuery(currentRoute.query, '&')}`"
     />
@@ -24,9 +26,11 @@
 </template>
 
 <script lang="ts" setup>
+const config = useRuntimeConfig();
+const { currentRoute } = useRouter();
+
 const domain = window.location.origin;
 const immediatelyShowQr = ref(false);
-const { currentRoute } = useRouter();
 
 async function navigateToReserveDrop() {
   try {
