@@ -30,7 +30,7 @@ export class User extends BaseSqlModel {
     ],
     validators: [
       {
-        resolver: uniqueFieldValue('user', 'email', undefined, true),
+        resolver: uniqueFieldValue('user', 'email'),
         code: ValidatorErrorCode.PROFILE_EMAIL_ALREADY_TAKEN,
       },
       {
