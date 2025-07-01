@@ -35,16 +35,15 @@ export function ClaimGuard(req: Request, _res: Response, next: NextFunction) {
         new UnauthorizedError(
           AuthorizationErrorCode.UNSUPPORTED_CLAIM_TYPE,
           context,
-          'claim-middleware/validateRoute',
+          `claim-middleware/validateRoute/${context.env.CLAIM_TYPE}`,
         ),
       );
   }
-
   next(
     new UnauthorizedError(
       AuthorizationErrorCode.UNSUPPORTED_CLAIM_TYPE,
       context,
-      'claim-middleware/validateRoute',
-    ),
+      `claim-middleware/validateRoute/${context.env.CLAIM_TYPE}`,
+      ),
   );
 }
