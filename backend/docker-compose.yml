@@ -71,6 +71,7 @@ services:
       CAPTCHA_SECRET: ${CAPTCHA_SECRET}
       CLAIM_EXPIRES_IN: ${CLAIM_EXPIRES_IN}
       CLAIM_START: ${CLAIM_START}
+      CLAIM_TYPE: ${CLAIM_TYPE}
 
   nft_studio_mail:
     image: bytemark/smtp
