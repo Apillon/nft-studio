@@ -21,7 +21,6 @@
     "query-string": "^9.1.0",
     "viem": "^2.23.4",
     "vue-papa-parse": "^3.1.0",
-    "vue3-flip-countdown": "^0.1.6",
     "web3-validator": "^2.0.6"
   },
   "devDependencies": {

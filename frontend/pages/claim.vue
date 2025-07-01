@@ -8,7 +8,6 @@ import { ClaimType } from '~/lib/values/general.values';
 definePageMeta({
   layout: 'claim',
 });
-
 const config = useRuntimeConfig();
 const router = useRouter();
 const message = useMessage();
@@ -17,10 +16,10 @@ const { wallet } = useWallet();
 const { handleError } = useErrors();
 const { nftImported, contractError, loadNft } = useClaim();
 const { connected, walletAddress, disconnectWallet, sign } = useWalletConnect();
+const timestamp = useTimestamp({ offset: 0 });
 
 const loading = ref<boolean>(false);
 const metadata = ref<Metadata | null>(null);
-const timestamp = ref<number>(new Date().getTime());
 const walletSignature = ref<string | undefined>();
 
 const type = config.public.CLAIM_TYPE;

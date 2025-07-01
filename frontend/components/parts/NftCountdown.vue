@@ -1,10 +1,14 @@
 <script lang="ts" setup>
-import { Countdown } from 'vue3-flip-countdown';
 import AirdropSVG from '~/assets/images/airdrop.svg';
-import { colors } from '~/tailwind.config';
 
 defineEmits(['proceed']);
-defineProps({ deadline: { type: String, default: '' } });
+defineProps({ timestamp: { type: [String, Number, Date], default: '' } });
+
+const { getMaxSupply, getTotalSupply, getName } = useClaim();
+
+const allNfts = await getMaxSupply();
+const mintedNfts = await getTotalSupply();
+const name = await getName();
 </script>
 
 <template>
@@ -12,28 +16,18 @@ defineProps({ deadline: { type: String, default: '' } });
     <img :src="AirdropSVG" class="mx-auto" width="202" height="240" alt="airdrop claim" />
 
     <div class="my-8 text-center">
-      <h3 class="mb-6">Nino’s soldiers NFT</h3>
+      <h3 class="mb-6">{{ name }}</h3>
       <n-tag class="mb-6" type="info" size="small" :bordered="false" round>
-        Only 100 available
+        Only {{ allNfts - mintedNfts }} available
       </n-tag>
-      <p>
-        Connect your wallet to claim Nino's Soldiers NFTs, a unique collection of digital soldier
-        characters that blend artistic creativity with the cutting-edge world of blockchain
-        collectibles.
-      </p>
+      <p>Connect your wallet to claim ˝{{ name }}˝ NFTs.</p>
     </div>
 
     <div class="">
       <div class="text-center mb-4">
         <strong>Time left to claim</strong>
       </div>
-      <Countdown
-        :flip-animation="false"
-        :label-color="colors.grey.transparent"
-        :main-color="colors.white"
-      />
-
-      <Btn class="mt-8" size="large" @click="$emit('proceed')">Proceed</Btn>
+      <Timer :date-time-to="timestamp" />
     </div>
   </div>
 </template>

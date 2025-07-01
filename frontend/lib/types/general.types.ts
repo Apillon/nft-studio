@@ -55,6 +55,7 @@ declare global {
     email_start_send_time: string | null;
     id?: number | null;
     nft_id?: number | null;
+    signature?: string | null;
     status?: number;
     tx_hash?: string | null;
     updateTime?: string;

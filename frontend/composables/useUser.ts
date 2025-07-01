@@ -90,10 +90,9 @@ export default function useUser() {
 
     try {
       await $api.post<SuccessResponse>('/users', { users: items });
-
-      userStore.users = [...userStore.users, ...items];
       message.success('Recipients are successfully added.');
 
+      await fetchUsers();
       await fetchStatistics();
       checkUnfinishedRecipients();
 
@@ -109,7 +108,7 @@ export default function useUser() {
       const { data } = await $api.post<SuccessResponse>('/send-claim-mail');
       if (data.success) {
         message.success(
-          'Emails have been sent successfully to all recipients! They will receive a link to claim their NFTs.'
+          'Emails have been sent successfully to all recipients! They will receive a link to claim their NFTs. Users with wallets will receive their NFTs.'
         );
       }
       return !!data.success;
@@ -121,15 +120,15 @@ export default function useUser() {
 
   /** Recipients polling */
   function checkUnfinishedRecipients() {
-    const unfinishedRecipient = userStore.users.find(item => item.airdrop_status === AirdropStatus.PENDING);
+    const unfinishedRecipient = userStore.users.find(item => Number(item.airdrop_status) <= AirdropStatus.PENDING);
     if (unfinishedRecipient === undefined) {
       return;
     }
 
     clearInterval(recipientInterval);
     recipientInterval = setInterval(async () => {
-      await getUsers();
-      const recipient = userStore.users.find(item => item.airdrop_status === AirdropStatus.PENDING);
+      await fetchUsers();
+      const recipient = userStore.users.find(item => Number(item.airdrop_status) <= AirdropStatus.PENDING);
       if (!recipient || recipient.airdrop_status >= AirdropStatus.EMAIL_SENT) {
         clearInterval(recipientInterval);
       }

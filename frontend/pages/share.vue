@@ -12,7 +12,7 @@ definePageMeta({
 useSeoMeta(prepareOG(`Just minted my ${query.name} NFT on Apillon!`, ``, `${query.image}`));
 
 onBeforeMount(() => {
-  if (!query.name || !query.image) {
+  if (!query.name && !query.txHash) {
     router.push('/claim');
   }
 });
