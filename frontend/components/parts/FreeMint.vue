@@ -2,7 +2,7 @@
   <div>
     <div class="flex justify-between items-center gap-8">
       <div class="max-w-4xl lg:pr-10">
-        <h6 class="mb-2 text-xs">NFT Event Experience</h6>
+        <h6 class="mb-2 text-xs">NFT Wild West</h6>
         <h1 class="mb-4">Dashboard</h1>
         <div>
           Allow anybody to mint an NFT from your collection through the claim page below. Users can connect their
