@@ -24,11 +24,18 @@
       <BtnLink class="max-w-xl" :link="`${domain}/claim${stringifyQuery($route.query, '?')}`" />
     </div>
 
+    <n-space class="w-full my-8" size="large" align="center" justify="space-between">
+      <div></div>
+      <n-space size="large">
+        <Btn type="secondary" :loading="userStore.loading" @click="fetchUsers()">Refresh </Btn>
+      </n-space>
+    </n-space>
     <TablePoapReservation />
   </div>
 </template>
 
 <script lang="ts" setup>
 const userStore = useUserStore();
+const { fetchUsers } = useUser();
 const domain = window.location.origin;
 </script>
