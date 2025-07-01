@@ -1,5 +1,5 @@
 <template>
-  <Tag :type="getPoapStatus(status)">
+  <Tag v-if="status !== null" :type="getPoapStatus(status)">
     <span class="first-letter:uppercase leading-normal">
       <slot>
         <template v-if="status === PoapStatus.WAITING">Waiting</template>
@@ -14,7 +14,7 @@
 import { PoapStatus } from '~/lib/values/general.values';
 
 defineProps({
-  status: { type: Number, default: PoapStatus.IN_PROGRESS },
+  status: { type: Number, default: null },
 });
 
 /** Poap status */

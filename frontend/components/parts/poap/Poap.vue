@@ -17,7 +17,7 @@
     <div class="card-light relative">
       <div class="flex gap-4 items-center mb-4">
         <h5>Your PoAP</h5>
-        <LazyPoapStatus v-if="poapStatus !== null" :key="poapStatus" :status="poapStatus" />
+        <PoapStats :status="poapStatus" />
       </div>
 
       <div class="flex flex-col lg:flex-row items-center justify-between gap-y-4 gap-x-8">
