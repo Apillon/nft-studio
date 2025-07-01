@@ -37,7 +37,7 @@ const { vueApp } = useNuxtApp();
 const $papa = vueApp.config.globalProperties.$papa as any;
 
 const uploadedFile = ref<UploadSettledFileInfo | null>(null);
-const requiredColumns = props.wallet ? ['wallet'] : ['email', 'email_start_send_time'];
+const requiredColumns = props.wallet ? ['wallet'] : ['email'];
 
 onMounted(() => {
   if (!props.autoIncrement) {
@@ -77,15 +77,15 @@ function parseUploadedFile(file?: File | null) {
       } else if (results.data.length) {
         if (hasRequiredColumns(results.meta.fields)) {
           const data = results.data.map((item: CsvItem) => {
-            if (item.email_start_send_time) {
-              item.email_start_send_time = new Date(Number(item.email_start_send_time)).toDateString();
-            }
+            item.email_start_send_time = item.email_start_send_time
+              ? new Date(Number(item.email_start_send_time)).toDateString()
+              : new Date().toDateString();
             return item;
           });
           emit('proceed', data);
         } else {
           message.warning(
-            'Required columns are missing, plase check your file. Required columns: ' + requiredColumns.join(', ')
+            'Required columns are missing, please check your file. Required columns: ' + requiredColumns.join(', ')
           );
         }
       }

@@ -19,7 +19,7 @@ const props = defineProps({
 const message = useMessage();
 const authStore = useAuthStore();
 const userStore = useUserStore();
-const { saveRecipients } = useUser();
+const { saveRecipients, sendEmails } = useUser();
 const { getMaxSupply } = useClaim();
 
 const maxSupply = await getMaxSupply();
@@ -48,14 +48,14 @@ const methods = [
   },
 ];
 
-const availableNFTs = computed(() => maxSupply - userStore.users.length - items.value.length);
+const availableNFTs = computed(() => maxSupply - userStore.users.length - items.value.length - 1000);
 
 const isButtonDisabled = computed(() => {
   switch (uploadStep.value) {
     case Step.TYPE:
       return !selectedMethod.value;
     case Step.DATA:
-      return items.value.length === 0 || availableNFTs.value < 0 || hasEmptyRow() || editingRow.value > -1;
+      return items.value.length === 0 || availableNFTs.value < 0 || hasEmptyRow() || editingRow.value >= 0;
     default:
       return false;
   }
@@ -69,20 +69,12 @@ const exampleFile = computed(() => {
 
 const isStep = (step: number) => uploadStep.value === step;
 const rowKey = (row: UserInterface) =>
-  items.value.findIndex(item => item.email === row?.email || item.wallet === row?.wallet);
+  items.value.findIndex(item => (isMethodWallet.value ? item.wallet === row?.wallet : item.email === row?.email));
 
 const keys = () => items.value.map(item => (isMethodWallet.value ? item.wallet : item.email));
 const hasEmptyRow = () => keys().some(item => item === '' || item === null);
 const areKeysUnique = () => new Set(keys()).size === keys().length;
 
-const addNewUser = () => {
-  if (hasEmptyRow()) {
-    editingRow.value = keys().findIndex(item => item === '' || item === null);
-  } else {
-    items.value.push(createEmptyUser());
-    editingRow.value = items.value.length - 1;
-  }
-};
 const createEmptyUser = (): UserInterface => ({
   airdrop_status: AirdropStatus.PENDING,
   amount: 1,
@@ -95,12 +87,24 @@ const createEmptyUser = (): UserInterface => ({
 const updateUser = (row: UserInterface) => {
   if (isMethodWallet.value && (!row.wallet || !isAddress(row.wallet))) {
     message.warning('Please enter a valid wallet address');
-  } else if (!isMethodWallet.value && (!row.email || !row.email_start_send_time || !validateEmail(row.email))) {
-    message.warning('Please enter a valid email address and start time');
+  } else if (!isMethodWallet.value && (!row.email || !validateEmail(row.email))) {
+    message.warning('Please enter a valid email address');
   } else if (!areKeysUnique()) {
     message.warning('Please enter unique email addresses or wallet addresses');
   } else {
     editingRow.value = -1;
+  }
+};
+const addNewUser = () => {
+  if (editingRow.value >= 0 && editingRow.value < items.value.length) {
+    updateUser(items.value[editingRow.value]);
+    if (editingRow.value >= 0) return;
+  }
+  if (hasEmptyRow()) {
+    editingRow.value = keys().findIndex(item => item === '' || item === null);
+  } else {
+    items.value.push(createEmptyUser());
+    editingRow.value = items.value.length - 1;
   }
 };
 
@@ -128,6 +132,9 @@ function emailAlreadyExists(email: string) {
 }
 
 function removeUser(user: UserInterface) {
+  if (editingRow.value === rowKey(user)) {
+    editingRow.value = -1;
+  }
   if (isMethodWallet.value) {
     items.value = items.value.filter(item => item.wallet !== user.wallet);
   } else {
@@ -138,6 +145,9 @@ function removeUser(user: UserInterface) {
 async function deploy() {
   uploadStep.value = Step.DEPLOYING;
   const res = await saveRecipients(items.value);
+  if (res) {
+    await sendEmails();
+  }
   userStore.balance = 0;
 
   uploadStep.value = res ? Step.DEPLOYED : Step.REVIEW;
@@ -152,13 +162,17 @@ async function deploy() {
     title="NFT email airdrop"
     @close="emit('close')"
   >
-    <div v-if="isStep(Step.TYPE)" class="max-w-lg w-full mx-auto">
+    <div v-if="isStep(Step.TYPE)" class="max-w-lg w-full mx-auto pt-4 lg:pt-0">
+      <Tag v-if="availableNFTs <= 0" type="error" class="absolute top-2 right-2">
+        You have exceeded the maximum number of NFTs available for airdrop.
+      </Tag>
       <h4>Select distribution methods</h4>
       <div class="mt-2 mb-4">How do you want to distribute your NFTs? Choose an option below.</div>
       <CardSelect
         v-for="method in methods"
         :key="method.value"
         v-bind="method"
+        :disabled="availableNFTs <= 0"
         :selected="selectedMethod === method.value"
         :alert="!authStore.smtpConfigured && method.value === AirdropMethod.EMAIL ? 'Needs setup' : ''"
         @click="selectedMethod = method.value"

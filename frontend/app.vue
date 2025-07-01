@@ -3,9 +3,9 @@ import { ClaimType } from '~/lib/values/general.values';
 
 const config = useRuntimeConfig();
 const title =
-  config.public.type === ClaimType.FREE_MINT
+  config.public.CLAIM_TYPE === ClaimType.FREE_MINT
     ? 'NFT Wild West'
-    : config.public.type === ClaimType.POAP
+    : config.public.CLAIM_TYPE === ClaimType.POAP
       ? 'NFT Event Edition'
       : 'NFT Brand Booster';
 

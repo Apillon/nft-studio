@@ -5,11 +5,20 @@
         <h6 class="mb-2 text-xs">NFT Brand Booster</h6>
         <h1 class="mb-4">Dashboard</h1>
         <div>
-          Reach your audience through email or their wallet address.All NFTs are sent from your Apillon-hosted
+          Reach your audience through email or their wallet address. All NFTs are sent from your Apillon-hosted
           collection. You’ll need enough NFTs in your collection to complete the drop.
         </div>
       </div>
       <Statistics :loading="userStore.loading" :statistics="userStore.statistics" />
+    </div>
+    <div class="my-8 bg-bg-light border border-black p-4 rounded-lg">
+      <h5 class="mb-3">Webpage to claim NFT</h5>
+      <h6 class="inline-block text-xs">Website</h6>
+      <IconInfo
+        tooltip="Share this link with your recipients. They will be able to claim the NFTs from this page."
+        size="sm"
+      />
+      <BtnLink class="max-w-xl" :link="`${domain}/claim${stringifyQuery($route.query, '?')}`" />
     </div>
     <hr class="border-grey-transparent dark:border-bg-lighter my-8" />
 
@@ -21,7 +30,7 @@
         </div>
         <n-space size="large">
           <Btn type="secondary" :loading="userStore.loading" @click="fetchUsers()">Refresh </Btn>
-          <Btn v-if="userStore.hasPending" type="secondary" :loading="loading" @click="send"> Send emails </Btn>
+          <Btn v-if="userStore.hasPending" type="secondary" :loading="loading" @click="send">Process batches</Btn>
           <Btn @click="openAirdrop(0)">
             <span class="inline-flex items-center gap-1">
               <NuxtIcon name="action/add" class="text-lg" />
@@ -85,6 +94,7 @@ const userStore = useUserStore();
 const { fetchUsers, getBalance, sendEmails } = useUser();
 const { isAutoIncrement } = useClaim();
 
+const domain = window.location.origin;
 const search = ref<string>('');
 const airdropType = ref<number>(0);
 const loading = ref<boolean>(false);

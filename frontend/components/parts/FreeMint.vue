@@ -21,7 +21,7 @@
         tooltip="Share this link with your users. They will be able to claim the NFTs from this page."
         size="sm"
       />
-      <BtnLink class="max-w-xl" :link="`${domain}/claim`" />
+      <BtnLink class="max-w-xl" :link="`${domain}/claim${stringifyQuery($route.query, '?')}`" />
     </div>
 
     <TablePoapReservation />

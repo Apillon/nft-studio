@@ -40,7 +40,7 @@ let qrCodeInterval: any = null as any;
 let timerInterval: any = null as any;
 
 const qrCodeText = computed<string>(
-  () => `${window.location.origin}/poap/reserve-nft?nftToken=${token.value}&${stringifyQuery(query)}`
+  () => `${window.location.origin}/poap/reserve-nft?nftToken=${token.value}${stringifyQuery(query, '&')}`
 );
 
 onMounted(async () => {

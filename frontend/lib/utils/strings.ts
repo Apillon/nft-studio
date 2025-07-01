@@ -113,8 +113,9 @@ export const parseImage = (img: string) => {
   return img.startsWith('ipfs://') ? removeLastSlash(img).replace('ipfs://', 'https://') + '.ipfs.dweb.link' : img;
 };
 
-export function stringifyQuery(query: Record<string, any>): string {
-  return Object.entries(query)
+export function stringifyQuery(query: Record<string, any>, prefix = ''): string {
+  const queryString = Object.entries(query)
     .map(([key, value]) => `${key}=${encodeURIComponent(value)}`)
     .join('&');
+  return queryString.length > 1 ? prefix + queryString : '';
 }
