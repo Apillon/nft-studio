@@ -74,6 +74,13 @@ const rowKey = (row: UserInterface) =>
 const keys = () => items.value.map(item => (isMethodWallet.value ? item.wallet : item.email));
 const hasEmptyRow = () => keys().some(item => item === '' || item === null);
 const areKeysUnique = () => new Set(keys()).size === keys().length;
+const validateEmail = (email: string) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};
 
 const createEmptyUser = (): UserInterface => ({
   airdrop_status: AirdropStatus.PENDING,

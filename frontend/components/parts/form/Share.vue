@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { transactionLink } from '~/lib/misc/chain';
+
 const props = defineProps({
   metadata: { type: Object as PropType<Metadata>, default: null },
   txHash: { type: String, default: null },

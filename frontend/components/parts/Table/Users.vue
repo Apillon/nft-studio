@@ -14,6 +14,7 @@
 <script lang="ts" setup>
 import type { DataTableColumns } from 'naive-ui';
 import { createPublicClient, http } from 'viem';
+import { dateTimeToDate, dateTimeToDateAndTime } from '~/lib/misc/dates';
 import { AirdropStatus, PaginationValues } from '~/lib/values/general.values';
 
 type Batch = {

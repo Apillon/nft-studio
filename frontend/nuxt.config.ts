@@ -51,7 +51,7 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       AutoImport({
-        imports: [{ 'naive-ui': ['useDialog', 'useMessage', 'useNotification', 'useLoadingBar'] }],
+        imports: [{ 'naive-ui': ['useMessage'] }],
       }),
 
       Components({ resolvers: [NaiveUiResolver()] }),
