@@ -73,6 +73,12 @@ export default defineNuxtConfig({
         // must use NODE_ENV (to build production version with dev config)
         process.env.NODE_ENV === Environments.dev ? ['naive-ui', 'vueuc'] : [],
     },
+    server: {
+      watch: {
+        usePolling: true,
+        interval: 100,
+      },
+    },
   },
 
   build: {

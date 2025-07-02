@@ -28,9 +28,7 @@ export default function useWalletConnect() {
 
   const network = computed(() => chains.value.find(c => c.id === config.public.CHAIN_ID));
   const connected = computed(() => isConnected.value || !!info.activeWallet?.address);
-  const walletAddress = computed<Address>(() =>
-    isConnected.value ? (address.value as Address) : (info.activeWallet?.address as Address)
-  );
+  const walletAddress = computed<Address>(() => (address.value || info.activeWallet?.address) as Address);
   const isLoggedIn = computed(() => connected.value && authStore.loggedIn);
 
   const sign = async (message: string) => {
@@ -91,12 +89,9 @@ export default function useWalletConnect() {
         }
       });
       wallet.value?.events.on('dataUpdated', ({ name }) => {
-        if (name === 'wallets') {
+        if (name === 'walletsEVM') {
           login(admin);
         }
-      });
-      wallet.value?.events.on('disconnect', () => {
-        disconnectWallet();
       });
     }
   }

@@ -9,19 +9,18 @@
   </Btn>
 
   <EmbeddedWallet
-    v-if="!!config.public.EMBEDDED_WALLET_CLIENT && !!network"
+    v-if="!!config.public.EMBEDDED_WALLET_CLIENT && !!network?.id"
     :client-id="config.public.EMBEDDED_WALLET_CLIENT"
     passkey-auth-mode="popup"
     :default-network-id="network.id"
-    :networks="[
-      {
-        name: network.name,
-        id: network.id,
-        rpcUrl: network.rpcUrls.default.http[0],
-        explorerUrl: network.blockExplorers.default.url,
-      },
-      moonbeam,
-    ]"
+    :networks="
+      chains.map(c => ({
+        name: c.name,
+        id: c.id,
+        rpcUrl: c.rpcUrls.default.http[0],
+        explorerUrl: c.blockExplorers?.default?.url || '',
+      }))
+    "
   />
 
   <modal
@@ -39,8 +38,7 @@
 
 <script lang="ts" setup>
 import type { Size } from 'naive-ui/es/button/src/interface';
-import { moonbeam } from 'viem/chains';
-import { useAccountEffect } from '@wagmi/vue';
+import { useAccountEffect, useChains } from '@wagmi/vue';
 import { EmbeddedWallet, useWallet } from '@apillon/wallet-vue';
 
 const props = defineProps({
@@ -50,6 +48,7 @@ const props = defineProps({
 
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
+const chains = useChains();
 const { wallet } = useWallet();
 const { loading, modalWalletVisible, network, connected, walletAddress, disconnectWallet, initEmbeddedWallet, login } =
   useWalletConnect();

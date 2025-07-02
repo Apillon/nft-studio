@@ -2,6 +2,7 @@
 const loading = ref(true);
 const router = useRouter();
 const { query } = useRoute();
+const { connected } = useWalletConnect();
 
 useHead({
   title: `Just minted my ${query.name} NFT on Apillon!`,
@@ -20,6 +21,16 @@ onBeforeMount(() => {
 onMounted(() => {
   loading.value = false;
 });
+
+watch(
+  () => connected.value,
+  _ => {
+    if (!connected.value) {
+      router.push('/claim');
+    }
+  },
+  { immediate: true }
+);
 
 const metadata = ref<Metadata>({
   id: Number(queryParam(query?.id)),
