@@ -140,20 +140,6 @@ const createColumns = (): DataTableColumns<UserInterface> => {
       title: 'Actions',
       render(row: UserInterface) {
         const actions = [];
-        if (row.id && row.airdrop_status < AirdropStatus.TRANSACTION_CREATED && row.wallet) {
-          actions.push(
-            h(
-              resolveComponent('Btn'),
-              {
-                class: 'locked',
-                size: 'small',
-                loading: loading.value === row.id,
-                onClick: () => mint(Number(row.id)),
-              },
-              'Mint'
-            )
-          );
-        }
         if (row.airdrop_status === AirdropStatus.PENDING) {
           actions.push(
             h('button', { class: 'icon-delete text-xl', onClick: () => handleDeleteUser(Number(row.id)) }, '')
@@ -166,6 +152,7 @@ const createColumns = (): DataTableColumns<UserInterface> => {
 };
 const columns = createColumns();
 
+/** Admin mint
 async function mint(userId: number) {
   loading.value = userId;
 
@@ -204,6 +191,7 @@ async function mint(userId: number) {
     loading.value = -1;
   }
 }
+ */
 
 async function handleDeleteUser(id: number) {
   loading.value = id;
