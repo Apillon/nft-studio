@@ -26,6 +26,7 @@
 
 <script lang="ts" setup>
 import type { UploadCustomRequestOptions, UploadSettledFileInfo } from 'naive-ui';
+import { useMessage } from 'naive-ui';
 
 const emit = defineEmits(['proceed']);
 const props = defineProps({

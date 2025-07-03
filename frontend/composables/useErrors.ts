@@ -1,4 +1,4 @@
-import { type MessageRenderMessage, NAlert } from 'naive-ui';
+import { type MessageRenderMessage, NAlert, useMessage } from 'naive-ui';
 import type { RenderMessageProps } from 'naive-ui/es/message/src/types';
 import { apiError } from '~/lib/misc/errors';
 

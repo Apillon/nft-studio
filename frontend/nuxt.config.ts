@@ -1,4 +1,3 @@
-import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import mkcert from 'vite-plugin-mkcert';
 import { moonbaseAlpha } from 'viem/chains';
@@ -48,12 +47,15 @@ export default defineNuxtConfig({
     'pinia-plugin-persistedstate/nuxt',
   ],
 
+  nitro: {
+    prerender: {
+      concurrency: 250,
+      interval: 100,
+    },
+  },
+
   vite: {
     plugins: [
-      AutoImport({
-        imports: [{ 'naive-ui': ['useMessage'] }],
-      }),
-
       Components({ resolvers: [NaiveUiResolver()] }),
       mkcert(),
       nodePolyfills(),

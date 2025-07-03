@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useMessage } from 'naive-ui';
 import { isAddress } from 'viem';
 import { AirdropStatus, AirdropMethod } from '~/lib/values/general.values';
 

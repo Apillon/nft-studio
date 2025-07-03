@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Events } from '@apillon/wallet-sdk';
 import { useWallet } from '@apillon/wallet-vue';
+import { useMessage } from 'naive-ui';
 import { isErc6492Signature } from 'viem';
 import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';

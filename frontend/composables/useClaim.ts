@@ -1,5 +1,6 @@
 import { useAccount, useWallet } from '@apillon/wallet-vue';
 import { useConnectorClient } from '@wagmi/vue';
+import { useMessage } from 'naive-ui';
 import type { Address } from 'viem';
 import { createPublicClient, getContract, http, maxUint32 } from 'viem';
 import { abi } from '~/lib/config/abi';

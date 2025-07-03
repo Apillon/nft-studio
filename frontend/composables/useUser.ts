@@ -1,3 +1,4 @@
+import { useMessage } from 'naive-ui';
 import { AirdropStatus } from '~/lib/values/general.values';
 
 export default function useUser() {

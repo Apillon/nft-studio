@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { DataTableColumns } from 'naive-ui';
+import { useMessage, type DataTableColumns } from 'naive-ui';
 import { createPublicClient, http } from 'viem';
 import { dateTimeToDate, dateTimeToDateAndTime } from '~/lib/misc/dates';
 import { AirdropStatus, PaginationValues } from '~/lib/values/general.values';
@@ -179,7 +179,7 @@ async function mint(userId: number) {
       message.info('NFT minting has started');
       updateUserStatus(userId, AirdropStatus.TRANSACTION_CREATED);
 
-      const receipt = await Promise.race([
+      const receipt: any = await Promise.race([
         txWait.wait(),
         publicClient.waitForTransactionReceipt({ hash: data.transactionHash }),
       ]);

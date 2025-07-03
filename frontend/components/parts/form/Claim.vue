@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useMessage } from 'naive-ui';
 import { createPublicClient, http, isErc6492Signature } from 'viem';
 import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
@@ -50,7 +51,7 @@ async function claim() {
       txWait.hash.value = data.transactionHash;
       message.info('NFT minting has started');
 
-      const receipt = await Promise.race([
+      const receipt: any = await Promise.race([
         txWait.wait(),
         publicClient.waitForTransactionReceipt({ hash: data.transactionHash }),
       ]);
