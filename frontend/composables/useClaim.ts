@@ -98,7 +98,7 @@ export default function useClaim() {
         if (Number(balance) === 0) return null;
       } else {
         const totalSupply = await getTotalSupply();
-        if (Number(nftId) > totalSupply) return null;
+        if (totalSupply === 0) return null;
       }
 
       const id = nftId || (await getTokenOfOwner(0));
@@ -122,7 +122,9 @@ export default function useClaim() {
     contractStore.totalSupply += 1;
 
     try {
-      if (wallet.value && info.activeWallet?.address) {
+      if (!metadata?.id) {
+        console.warn('Missing NFT ID!');
+      } else if (wallet.value && info.activeWallet?.address) {
         success = wallet.value?.events.emit('addTokenNft', {
           address: contractAddress,
           tokenId: Number(metadata.id),
@@ -141,7 +143,7 @@ export default function useClaim() {
             type: 'ERC721',
             options: {
               address: contractAddress,
-              tokenId: metadata.id.toString(),
+              tokenId: `${metadata.id}`,
               image,
             },
           },

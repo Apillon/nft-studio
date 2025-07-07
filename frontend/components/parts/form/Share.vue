@@ -21,7 +21,8 @@ onMounted(async () => {
 <template>
   <div v-if="metadata" class="max-w-md w-full md:px-6 mx-auto">
     <div class="mb-8 text-center">
-      <h3>Just minted my #{{ metadata.name }} NFT on Apillon!</h3>
+      <h3 v-if="txHash">Just minted my #{{ metadata.name }} NFT on Apillon!</h3>
+      <h3 v-else>Already minted your #{{ metadata.name }} NFT on Apillon!</h3>
     </div>
 
     <div class="rounded-lg overflow-hidden mb-6">

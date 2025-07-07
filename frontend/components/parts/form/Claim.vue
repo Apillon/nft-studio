@@ -71,8 +71,14 @@ async function claim() {
       message.error('Failed to claim NFT, please try again later.');
     }
     loading.value = false;
-  } catch (e) {
+  } catch (e: any) {
     handleError(e);
+    if (e?.data?.errors?.some((i: any) => i?.code === 400007)) {
+      const metadata = await loadNft();
+      if (metadata) {
+        emits('claim', metadata, '');
+      }
+    }
     loading.value = false;
   }
 }
