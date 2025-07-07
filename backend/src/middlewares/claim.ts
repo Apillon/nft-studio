@@ -44,6 +44,6 @@ export function ClaimGuard(req: Request, _res: Response, next: NextFunction) {
       AuthorizationErrorCode.UNSUPPORTED_CLAIM_TYPE,
       context,
       `claim-middleware/validateRoute/${context.env.CLAIM_TYPE}`,
-      ),
+    ),
   );
 }

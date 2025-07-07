@@ -181,7 +181,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
       }
     }
 
-    writeLog(LogType.ERROR, updates);
+    writeLog(LogType.SQL, updates);
 
     if (updates.length > 0) {
       const sql = `
