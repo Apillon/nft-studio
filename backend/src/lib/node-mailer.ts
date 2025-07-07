@@ -98,7 +98,7 @@ export async function SmtpSendTemplate(
       senderName ? senderName : env.SMTP_NAME_FROM
     } <${
       senderEmail ? senderEmail : env.SMTP_EMAIL_FROM
-    }>" to "${mailAddresses.join(';')}"`,
+    }>" to ${mailAddresses.length} recipients.`,
     'node-mailer.ts',
     'SmtpSendTemplate',
   );
