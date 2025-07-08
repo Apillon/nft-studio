@@ -1,9 +1,9 @@
 import { Application } from 'express';
 import { NextFunction, Request, Response } from '../http';
-import { PopulateStrategy } from '../config/values';
+import { PopulateStrategy, ValidatorErrorCode } from '../config/values';
 import { AuthenticateAdmin } from '../middlewares/authentication';
 import { BatchUsers } from '../models/batch-users';
-import { ValidationError } from '../lib/errors';
+import { ResourceError, ValidationError } from '../lib/errors';
 
 /**
  * Installs new route on the provided application.
@@ -21,6 +21,30 @@ export function inject(app: Application) {
 
 export async function resolve(req: Request, res: Response): Promise<void> {
   const { context, body } = req;
+
+  const usersToCreate = body.users;
+
+  const emailSet = new Set<string>();
+  const walletSet = new Set<string>();
+
+  for (const user of usersToCreate) {
+    const { email, wallet } = user;
+
+    if (email && emailSet.has(email)) {
+      throw new ResourceError(ValidatorErrorCode.DUPLICATED_MAIL);
+    }
+    if (wallet && walletSet.has(wallet)) {
+      throw new ResourceError(ValidatorErrorCode.DUPLICATED_WALLET);
+    }
+
+    if (email) {
+      emailSet.add(email);
+    }
+    if (wallet) {
+      walletSet.add(wallet);
+    }
+  }
+
   const users = new BatchUsers({}, context).populate(
     body,
     PopulateStrategy.ADMIN,

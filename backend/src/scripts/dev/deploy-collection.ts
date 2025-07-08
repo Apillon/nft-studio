@@ -6,7 +6,7 @@ import { env } from '../../config/env';
     apiUrl: env.APILLON_API_URL,
     key: env.APILLON_KEY,
     secret: env.APILLON_SECRET,
-    logLevel: LogLevel.VERBOSE,
+    logLevel: env.APP_ENV === 'production' ? LogLevel.ERROR : LogLevel.VERBOSE,
   });
 
   const collection = await nft.create({

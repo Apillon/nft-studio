@@ -84,6 +84,8 @@ export const ErrorCodes = {
   422007: 'Captcha error. Please solve the captcha again.',
   422008: 'User has already minted. Duplicate minting is not allowed.',
   422009: 'User with this wallet address already exists. Please use a different wallet.',
+  422102: "Email is duplicated in the request. Please provide unique emails.",
+  422103: "Wallet address is duplicated in the request. Please provide unique wallet addresses.",
   422013: 'Wallet address is not valid.',
   422014: 'Email or wallet address is required. Please provide one of them.',
 

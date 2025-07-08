@@ -208,11 +208,11 @@ export class User extends BaseSqlModel {
       `
       SELECT 1
       FROM user
-      WHERE email <> @email
+      WHERE id <> @id
       AND wallet = @wallet;
     `,
       {
-        email: this.email,
+        id: this.id,
         wallet: this.wallet,
       },
     );
