@@ -28,6 +28,11 @@ export function writeLog(
   functionSource = '',
   error?: Error,
 ) {
+  if (type === LogType.SQL && env.APP_ENV === 'production') {
+    // Do not log SQL queries in production
+    return;
+  }
+
   if (env.LOG_TARGET == 'console') {
     // setTheme({
     //   info: [bgYellow, black],

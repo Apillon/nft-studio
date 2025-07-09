@@ -10,7 +10,7 @@ export async function claim(user: User): Promise<string> {
     apiUrl: env.APILLON_API_URL,
     key: env.APILLON_KEY,
     secret: env.APILLON_SECRET,
-    logLevel: LogLevel.VERBOSE,
+    logLevel: env.APP_ENV === 'production' ? LogLevel.ERROR : LogLevel.VERBOSE,
   }).collection(env.COLLECTION_UUID);
 
   validateAirdropStatus(user.airdrop_status);

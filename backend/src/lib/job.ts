@@ -96,7 +96,8 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
           apiUrl: env.APILLON_API_URL,
           key: env.APILLON_KEY,
           secret: env.APILLON_SECRET,
-          logLevel: LogLevel.VERBOSE,
+          logLevel:
+            env.APP_ENV === 'production' ? LogLevel.ERROR : LogLevel.VERBOSE,
         }).collection(env.COLLECTION_UUID)
       : null;
 
@@ -181,7 +182,7 @@ const sendClaimEmails = async (job: JobType, mysql: MySql) => {
       }
     }
 
-    writeLog(LogType.ERROR, updates);
+    writeLog(LogType.SQL, updates);
 
     if (updates.length > 0) {
       const sql = `
