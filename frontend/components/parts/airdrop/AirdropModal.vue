@@ -54,7 +54,7 @@ const availableNFTs = computed(() => maxSupply - userStore.users.length - items.
 const isButtonDisabled = computed(() => {
   switch (uploadStep.value) {
     case Step.TYPE:
-      return !selectedMethod.value;
+      return !selectedMethod.value || availableNFTs.value <= 0;
     case Step.DATA:
       return items.value.length === 0 || availableNFTs.value < 0 || hasEmptyRow() || editingRow.value >= 0;
     default:
@@ -171,7 +171,7 @@ async function deploy() {
     @close="emit('close')"
   >
     <div v-if="isStep(Step.TYPE)" class="max-w-lg w-full mx-auto pt-4 lg:pt-0">
-      <Tag v-if="availableNFTs <= 0" type="error" class="absolute top-2 right-2">
+      <Tag v-if="availableNFTs <= 0" type="error" class="absolute top-2 left-1/2 -translate-x-1/2">
         You have exceeded the maximum number of NFTs available for airdrop.
       </Tag>
       <h4>Select distribution methods</h4>
@@ -180,6 +180,7 @@ async function deploy() {
         v-for="method in methods"
         :key="method.value"
         v-bind="method"
+        :class="{ 'pointer-events-none': availableNFTs <= 0 }"
         :disabled="availableNFTs <= 0"
         :selected="selectedMethod === method.value"
         :alert="!authStore.smtpConfigured && method.value === AirdropMethod.EMAIL ? 'Needs setup' : ''"
@@ -203,15 +204,10 @@ async function deploy() {
     </div>
     <div v-else-if="isStep(Step.DATA)">
       <div class="flex justify-between items-center mb-6">
-        <div v-if="isMethodWallet">
-          <h3 class="mb-2">List of NFT wallet airdrop</h3>
-          <span>Please check list before proceed</span>
+        <div>
+          <h3 class="mb-2">Your NFT {{ isMethodWallet ? 'Wallet' : 'Email' }} Mint list</h3>
+          <span>Please check the list before proceeding.</span>
         </div>
-        <div v-else>
-          <h3 class="mb-2">List of NFT email airdrop</h3>
-          <span>Please check list before proceed</span>
-        </div>
-
         <Btn v-if="availableNFTs > 0" type="secondary" @click="uploadStep = Step.UPLOAD"> Upload more </Btn>
       </div>
 
@@ -232,6 +228,7 @@ async function deploy() {
     </div>
     <PreviewUpload
       v-else-if="isStep(Step.REVIEW)"
+      :is-method-wallet="isMethodWallet"
       :num-of-nfts="items.length"
       :max-supply="maxSupply"
       @back="uploadStep = Step.DATA"

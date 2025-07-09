@@ -378,6 +378,12 @@ body > .n-message-container {
   .n-base-selection .n-base-suffix {
     @apply right-2;
   }
+
+  .n-pagination-item {
+    &--clickable {
+      @apply text-black font-semibold;
+    }
+  }
 }
 
 /** Popover */

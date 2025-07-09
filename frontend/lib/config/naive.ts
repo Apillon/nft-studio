@@ -290,8 +290,14 @@ export const NaiveTheme: GlobalThemeOverrides = {
     zIndex: 80,
     peers: {
       Card: {
-        borderColor: colors.grey.dark,
-        borderRadius: '0px',
+        borderColor: colors.black,
+        borderRadius: '8px',
+        color: colors.bg.DEFAULT,
+        colorEmbedded: colors.bg.DEFAULT,
+        colorEmbeddedModal: colors.bg.DEFAULT,
+        colorEmbeddedPopover: colors.bg.DEFAULT,
+        colorModal: colors.bg.DEFAULT,
+        colorPopover: colors.bg.DEFAULT,
         paddingSmall: '28px 40px',
         paddingMedium: '32px 64px',
         paddingLarge: '32px 64px',
@@ -307,7 +313,17 @@ export const NaiveTheme: GlobalThemeOverrides = {
       },
     },
   },
-  Pagination: { itemColorDisabled: colors.grey.dark },
+  Pagination: {
+    buttonColor: colors.bg.light,
+    buttonColorHover: colors.bg.light,
+    buttonColorPressed: colors.bg.light,
+    itemColorDisabled: colors.bg.light,
+    itemTextColor: colors.black,
+    itemTextColorActive: colors.black,
+    itemTextColorDisabled: colors.bg.darker,
+    itemTextColorHover: colors.black,
+    itemTextColorPressed: colors.black,
+  },
   Select: {
     peers: {
       InternalSelection: {

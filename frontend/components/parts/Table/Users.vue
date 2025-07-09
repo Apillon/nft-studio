@@ -13,7 +13,6 @@
 
 <script lang="ts" setup>
 import { useMessage, type DataTableColumns } from 'naive-ui';
-import { createPublicClient, http } from 'viem';
 import { dateTimeToDate, dateTimeToDateAndTime } from '~/lib/misc/dates';
 import { AirdropStatus, PaginationValues } from '~/lib/values/general.values';
 
@@ -30,17 +29,10 @@ const props = defineProps({
   users: { type: Array<UserInterface>, required: true },
 });
 const message = useMessage();
-const txWait = useTxWait();
 const userStore = useUserStore();
 const { fetchStatistics } = useUser();
 const { handleError } = useErrors();
-const { network, ensureCorrectNetwork } = useWalletConnect();
-const publicClient = createPublicClient({ chain: network.value, transport: http() });
-
 const loading = ref<number>(-1);
-
-const updateUserStatus = (id: number, status: number) =>
-  ((userStore.users.find(u => u.id === id) || ({} as UserInterface)).airdrop_status = status);
 
 const data = computed(() => {
   if (props.search) {
@@ -151,47 +143,6 @@ const createColumns = (): DataTableColumns<UserInterface> => {
   ];
 };
 const columns = createColumns();
-
-/** Admin mint
-async function mint(userId: number) {
-  loading.value = userId;
-
-  try {
-    const { data } = await $api.post<ClaimResponse>('/claim-admin', {
-      userId,
-    });
-    if (data.success) {
-      await ensureCorrectNetwork();
-      txWait.hash.value = data.transactionHash;
-      message.info('NFT minting has started');
-      updateUserStatus(userId, AirdropStatus.TRANSACTION_CREATED);
-
-      const receipt: any = await Promise.race([
-        txWait.wait(),
-        publicClient.waitForTransactionReceipt({ hash: data.transactionHash }),
-      ]);
-      message.success('You successfully claimed NFT');
-
-      const logs = receipt?.logs || receipt.data?.logs;
-      if (logs && logs[0].topics[3]) {
-        message.success('You successfully minted NFT');
-        updateUserStatus(userId, AirdropStatus.AIRDROP_COMPLETED);
-      } else {
-        message.error('Mint failed, missing NFT ID!');
-        updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
-      }
-    } else {
-      message.error('Failed to claim NFT, please try again later.');
-      updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
-    }
-    loading.value = -1;
-  } catch (e) {
-    handleError(e);
-    updateUserStatus(userId, AirdropStatus.AIRDROP_ERROR);
-    loading.value = -1;
-  }
-}
- */
 
 async function handleDeleteUser(id: number) {
   loading.value = id;

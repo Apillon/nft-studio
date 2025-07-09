@@ -29,8 +29,8 @@ function openEmbeddedWallet() {
       </FormWallet>
     </div>
     <div class="my-8 text-center max-w-xl mx-auto">
-      <h6 class="mb-2">Having trouble logging in?</h6>
-      <p>
+      <h6 class="mb-2 font-semibold">Having trouble logging in?</h6>
+      <p class="text-black">
         Only those with secret handshake (the designated wallet) can enter. Contact the master who set up your NFT
         Studio to request access.
       </p>

@@ -1,4 +1,7 @@
+import { ClaimType } from '~/lib/values/general.values';
+
 export default function useScreen() {
+  const config = useRuntimeConfig();
   const breakpoints = useBreakpoints({
     xs: 400,
     sm: 640,
@@ -8,7 +11,15 @@ export default function useScreen() {
     hd: 1920,
   });
 
+  const claimTypeName =
+    config.public.CLAIM_TYPE === ClaimType.FREE_MINT
+      ? 'NFT Wild West'
+      : config.public.CLAIM_TYPE === ClaimType.POAP
+        ? 'NFT Event Edition'
+        : 'NFT Brand Booster';
+
   return {
+    claimTypeName,
     breakpoints,
 
     /**

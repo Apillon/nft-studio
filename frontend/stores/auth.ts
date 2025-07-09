@@ -7,6 +7,7 @@ export const useAuthStore = defineStore('auth', {
     userId: 0,
     username: '',
     smtpConfigured: null as boolean | null,
+    smtpConfiguredAlert: true,
   }),
 
   getters: {
@@ -47,6 +48,6 @@ export const useAuthStore = defineStore('auth', {
   persist: {
     key: WebStorageKeys.AUTH,
     storage: piniaPluginPersistedstate.localStorage(),
-    pick: ['jwt', 'userId', 'username'],
+    pick: ['jwt', 'userId', 'username', 'smtpConfiguredAlert'],
   },
 });

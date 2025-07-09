@@ -124,14 +124,14 @@ const createColumns = (): DataTableColumns<UserInterface> => {
 
   return [
     ...cols,
-    {
-      key: 'airdrop_status',
-      title: 'Status',
-      minWidth: 100,
-      render(row: UserInterface) {
-        return AirdropStatus[row.airdrop_status].replaceAll('_', ' ');
-      },
-    },
+    // {
+    //   key: 'airdrop_status',
+    //   title: 'Status',
+    //   minWidth: 100,
+    //   render(row: UserInterface) {
+    //     return AirdropStatus[row.airdrop_status].replaceAll('_', ' ');
+    //   },
+    // },
     {
       key: 'actions',
       title: '',

@@ -43,24 +43,22 @@ export default defineNuxtPlugin(nuxtApp => {
     polygonAmoy,
     sepolia,
   ];
-  const transports = chains.reduce((acc: Transport, chain) => {
+  const transports = chains.reduce((acc: Record<number, ReturnType<typeof http>>, chain: Chain) => {
     acc[chain.id] = http();
     return acc;
   }, {});
 
-  const connectors = [
-    metaMask({
-      dappMetadata: {
-        name: 'LendeeFi Metamask wallet',
-      },
-    }),
-    coinbaseWallet({
-      appName: 'Apillon Prebuild solution',
-    }),
-  ];
-  if (config.public.WALLET_CONNECT_PROJECT) {
-    connectors.push(walletConnect({ projectId: config.public.WALLET_CONNECT_PROJECT }));
-  }
+  const walletConnectProject = config.public.WALLET_CONNECT_PROJECT;
+  const connectors = walletConnectProject
+    ? [
+        metaMask({ dappMetadata: { name: 'NFT Studio - Metamask' } }),
+        coinbaseWallet({ appName: 'NFT Studio - Coinbase' }),
+        walletConnect({ projectId: config.public.WALLET_CONNECT_PROJECT }),
+      ]
+    : [
+        metaMask({ dappMetadata: { name: 'NFT Studio - Metamask' } }),
+        coinbaseWallet({ appName: 'NFT Studio - Coinbase' }),
+      ];
 
   const wagmiConfig = createConfig({
     chains,

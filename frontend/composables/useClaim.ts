@@ -137,6 +137,7 @@ export default function useClaim() {
           await sleep(200);
         }
         // Use the Ethereum provider to watch the NFT asset
+        // TS-ignore
         success = await walletClient.value?.request({
           method: 'wallet_watchAsset',
           params: {
@@ -147,7 +148,7 @@ export default function useClaim() {
               image,
             },
           },
-        });
+        } as any);
       }
       nftImported.value = !!success;
     } catch (e) {
@@ -204,8 +205,8 @@ export default function useClaim() {
   }
 
   return {
-    nftImported,
     contract,
+    nftImported,
     addNftId,
     contractError,
     getMaxSupply,

@@ -53,9 +53,9 @@ watch(
 
 async function validateWallet() {
   loading.value = true;
-  timestamp.value = new Date().getTime();
+  const timestamp = new Date().getTime();
 
-  const signature = await sign(`test\n${timestamp.value}`).catch(e => contractError(e));
+  const signature = await sign(`test\n${timestamp}`).catch(e => contractError(e));
   if (!signature) {
     loading.value = false;
     return;
@@ -64,8 +64,8 @@ async function validateWallet() {
   try {
     const { data } = await $api.post<SuccessResponse>('/claim-validate', {
       signature,
+      timestamp,
       address: walletAddress.value,
-      timestamp: timestamp.value,
       isSmart: isErc6492Signature(signature as `0x${string}`),
     });
     if (data) {

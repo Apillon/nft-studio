@@ -56,6 +56,10 @@ export default function useUser() {
       const { data } = await userStore.promises.users;
       userStore.users = data.items;
 
+      if (data.total > userStore.statistics.total) {
+        fetchStatistics();
+      }
+
       /** Users pooling */
       checkUnfinishedRecipients();
     } catch (e) {

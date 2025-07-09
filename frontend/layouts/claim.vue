@@ -1,19 +1,11 @@
 <template>
   <n-config-provider :theme="lightTheme" :theme-overrides="NaiveTheme" class="flex h-full flex-col">
-    <n-message-provider
-      placement="bottom-right"
-      :keep-alive-on-hover="true"
-      :duration="3000"
-      closable
-    >
+    <n-message-provider placement="bottom-right" :keep-alive-on-hover="true" :duration="3000" closable>
       <n-layout class="relative h-screen" :native-scrollbar="false">
         <div ref="headerRef">
-          <Header logo-center :hideLogin="!!($route.query?.txHash && $route.query?.image)" />
+          <Header logo-center :hide-login="!!($route.query?.txHash && $route.query?.image)" />
         </div>
-        <div
-          class="container max-w-6xl py-8 flex flex-col justify-center box-border"
-          :style="containerStyle"
-        >
+        <div class="container max-w-6xl py-8 flex flex-col justify-center box-border" :style="containerStyle">
           <slot />
         </div>
         <div ref="footerRef" class="justify-center">

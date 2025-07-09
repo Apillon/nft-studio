@@ -2,20 +2,24 @@
   <div v-if="authStore.smtpConfigured === false" class="fixed right-4 z-50" :style="{ bottom: `${bottom}px` }">
     <button
       class="n-button w-9 h-9 rounded-full !bg-bg-darker hover:!bg-bg-dark transition-colors"
-      @click="showAlert = !showAlert"
+      @click="authStore.smtpConfiguredAlert = !authStore.smtpConfiguredAlert"
     >
       <NuxtIcon name="logo/apillon-icon" filled />
     </button>
 
     <transition name="fade" appear>
-      <div v-if="showAlert" class="absolute right-12 bottom-12 min-w-60 sm:min-w-[32rem] max-w-lg" :class="$style.bg">
+      <div
+        v-if="authStore.smtpConfiguredAlert"
+        class="absolute right-12 bottom-12 min-w-60 sm:min-w-[32rem] max-w-lg"
+        :class="$style.bg"
+      >
         <div class="relative bg-bg-light border border-black rounded-lg pl-8 p-2" :class="$style.arrow">
           <div class="absolute top-3 left-2">
             <NuxtIcon name="icon/alert" class="text-pink text-lg" filled />
           </div>
           <button
             class="n-button absolute flex-cc -top-4 -right-4 w-8 h-8 !bg-white border border-solid border-grey rounded-full"
-            @click="showAlert = false"
+            @click="authStore.smtpConfiguredAlert = false"
           >
             <NuxtIcon name="action/close" class="text-bg-dark text-xs" filled />
           </button>
@@ -41,7 +45,6 @@ defineProps({
   bottom: { type: Number, default: 16 },
 });
 const authStore = useAuthStore();
-const showAlert = ref(false);
 
 onMounted(() => {
   authStore.getConfig();

@@ -1,11 +1,6 @@
 <template>
   <n-config-provider :theme="lightTheme" :theme-overrides="NaiveTheme" class="flex h-full flex-col">
-    <n-message-provider
-      placement="bottom-right"
-      :keep-alive-on-hover="true"
-      :duration="3000"
-      closable
-    >
+    <n-message-provider placement="bottom-right" :keep-alive-on-hover="true" :duration="3000" closable>
       <n-layout class="relative h-screen" :native-scrollbar="false">
         <div ref="headerRef">
           <Header admin />

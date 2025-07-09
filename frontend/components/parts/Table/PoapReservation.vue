@@ -12,8 +12,10 @@
 
 <script lang="ts" setup>
 import type { DataTableColumns } from 'naive-ui';
+import { transactionLink } from '~/lib/misc/chain';
 import { PaginationValues } from '~/lib/values/general.values';
 
+const config = useRuntimeConfig();
 const userStore = useUserStore();
 const { getUsers } = useUser();
 
@@ -35,8 +37,14 @@ const columns: DataTableColumns<any> = [
   },
   {
     title: 'Tx hash',
-    key: 'txHash',
-    minWidth: 100,
+    key: 'tx_hash',
+    minWidth: 150,
+    render(row: any) {
+      return h(resolveComponent('TableLink'), {
+        link: transactionLink(row.tx_hash, config.public.CHAIN_ID),
+        text: shortHash(row.tx_hash),
+      });
+    },
   },
   {
     title: 'Airdrop status',
