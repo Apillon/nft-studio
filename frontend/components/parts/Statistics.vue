@@ -1,5 +1,5 @@
 <template>
-  <div v-if="statistics" class="card-dark small md:min-w-96 inline-flex gap-4">
+  <div v-if="statistics" class="card-dark small md:min-w-96 inline-flex items-center gap-4">
     <div class="w-24">
       <img
         v-if="config.public.COLLECTION_LOGO"

@@ -1,5 +1,7 @@
 <template>
-  <div class="relative w-full max-w-md border-card border-black p-6">
+  <div
+    class="relative w-full max-w-md border-card border-black hover:border-grey-transparent transition-colors duration-300 p-6"
+  >
     <div class="h-full w-full flex flex-col justify-between gap-2">
       <div v-if="icon || img" class="flex-cc h-12 w-12 rounded -mb-2">
         <NuxtIcon v-if="icon" :name="icon" class="icon-auto text-2xl" />

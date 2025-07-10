@@ -45,11 +45,13 @@
       <h6 class="mt-8 mb-2">Distribution methods</h6>
       <div class="flex gap-6">
         <Card
+          class="cursor-pointer"
           icon="icon/airdrop"
           title="Email Mint"
           content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT - no wallet required."
           :tags="['Gasless for users', 'Email user base', 'Rewards', 'Easy claim']"
           :alert="authStore.smtpConfigured ? '' : 'Needs setup'"
+          @click="openAirdrop(AirdropMethod.EMAIL)"
         >
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
@@ -59,10 +61,12 @@
           </template>
         </Card>
         <Card
+          class="cursor-pointer"
           icon="icon/wallet"
           title="Wallet Mint"
           content="Upload a list of emails and send minting invites. Users will receive a branded email from you with a link to claim their NFT."
           :tags="['Whitelisting', 'Rewards', 'Gasless for users']"
+          @click="openAirdrop(AirdropMethod.WALLET)"
         >
           <template #additional>
             <div class="flex gap-2 w-full mt-4">
