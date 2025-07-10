@@ -40,7 +40,7 @@ function connectWallet(conn: Connector<CreateConnectorFn>) {
     <hr class="my-4 border-grey-transparent dark:border-bg-lighter" />
     <h6 class="my-4">Connect your wallet to get started:</h6>
 
-    <n-space size="large" vertical>
+    <n-space vertical>
       <slot />
       <Btn
         v-for="(c, key) in connectors"

@@ -2,7 +2,7 @@
   <div class="flex flex-col gap-4 max-w-lg mx-auto">
     <h2>NFT & Costs details</h2>
 
-    <n-table class="plain mb-6 table-fixed" :bordered="false" :single-line="true">
+    <n-table class="plain mb-6 table-auto" :bordered="false" :single-line="true">
       <tbody>
         <tr v-for="(item, key) in data" :key="key" :class="{ hidden: item.show === false }">
           <td>
@@ -10,10 +10,6 @@
           </td>
           <td class="relative">
             <strong class="text-black dark:text-white">{{ item.value }}</strong>
-
-            <Btn class="float-right text-white-primary no-underline" type="link" @click="$emit('back')">
-              <span class="icon-edit align-sub text-xl" />
-            </Btn>
           </td>
         </tr>
       </tbody>

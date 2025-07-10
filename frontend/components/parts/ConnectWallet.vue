@@ -29,9 +29,13 @@
     @update:show="modalWalletVisible = false"
   >
     <FormWallet :admin="admin">
-      <Btn v-if="!!config.public.EMBEDDED_WALLET_CLIENT" type="secondary" size="large" @click="openWallet">
-        <span class="mr-1">▶◀</span> Apillon Embedded Wallet
-      </Btn>
+      <template v-if="!!config.public.EMBEDDED_WALLET_CLIENT">
+        <small v-if="!admin">Dont have a wallet?</small>
+        <Btn type="secondary" size="large" @click="openWallet">
+          <span class="mr-1">▶◀</span> Apillon Embedded Wallet
+        </Btn>
+        <small v-if="!admin">Connect your existing wallet to get started:</small>
+      </template>
     </FormWallet>
   </modal>
 </template>
@@ -58,6 +62,14 @@ useAccountEffect({ onConnect: () => loginDelay() });
 onMounted(() => {
   initEmbeddedWallet();
 });
+watch(
+  () => walletAddress.value,
+  (newValue, oldValue) => {
+    if (oldValue && newValue) {
+      modalWalletVisible.value = false;
+    }
+  }
+);
 
 function openWallet() {
   if (wallet.value) {

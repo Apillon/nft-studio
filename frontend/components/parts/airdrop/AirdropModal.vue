@@ -119,24 +119,35 @@ const addNewUser = () => {
 function onFileUploaded(csvData: CsvItem[]) {
   const data: UserInterface[] = csvData.map(item => Object.assign(createEmptyUser(), item));
 
-  if (!Array.isArray(items.value) || items.value.length === 0) {
-    items.value = data;
-  } else {
-    data.forEach(item => {
-      if (emailAlreadyExists(item?.email || '')) {
-        message.warning(`Email: ${item.email} is already on the list`);
-      } else {
-        items.value.unshift(item as UserInterface);
-      }
-    });
+  let uploadedAll = true;
+  data.forEach(item => {
+    if (!isMethodWallet.value && emailAlreadyExists(item?.email || '')) {
+      message.warning(`Email: ${item.email} is already on the list`);
+      uploadedAll = false;
+    } else if (isMethodWallet.value && walletAlreadyExists(item?.wallet || '')) {
+      message.warning(`Wallet: ${item.wallet} is already on the list`);
+      uploadedAll = false;
+    } else {
+      items.value.unshift(item as UserInterface);
+    }
+  });
+  if (uploadedAll) {
+    uploadStep.value = Step.DATA;
   }
+
   if (availableNFTs.value < 0) {
-    message.warning(`You uploaded too many NFTs. Please remove ${Math.abs(availableNFTs.value)} NFTs on next step.`);
+    const type = isMethodWallet.value ? 'wallets' : 'emails';
+    message.warning(
+      `You uploaded too many ${type}. Please remove ${Math.abs(availableNFTs.value)} ${type} on next step.`
+    );
   }
 }
 
 function emailAlreadyExists(email: string) {
-  return items.value.some(item => item.email === email);
+  return items.value.some(item => item.email === email) || userStore.users.some(item => item.email === email);
+}
+function walletAlreadyExists(wallet: string) {
+  return items.value.some(item => item.wallet === wallet) || userStore.users.some(item => item.wallet === wallet);
 }
 
 function removeUser(user: UserInterface) {

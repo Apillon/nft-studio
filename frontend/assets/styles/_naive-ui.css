@@ -86,7 +86,7 @@
   max-width: 100vw;
 
   .n-drawer-body-content-wrapper {
-    @apply scrollable;
+    @apply scrollable !cursor-default;
   }
 
   &.n-drawer--bottom-placement {
