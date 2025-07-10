@@ -19,25 +19,24 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div v-if="metadata" class="max-w-md w-full md:px-6 mx-auto">
-    <div class="mb-8 text-center">
-      <h3 v-if="txHash">Just minted my #{{ metadata.name }} NFT on Apillon!</h3>
-      <h3 v-else>Already minted your #{{ metadata.name }} NFT on Apillon!</h3>
+  <div v-if="metadata" class="max-w-md w-full md:px-2 mx-auto">
+    <div v-if="txHash || true" class="mb-8 text-center">
+      <NuxtIcon name="icon/success" class="inline-block text-3xl text-green" filled />
+      <h4>Great success!</h4>
+      <p class="text-bg-bg">Your NFT has been successfully minted. Share it with the world!</p>
     </div>
+    <h1 class="my-4 text-center lg:text-3xl">Your NFT</h1>
 
-    <div class="rounded-lg overflow-hidden mb-6">
+    <div class="rounded-lg overflow-hidden mb-6 max-w-64 mx-auto">
       <div v-if="loading" class="w-full h-40 flex-cc">
         <Spinner :size="36" />
       </div>
       <img v-else-if="imageLink" :src="imageLink" class="w-full" alt="nft" />
 
-      <div class="p-6 bg-grey-dark text-white">
-        <h5>{{ metadata.name }}</h5>
+      <div class="p-3 bg-grey-dark rounded-b-lg text-white">
+        <span class="text-cs">{{ metadata.name }}</span>
       </div>
       <div class="mt-4 text-center">
-        <p class="mb-4">{{ metadata.description }}</p>
-
-        <!-- Transaction -->
         <a
           v-if="txHash"
           :href="transactionLink(txHash, config.public.CHAIN_ID)"

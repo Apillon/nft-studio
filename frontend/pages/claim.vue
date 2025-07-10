@@ -3,7 +3,6 @@ import type { Events } from '@apillon/wallet-sdk';
 import { useWallet } from '@apillon/wallet-vue';
 import { useMessage } from 'naive-ui';
 import { isErc6492Signature } from 'viem';
-import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
 
 definePageMeta({
@@ -93,20 +92,16 @@ function onClaim(metadata: Metadata, txHash?: string) {
     </p>
   </div>
   <FormShare v-else-if="metadata" :metadata="metadata" />
-  <div v-else-if="!connected" class="max-w-md w-full md:px-6 my-12 mx-auto">
-    <img :src="SuccessSVG" class="mx-auto" width="165" height="169" alt="airdrop" />
-
+  <div v-else-if="!connected" class="max-w-md w-full md:px-9 my-12 mx-auto">
     <div class="my-8 text-center">
-      <h3 class="mb-6">Great Success!</h3>
-      <p>
-        To join this NFT airdrop, you need to connect your EVM compatible wallet. This step is crucial for securely
-        receiving and managing the airdropped NFTs.
-      </p>
+      <NuxtIcon name="icon/cube" class="inline-block icon-auto text-9xl lg:text-[150px]" filled />
+      <h1 class="mt-4 mb-6 lg:text-3xl">Your NFT is ready for you</h1>
+      <p>Click below to reveal your unique digital collectible.</p>
     </div>
 
     <ConnectWallet size="large" />
   </div>
-  <div v-else-if="isWhitelist && !walletSignature" class="max-w-md w-full md:px-6 my-12 mx-auto">
+  <div v-else-if="isWhitelist && !walletSignature" class="max-w-md w-full md:px-9 my-12 mx-auto">
     <Btn size="large" :loading="loading" @click="validateWallet()"> Wallet eligibility check </Btn>
   </div>
   <NftCountdown v-else-if="timeToStart > 0" :timestamp="config.public.CLAIM_START" />

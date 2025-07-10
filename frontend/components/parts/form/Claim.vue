@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useMessage } from 'naive-ui';
 import { createPublicClient, http, isErc6492Signature } from 'viem';
-import SuccessSVG from '~/assets/images/success.svg';
 import { ClaimType } from '~/lib/values/general.values';
 
 const props = defineProps({
@@ -85,15 +84,11 @@ async function claim() {
 </script>
 
 <template>
-  <div class="max-w-md w-full md:px-6 my-12 mx-auto">
-    <img :src="SuccessSVG" class="mx-auto" width="165" height="169" alt="airdrop" />
-
+  <div class="max-w-md w-full md:px-9 my-12 mx-auto">
     <div class="my-8 text-center">
-      <h3 class="mb-6">Great Success!</h3>
-      <p>
-        Minting your NFT is almost done. Please sign the message with your wallet to confirm ownership of the wallet and
-        claim your NFT.
-      </p>
+      <NuxtIcon name="icon/cube" class="inline-block icon-auto text-9xl lg:text-[150px]" filled />
+      <h1 class="mt-4 mb-6 lg:text-3xl">Your NFT is ready for you</h1>
+      <p>Click below to reveal your unique digital collectible.</p>
     </div>
     <Btn size="large" :loading="loading" :disabled="walletUsed" @click="claim()">Claim NFT</Btn>
   </div>

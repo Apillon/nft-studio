@@ -28,13 +28,14 @@ function connectWallet(conn: Connector<CreateConnectorFn>) {
 </script>
 
 <template>
-  <div class="max-w-md w-full md:px-6 my-12 mx-auto text-center">
+  <div class="max-w-md w-full md:px-4 my-12 mx-auto text-center">
     <NuxtIcon name="icon/studio" class="text-3xl inline-block" />
 
     <h1 class="my-4">{{ claimTypeName }}</h1>
     <div>
-      <strong>Email the magic. Earn the trust.</strong><br />
-      Turn leads into fans - and fans into believers.
+      <strong> You’ll need a secure wallet to receive and manage your NFT.</strong><br />
+
+      No wallet yet? Use Apillon Embedded wallet - no tricky setup, no stress.
     </div>
 
     <hr class="my-4 border-grey-transparent dark:border-bg-lighter" />
