@@ -26,6 +26,7 @@ export const colors = {
     darker: '#06080F',
   },
   grey: {
+    placeholder: '#c4c4c4',
     DEFAULT: '#9c9c95',
     transparent: 'rgba(153, 153, 153, 0.64)', // #99999a3
     dark: '#141721', // rgba(20, 23, 33, 1)

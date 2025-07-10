@@ -11,15 +11,6 @@
       </div>
       <Statistics :loading="userStore.loading" :statistics="userStore.statistics" />
     </div>
-    <div class="my-8 bg-bg-light border border-black p-4 rounded-lg">
-      <h5 class="mb-3">Webpage to claim NFT</h5>
-      <h6 class="inline-block text-xs">Website</h6>
-      <IconInfo
-        tooltip="Share this link with your recipients. They will be able to claim the NFTs from this page."
-        size="sm"
-      />
-      <BtnLink class="max-w-xl" :link="`${domain}/claim${stringifyQuery($route.query, '?')}`" />
-    </div>
     <hr class="border-grey-transparent dark:border-bg-lighter my-8" />
 
     <template v-if="userStore.hasUsers || userStore.loading">

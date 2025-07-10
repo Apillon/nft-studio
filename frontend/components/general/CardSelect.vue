@@ -9,7 +9,7 @@
     <Tag v-if="alert" type="error" class="absolute top-2 right-2">
       {{ alert }}
     </Tag>
-    <div v-if="icon || img" class="flex-cc h-12 w-12 rounded p-1">
+    <div v-if="icon || img" class="flex-cc h-12 w-12 rounded p-1" :class="iconClass">
       <NuxtIcon v-if="icon" :name="icon" class="icon-auto text-2xl" />
       <img v-else-if="img" :src="img" alt="" />
     </div>
@@ -31,6 +31,7 @@
 <script lang="ts" setup>
 defineProps({
   icon: { type: String, default: '' },
+  iconClass: { type: String, default: '' },
   img: { type: String, default: '' },
   title: { type: String, default: '' },
   content: { type: String, default: '' },

@@ -212,6 +212,16 @@ async function deploy() {
         </span>
       </div>
       <FormUpload :auto-increment="autoIncrement" :wallet="isMethodWallet" @proceed="onFileUploaded" />
+      <div class="my-6">
+        <span class="text-xs">OR add manually</span>
+      </div>
+      <CardSelect
+        :icon-class="`min-w-12 rounded bg-grey-placeholder ${isMethodWallet ? 'p-3' : 'p-[14px]'}`"
+        :icon="isMethodWallet ? 'icon/wallet' : 'icon/email'"
+        :title="isMethodWallet ? 'Add wallets manually' : 'Add emails manually'"
+        :content="isMethodWallet ? 'Enter wallet addresses one by one' : 'Enter email addresses one by one'"
+        @click="uploadStep = Step.DATA"
+      />
     </div>
     <div v-else-if="isStep(Step.DATA)">
       <div class="flex justify-between items-center mb-6">
@@ -262,10 +272,7 @@ async function deploy() {
         <span v-else></span>
         <div class="flex items-center gap-2">
           <Btn v-if="uploadStep > Step.TYPE" class="min-w-40" type="secondary" @click="uploadStep -= 1"> Back </Btn>
-          <Btn class="min-w-40" :disabled="isButtonDisabled" @click="uploadStep += 1">
-            <span v-if="isStep(Step.UPLOAD) && items.length === 0"> Skip </span>
-            <span v-else> Continue </span>
-          </Btn>
+          <Btn class="min-w-40" :disabled="isButtonDisabled" @click="uploadStep += 1"> Continue </Btn>
         </div>
       </div>
     </template>
