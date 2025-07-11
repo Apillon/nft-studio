@@ -52,7 +52,7 @@
           <img
             v-for="i in 5"
             :key="i + nfts.length"
-            :src="i - 1 in nfts ? nfts[i - 1] : `/images/nfts/1.png`"
+            :src="i - 1 in nfts ? nfts[i - 1] : `/images/nfts/cube.svg`"
             class="h-32 rounded-lg pointer-events-none"
           />
         </HorizontalSlider>
