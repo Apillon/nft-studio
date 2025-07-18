@@ -23,7 +23,10 @@
           <p class="mt-2 text-xs">Your balance: {{ userStore.balance }} credits</p>
         </div>
       </div>
-      <Btn size="large" type="primary" @click="deploy()"> Send minting invites </Btn>
+      <Btn size="large" type="primary" @click="deploy()">
+        <span v-if="isMethodWallet">Send NFTs</span>
+        <span v-else>Send minting invites</span>
+      </Btn>
     </div>
   </div>
 

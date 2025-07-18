@@ -30,11 +30,10 @@
   >
     <FormWallet :admin="admin">
       <template v-if="!!config.public.EMBEDDED_WALLET_CLIENT">
-        <small v-if="!admin">Dont have a wallet?</small>
-        <Btn type="secondary" size="large" @click="openWallet">
+        <Btn class="relative" type="secondary" size="large" @click="openWallet">
           <span class="mr-1">▶◀</span> Apillon Embedded Wallet
+          <Tag v-if="!admin" class="absolute -right-4 top-0 rotate-12 z-10" type="info">No setup needed</Tag>
         </Btn>
-        <small v-if="!admin">Connect your existing wallet to get started:</small>
       </template>
     </FormWallet>
   </modal>
@@ -43,7 +42,7 @@
 <script lang="ts" setup>
 import type { Size } from 'naive-ui/es/button/src/interface';
 import { useAccountEffect, useChains } from '@wagmi/vue';
-import { EmbeddedWallet, useWallet } from '@apillon/wallet-vue';
+import { EmbeddedWallet, useWallet, useAccount } from '@apillon/wallet-vue';
 
 const props = defineProps({
   admin: { type: Boolean, default: false },
@@ -53,6 +52,7 @@ const props = defineProps({
 const config = useRuntimeConfig();
 const authStore = useAuthStore();
 const chains = useChains();
+const { info } = useAccount();
 const { wallet } = useWallet();
 const { loading, modalWalletVisible, network, connected, walletAddress, disconnectWallet, initEmbeddedWallet, login } =
   useWalletConnect();
@@ -70,9 +70,19 @@ watch(
     }
   }
 );
+watch(
+  () => info.activeWallet?.address,
+  address => {
+    if (address && props.admin) {
+      login();
+    }
+  }
+);
 
 function openWallet() {
-  if (wallet.value) {
+  if (info.activeWallet?.address && props.admin) {
+    login();
+  } else if (wallet.value) {
     wallet.value.events.emit('open', true);
     modalWalletVisible.value = false;
   }

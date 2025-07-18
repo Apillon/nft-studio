@@ -5,7 +5,10 @@
         <div ref="headerRef">
           <Header logo-center />
         </div>
-        <div class="container max-w-6xl py-8 flex flex-col justify-center box-border" :style="containerStyle">
+        <div
+          class="container max-w-6xl py-8 flex flex-col justify-center box-border"
+          :style="{ minHeight: `calc(100vh - ${height}px)` }"
+        >
           <slot />
         </div>
         <div ref="footerRef" class="justify-center">
@@ -31,12 +34,6 @@ const { width } = useWindowSize();
 const height = ref<number>(0);
 const headerRef = ref<HTMLElement>();
 const footerRef = ref<HTMLElement>();
-
-const containerStyle = computed(() => {
-  return {
-    minHeight: `calc(100vh - ${height.value}px)`,
-  };
-});
 
 onMounted(() => {
   setHeight();

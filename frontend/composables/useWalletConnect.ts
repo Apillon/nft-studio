@@ -1,4 +1,4 @@
-import type { Events } from '@apillon/wallet-sdk';
+import { WalletDisconnectedError, type Events } from '@apillon/wallet-sdk';
 import type { Config } from '@wagmi/vue';
 import type { Address } from 'viem';
 import { signMessage } from '@wagmi/vue/actions';
@@ -72,7 +72,11 @@ export default function useWalletConnect() {
     if (isConnected.value) {
       disconnect();
     } else if (wallet.value && info.activeWallet?.address) {
-      wallet.value?.events.emit('disconnect');
+      try {
+        wallet.value?.events.emit('disconnect', { error: new WalletDisconnectedError() });
+      } catch (e) {
+        console.error(e);
+      }
     }
   }
 
